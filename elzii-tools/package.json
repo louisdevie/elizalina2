@@ -1,0 +1,52 @@
+{
+  "name": "elzii-tools",
+  "version": "0.1.0",
+  "description": "i18n framework",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "elzii-update": "./dist/bin/elzii-update.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "tsup": {
+    "entry": {
+      "index": "src/index.ts",
+      "bin/elzii-update": "bin/elzii-update.ts"
+    },
+    "outDir": "dist",
+    "format": [
+      "cjs"
+    ],
+    "dts": {
+      "entry": {
+        "index": "src/index.ts"
+      }
+    },
+    "sourcemap": true,
+    "minify": true,
+    "clean": true
+  },
+  "keywords": [],
+  "author": "Louis DEVIE",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.5",
+    "@types/yargs": "^17.0.32",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.4",
+    "ts-jest": "^29.1.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "yargs": "^17.7.2"
+  }
+}
