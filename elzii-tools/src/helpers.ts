@@ -1,4 +1,4 @@
-import { throwError } from '@module/error'
+import { throwError } from '@module/elzIIError'
 import fs from 'node:fs'
 
 /**

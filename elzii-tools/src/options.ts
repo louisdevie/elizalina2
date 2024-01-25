@@ -1,4 +1,4 @@
-import { handleErrors, throwError } from './error'
+import { handleErrors, throwError } from './elzIIError'
 import { show } from '.'
 import type { Debug } from './show'
 
