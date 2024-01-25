@@ -13,12 +13,16 @@ export class Error {
     return this._kind
   }
 
-  public get detailedMessage(): string {
+  public get message(): string {
     return this._detailedMessage[0]
   }
 
   public get details(): string[] {
     return this._detailedMessage.slice(1)
+  }
+
+  public toString(): string {
+    return this.message
   }
 
   public cantHandle(): never {
@@ -41,22 +45,50 @@ export function throwError(message: string, kind: ErrorKind = 'other'): never {
   throw new Error([message], kind)
 }
 
-export function handleErrors(
-  tryBlock: () => void,
-  handlers: Partial<Record<ErrorKind, (err: Error) => void>>,
-) {
+export function handleErrors<T>(
+  tryBlock: () => T,
+  handlers: Partial<Record<ErrorKind | 'all', (err: unknown) => T>>,
+): T {
+  let result: T
   try {
-    tryBlock()
+    result = tryBlock()
   } catch (error) {
+    let handler
     if (error instanceof Error) {
-      let handler = handlers[error.kind]
-      if (handler !== undefined) {
-        handler(error)
-      } else {
-        throw error
-      }
+      handler = handlers[error.kind] ?? handlers['all']
+    } else {
+      handler = handlers['all']
+    }
+
+    if (handler !== undefined) {
+      result = handler(error)
     } else {
       throw error
     }
   }
+  return result
+}
+
+export async function handleErrorsAsync<T>(
+  tryBlock: () => Promise<T>,
+  handlers: Partial<Record<ErrorKind | 'all', (err: unknown) => T>>,
+): Promise<T> {
+  let result: T
+  try {
+    result = await tryBlock()
+  } catch (error) {
+    let handler
+    if (error instanceof Error) {
+      handler = handlers[error.kind] ?? handlers['all']
+    } else {
+      handler = handlers['all']
+    }
+
+    if (handler !== undefined) {
+      result = handler(error)
+    } else {
+      throw error
+    }
+  }
+  return result
 }

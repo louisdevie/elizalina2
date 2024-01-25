@@ -8,7 +8,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "elzii-update": "./dist/bin/elzii-update.js"
+    "elzii-update": "./dist/bin/elzii-update.js",
+    "elzii-release": "./dist/bin/elzii-release.js"
   },
   "scripts": {
     "build": "tsup",
@@ -17,7 +18,8 @@
   "tsup": {
     "entry": {
       "index": "src/index.ts",
-      "bin/elzii-update": "bin/elzii-update.ts"
+      "bin/elzii-update": "bin/elzii-update.ts",
+      "bin/elzii-release": "bin/elzii-release.ts"
     },
     "outDir": "dist",
     "format": [
@@ -46,7 +48,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "chalk": "^5.3.0",
+    "bundle-require": "^4.0.2",
+    "chalk": "^4.1.0",
+    "yaml": "^2.3.4",
     "yargs": "^17.7.2"
   }
 }
