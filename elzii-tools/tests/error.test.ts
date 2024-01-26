@@ -1,4 +1,4 @@
-import { ElzIIError, handleErrors, handleErrorsAsync, throwError } from '@module/elzIIError'
+import { ElzIIError, handleErrors, handleErrorsAsync, throwError } from '@module/error'
 
 test('error.Error.constructor', () => {
   let err1 = new ElzIIError([], 'other')

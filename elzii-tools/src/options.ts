@@ -1,4 +1,4 @@
-import { handleErrors, throwError } from './elzIIError'
+import { handleErrors, throwError } from './error'
 import { show } from '.'
 import type { Debug } from './show'
 
@@ -58,7 +58,7 @@ export class ConfigBuilder implements Debug {
     this._targets = {}
   }
 
-  public static isSingleTarget(options: object): boolean {
+  private static isSingleTarget(options: object): boolean {
     return (
       'translations' in options &&
       typeof options.translations === 'string' &&
@@ -207,7 +207,7 @@ function enabled(directory: string): NormalizedOutputConfig {
 }
 
 export class OutputConfigBuilder implements Debug {
-  private _options: Record<OutputTypes, NormalizedOutputConfig>
+  private readonly _options: Record<OutputTypes, NormalizedOutputConfig>
 
   public constructor(options: OutputOptions) {
     if ('js' in options) {
@@ -239,10 +239,12 @@ export class OutputConfigBuilder implements Debug {
 
   public debug(): string[] {
     return ['js', 'dts', 'ts'].map((type) => {
-      const ncfg = (this._options as Record<string, NormalizedOutputConfig>)[type]
+      const normalizedConfig = (this._options as Record<string, NormalizedOutputConfig>)[type]
       return (
         `       ${type}: ` +
-        (ncfg.enabled ? `enabled (directory: ${JSON.stringify(ncfg.directory)})` : 'disabled')
+        (normalizedConfig.enabled ?
+          `enabled (directory: ${JSON.stringify(normalizedConfig.directory)})`
+        : 'disabled')
       )
     })
   }

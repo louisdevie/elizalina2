@@ -1,5 +1,5 @@
 import chalk, { Chalk } from 'chalk'
-import { ElzIIError } from '@module/elzIIError'
+import { ElzIIError } from '@module/error'
 import { Config } from '@module/config'
 
 export interface Debug {

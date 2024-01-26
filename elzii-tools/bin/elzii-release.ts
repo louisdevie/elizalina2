@@ -3,7 +3,7 @@
 import yargs from 'yargs'
 import { show, config, version } from '@module'
 import { expectNoPromise, noColorEnv, doNothing } from '@module/helpers'
-import { handleErrorsAsync } from '@module/elzIIError'
+import { handleErrorsAsync } from '@module/error'
 
 let argv = expectNoPromise(
   yargs

@@ -1,15 +1,16 @@
-import { throwError } from '@module/elzIIError'
+import { throwError } from '@module/error'
 import fs from 'node:fs'
 
 /**
- * Throws an error if a promise in encountered.
+ * Converts a value that *may* be a promise into a promise if it is a regular value.
  * @param maybePromise A value that may be a promise.
+ * @return That value always inside a promise.
  */
-export function expectNoPromise<T>(maybePromise: T | Promise<T>): T {
+export function intoPromise<T>(maybePromise: T | Promise<T>): Promise<T> {
   if (maybePromise instanceof Promise) {
-    throwError('Unexpected promise value', 'other')
-  } else {
     return maybePromise
+  } else {
+    return Promise.resolve(maybePromise)
   }
 }
 
@@ -24,6 +25,11 @@ export function doNothing(...args: any[]): void {
   /* do nothing */
 }
 
+/**
+ * A wrapper around `fs.access` that always return a boolean (`false` when it fails)
+ * @param path The path to check for access
+ * @param mode The required mode (see file access constants for more information)
+ */
 export function access(path: fs.PathLike, mode?: number): Promise<boolean> {
   return new Promise<boolean>((resolve, reject) =>
     fs.access(path, mode, (err) => resolve(err === null)),
