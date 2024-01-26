@@ -35,6 +35,25 @@
     "minify": true,
     "clean": true
   },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "@module/(.*)": "<rootDir>/src/$1",
+      "@module": "<rootDir>/src/index"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coverageReporters": [
+      [
+        "cobertura",
+        {
+          "file": "coverage.xml"
+        }
+      ]
+    ]
+  },
   "keywords": [],
   "author": "Louis DEVIE",
   "license": "MIT",
