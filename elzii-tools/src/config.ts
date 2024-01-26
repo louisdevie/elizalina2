@@ -2,11 +2,34 @@ import { Show } from '@module/show'
 import chalk, { Chalk } from 'chalk'
 import fs from 'node:fs'
 import path from 'node:path'
-import { handleErrors, handleErrorsAsync, throwError } from '@module/error'
-import { ConfigBuilder, Options } from './options'
+import { handleErrorsAsync, throwError } from '@module/error'
+import { TargetsConfigBuilder, Options, TargetConfigBuilder, OutputConfigBuilder } from './options'
 import { bundleRequire } from 'bundle-require'
 import { access } from '@module/helpers'
 import YAML from 'yaml'
+
+export interface TargetsConfig {
+  readonly allTargets: Record<string, TargetConfig>
+  readonly areValid: boolean
+
+  target(name: string): TargetConfig
+}
+
+export interface TargetConfig {
+  readonly translations: string
+  readonly output: OutputConfig
+  readonly interfaceName: string
+  readonly elzInstanceName: string
+  readonly singleFile: boolean
+}
+
+export interface OutputConfig {
+  readonly js: NormalizedOutputConfig
+  readonly dts: NormalizedOutputConfig
+  readonly ts: NormalizedOutputConfig
+}
+
+export type NormalizedOutputConfig = { enabled: false } | { enabled: true; directory: string }
 
 export class Config {
   private _debug: boolean
@@ -90,9 +113,9 @@ export class Config {
 
   public async loadConfigFiles() {
     const pkgRoot = this.requireCurrentPackageRoot()
-    let options = new ConfigBuilder()
+    let options = new TargetsConfigBuilder()
 
-    let foundConfig = false
+    let foundConfig
 
     for (const loader of [
       new YamlConfigLoader(pkgRoot),
@@ -100,15 +123,24 @@ export class Config {
       new ScriptConfigLoader(pkgRoot, '.js'),
       new PackageJsonConfigLoader(pkgRoot),
     ]) {
-      foundConfig = await handleErrorsAsync(() => loader.load(this.show, options), {
-        all: (error) => this.handleConfigFileErrors(error, loader.baseName),
-      })
+      foundConfig =
+        (
+          (await handleErrorsAsync(() => loader.load(this.show, options), {
+            all: (error) => this.handleConfigFileErrors(error, loader.baseName),
+          }))
+        ) ?
+          loader.baseName
+        : undefined
 
-      if (foundConfig) break
+      if (foundConfig !== undefined) break
     }
 
-    if (foundConfig) {
+    if (foundConfig !== undefined) {
       if (this._debug) this.show.debugInfo('final target configuration:').debug(options)
+
+      if (!options.areValid) {
+        throwError(`The configuration in ${foundConfig} was invalid.`, 'config')
+      }
     } else {
       throwError('No configuration file was found.', 'config')
     }
@@ -126,7 +158,7 @@ export class Config {
 interface ConfigLoader {
   baseName: string
 
-  load(show: Show, options: ConfigBuilder): Promise<boolean>
+  load(show: Show, options: TargetsConfigBuilder): Promise<boolean>
 }
 
 abstract class SerializedConfigLoader implements ConfigLoader {
@@ -140,7 +172,7 @@ abstract class SerializedConfigLoader implements ConfigLoader {
     return path.basename(this._path)
   }
 
-  public async load(show: Show, options: ConfigBuilder): Promise<boolean> {
+  public async load(show: Show, options: TargetsConfigBuilder): Promise<boolean> {
     let loaded = false
 
     if (await access(this._path, fs.constants.R_OK)) {
@@ -195,7 +227,7 @@ class ScriptConfigLoader implements ConfigLoader {
     return path.basename(this._path)
   }
 
-  public async load(show: Show, options: ConfigBuilder): Promise<boolean> {
+  public async load(show: Show, options: TargetsConfigBuilder): Promise<boolean> {
     let loaded = false
 
     if (await access(this._path, fs.constants.R_OK)) {

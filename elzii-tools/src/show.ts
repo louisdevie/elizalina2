@@ -33,6 +33,11 @@ export class Show {
     return this
   }
 
+  public error(error: unknown): Show {
+    this.show(error, '[error]', chalk.redBright)
+    return this
+  }
+
   public warning(warning: unknown): Show {
     this.show(warning, '[warning]', chalk.yellow)
     return this

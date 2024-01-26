@@ -1,4 +1,4 @@
-import { ConfigBuilder, OutputConfigBuilder, TargetConfigBuilder } from '@module/options'
+import { TargetsConfigBuilder, OutputConfigBuilder, TargetConfigBuilder } from '@module/options'
 
 test('options:OutputConfigBuilder', () => {
   let jsOnly = new OutputConfigBuilder({ js: 'path/to/js' })
@@ -56,7 +56,7 @@ test('options:TargetConfigBuilder', () => {
 })
 
 test('options:ConfigBuilder', () => {
-  let singleTarget = new ConfigBuilder()
+  let singleTarget = new TargetsConfigBuilder()
 
   singleTarget.merge(
     {
@@ -70,9 +70,9 @@ test('options:ConfigBuilder', () => {
   expect(singleTarget.allTargets).toHaveProperty('default')
   expect(singleTarget.target('default').translations).toEqual('something')
 
-  let multipleTargets = new ConfigBuilder()
+  let multipleTargets = new TargetsConfigBuilder()
 
-  singleTarget.merge(
+  multipleTargets.merge(
     {
       targetA: {
         translations: 'something',
@@ -87,8 +87,8 @@ test('options:ConfigBuilder', () => {
     'in tests',
   )
 
-  expect(singleTarget.allTargets).toHaveProperty('targetA')
-  expect(singleTarget.allTargets).toHaveProperty('targetB')
-  expect(singleTarget.target('targetA').translations).toEqual('something')
-  expect(singleTarget.target('targetB').translations).toEqual('something/else')
+  expect(multipleTargets.allTargets).toHaveProperty('targetA')
+  expect(multipleTargets.allTargets).toHaveProperty('targetB')
+  expect(multipleTargets.target('targetA').translations).toEqual('something')
+  expect(multipleTargets.target('targetB').translations).toEqual('something/else')
 })

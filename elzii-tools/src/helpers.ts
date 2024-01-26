@@ -1,4 +1,3 @@
-import { throwError } from '@module/error'
 import fs from 'node:fs'
 
 /**
@@ -21,7 +20,7 @@ export function noColorEnv(): boolean {
   return process.env.NO_COLOR !== undefined
 }
 
-export function doNothing(...args: any[]): void {
+export function doNothing(..._: any[]): void {
   /* do nothing */
 }
 
@@ -31,7 +30,5 @@ export function doNothing(...args: any[]): void {
  * @param mode The required mode (see file access constants for more information)
  */
 export function access(path: fs.PathLike, mode?: number): Promise<boolean> {
-  return new Promise<boolean>((resolve, reject) =>
-    fs.access(path, mode, (err) => resolve(err === null)),
-  )
+  return new Promise<boolean>((resolve, _) => fs.access(path, mode, (err) => resolve(err === null)))
 }
