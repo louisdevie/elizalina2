@@ -3,13 +3,13 @@ import chalk, { Chalk } from 'chalk'
 import fs from 'node:fs'
 import path from 'node:path'
 import { handleErrorsAsync, throwError } from '@module/error'
-import { TargetsConfigBuilder, Options } from './options'
+import { TargetsConfigBuilder, Options, CodeStyle } from './options'
 import { bundleRequire } from 'bundle-require'
 import { access } from '@module/helpers'
 import YAML from 'yaml'
 
 export interface TargetsConfig {
-  readonly allTargets: Record<string, TargetConfig>
+  readonly allTargets: string[]
   readonly areValid: boolean
 
   target(name: string): TargetConfig
@@ -21,6 +21,9 @@ export interface TargetConfig {
   readonly interfaceName: string
   readonly elzInstanceName: string
   readonly singleFile: boolean
+  readonly minify: boolean
+  readonly sourcemap: boolean
+  readonly style: CodeStyle
 }
 
 export interface OutputConfig {
@@ -35,6 +38,7 @@ export class Config {
   private _debug: boolean
   private readonly _color: Chalk
   private _currentPackageRoot?: string
+  private _targets?: TargetsConfig
 
   // We use a lazily initialized show object to break the circular dependency between the two classes
   private _show?: Show
@@ -65,6 +69,11 @@ export class Config {
     if (this._currentPackageRoot === undefined)
       throwError("The root of the current package hasn't been resolved yet.", 'config')
     return this._currentPackageRoot
+  }
+
+  public requireTargets(): TargetsConfig {
+    if (this._targets === undefined) throwError("The targets haven't been loaded yet.", 'config')
+    return this._targets
   }
 
   public enableDebugMode() {

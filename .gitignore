@@ -3,3 +3,5 @@ dist
 discord.xml
 coverage.xml
 lcov-report
+gen
+*.tokens

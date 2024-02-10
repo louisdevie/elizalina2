@@ -1,12 +1,12 @@
 /**
  * A string describing the origin of an error.
  */
-export type ErrorKind = 'config' | 'other'
+export type ErrorKind = 'config' | 'parser' | 'other'
 
 /**
  * Custom error class for exceptions specific to the tooling.
  */
-export class ElzIIError extends Error {
+export class ElziiError extends Error {
   private _kind: ErrorKind
   private _detailedMessage: string[]
 
@@ -73,17 +73,33 @@ export class ElzIIError extends Error {
   }
 }
 
+export class ErrorReport {
+  private readonly _errors: ElziiError[]
+
+  public constructor() {
+    this._errors = []
+  }
+
+  public encounteredError(message: string, kind: ErrorKind = 'other'): void {
+    this._errors.push(new ElziiError([message], kind))
+  }
+
+  public get errors(): ElziiError[] {
+    return this._errors
+  }
+}
+
 /**
  * Helper that builds and throw an error object.
  * @param message A message describing the error.
  * @param kind The origin of the error.
  */
 export function throwError(message: string, kind: ErrorKind = 'other'): never {
-  throw new ElzIIError([message], kind)
+  throw new ElziiError([message], kind)
 }
 
 type Handlers<T> = {
-  [p in ErrorKind | 'elzii']?: (err: ElzIIError) => T
+  [p in ErrorKind | 'elzii']?: (err: ElziiError) => T
 } & {
   all?: (err: unknown) => T
 }
@@ -91,7 +107,7 @@ type Handlers<T> = {
 function handleCaughtError<T>(error: unknown, handlers: Handlers<T>): T {
   let result: T
 
-  if (error instanceof ElzIIError) {
+  if (error instanceof ElziiError) {
     let elziiHandler = handlers[error.kind] ?? handlers['elzii'] ?? handlers['all']
     if (elziiHandler !== undefined) {
       result = elziiHandler(error)

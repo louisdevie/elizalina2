@@ -1,5 +1,5 @@
 import chalk, { Chalk } from 'chalk'
-import { ElzIIError } from '@module/error'
+import { SingleError } from '@module/error'
 import { Config } from '@module/config'
 
 export interface Debug {
@@ -17,7 +17,7 @@ export class Show {
   }
 
   private show(infos: unknown, tag: string, chalk: Chalk) {
-    if (infos instanceof ElzIIError) {
+    if (infos instanceof SingleError) {
       console.log(chalk(`${tag} ${infos.message}`))
       for (const details of infos.details) {
         console.log(chalk(Show.detailsPadding + details))
@@ -44,7 +44,7 @@ export class Show {
   }
 
   public detailedWarning(...details: string[]): Show {
-    this.show(new ElzIIError(details, 'other'), '[warning]', chalk.yellow)
+    this.show(new SingleError(details, 'other'), '[warning]', chalk.yellow)
     return this
   }
 

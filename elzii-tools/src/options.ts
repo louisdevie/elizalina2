@@ -35,24 +35,42 @@ export interface TargetOptions {
    * If set to true, all translations will be compiled in a single file
    */
   singleFile?: boolean
+
+  /**
+   * If set to true, emitted JavaScript will be minified.
+   */
+  minify?: boolean
+
+  /**
+   * If set to true, source maps will be generated along JavaScript/TypeScript files.
+   */
+  sourcemap?: boolean
+
+  /**
+   * Can be set to 'prettier' to use the project's prettier configuration when emitting code
+   * (it does not apply to JavaScript files when `minify` is set to `true`).
+   */
+  style?: CodeStyle
 }
+
+export type CodeStyle = 'elizalina-default' | 'prettier'
 
 export type OutputOptions =
   | {
       /**
-       * The directory where javascript files will be generated.
+       * The directory where JavaScript files will be generated.
        */
       js: string
 
       /**
-       * Enable .d.ts file generation. You can specify a directory different from the javascript output
+       * Enable .d.ts file generation. You can also specify a directory different from the javascript output
        * (the default is `false`)
        */
       dts?: boolean | string
     }
   | {
       /**
-       * The directory where typescript files will be generated.
+       * The directory where TypeScript files will be generated.
        */
       ts: string
     }
@@ -77,8 +95,8 @@ export class TargetsConfigBuilder implements TargetsConfig, Debug {
     return this._targets[name]
   }
 
-  public get allTargets(): Record<string, TargetConfigBuilder> {
-    return this._targets
+  public get allTargets(): string[] {
+    return Object.keys(this._targets)
   }
 
   public get areValid(): boolean {
@@ -138,6 +156,9 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
   private _interfaceName?: string
   private _elzInstanceName?: string
   private _singleFile?: boolean
+  private _minify?: boolean
+  private _sourcemap?: boolean
+  private _style?: CodeStyle
 
   public isValid(thisName: string): boolean {
     let valid = true
@@ -175,6 +196,18 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     return this._singleFile ?? false
   }
 
+  public get minify(): boolean {
+    return this._minify ?? false
+  }
+
+  public get sourcemap(): boolean {
+    return this._sourcemap ?? false
+  }
+
+  public get style(): CodeStyle {
+    return this._style ?? 'elizalina-default'
+  }
+
   public merge(options: TargetOptions, shouldOverride: boolean, warningDetails: string) {
     if (!shouldOverride && this._translations !== undefined)
       show.detailedWarning('The "translations" option was overwritten', warningDetails)
@@ -201,6 +234,24 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
         show.detailedWarning('The "singleFile" option was overwritten', warningDetails)
       this._singleFile = options.singleFile
     }
+
+    if (options.minify !== undefined) {
+      if (!shouldOverride && this._minify !== undefined)
+        show.detailedWarning('The "minify" option was overwritten', warningDetails)
+      this._minify = options.minify
+    }
+
+    if (options.sourcemap !== undefined) {
+      if (!shouldOverride && this._sourcemap !== undefined)
+        show.detailedWarning('The "sourcemap" option was overwritten', warningDetails)
+      this._sourcemap = options.sourcemap
+    }
+
+    if (options.style !== undefined) {
+      if (!shouldOverride && this._style !== undefined)
+        show.detailedWarning('The "style" option was overwritten', warningDetails)
+      this._style = options.style
+    }
   }
 
   private debugJsonify(getter: () => any): string {
@@ -220,6 +271,9 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     debugOutput.push(`     interfaceName: ${this.debugJsonify(() => this.interfaceName)}`)
     debugOutput.push(`     elzInstanceName: ${this.debugJsonify(() => this.elzInstanceName)}`)
     debugOutput.push(`     singleFile: ${this.debugJsonify(() => this.singleFile)}`)
+    debugOutput.push(`     minify: ${this.debugJsonify(() => this.minify)}`)
+    debugOutput.push(`     sourcemap: ${this.debugJsonify(() => this.sourcemap)}`)
+    debugOutput.push(`     style: ${this.debugJsonify(() => this.style)}`)
 
     return debugOutput
   }
