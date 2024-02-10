@@ -1,4 +1,4 @@
-import { defaultEtrParser } from '@module/etrFormat'
+import { defaultEtrParser } from '../../src/etr'
 import { Message, TypeHint, UserCode } from '@module/translations'
 
 test('parsing only a comment', async () => {

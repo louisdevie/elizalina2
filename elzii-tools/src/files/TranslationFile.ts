@@ -1,6 +1,6 @@
 import { Translation } from '@module/translations'
 import fs from 'node:fs'
-import { defaultEtrParser } from '../etrFormat'
+import { defaultEtrParser } from '../etr'
 
 export default class TranslationFile {
   private _path: string

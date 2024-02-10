@@ -1,4 +1,4 @@
-import { EtrParser } from '@module/etrFormat'
+import { EtrParser } from '.'
 import { Translation } from '@module/translations'
 import { CharStream, CommonTokenStream } from 'antlr4'
 import GeneratedEtrLexer from './gen/EtrLexer'
