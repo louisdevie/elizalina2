@@ -5,3 +5,4 @@ coverage.xml
 lcov-report
 gen
 *.tokens
+*.local.mjs
