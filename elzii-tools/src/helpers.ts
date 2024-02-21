@@ -23,12 +23,3 @@ export function noColorEnv(): boolean {
 export function doNothing(..._: any[]): void {
   /* do nothing */
 }
-
-/**
- * A wrapper around `fs.access` that always return a boolean (`false` when it fails)
- * @param path The path to check for access
- * @param mode The required mode (see file access constants for more information)
- */
-export function access(path: fs.PathLike, mode?: number): Promise<boolean> {
-  return new Promise<boolean>((resolve, _) => fs.access(path, mode, (err) => resolve(err === null)))
-}

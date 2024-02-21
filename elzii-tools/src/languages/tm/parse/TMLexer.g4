@@ -1,4 +1,4 @@
-lexer grammar EtrLexer;
+lexer grammar TMLexer;
 
 fragment IDENTIFIER
     : [A-Za-z_] [A-Za-z0-9_]*

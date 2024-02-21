@@ -1,7 +1,7 @@
-parser grammar EtrParser;
+parser grammar TMParser;
 
 options {
-    tokenVocab = EtrLexer;
+    tokenVocab = TMLexer;
 }
 
 

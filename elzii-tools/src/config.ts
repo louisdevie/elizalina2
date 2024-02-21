@@ -5,25 +5,28 @@ import path from 'node:path'
 import { handleErrorsAsync, throwError } from '@module/error'
 import { TargetsConfigBuilder, Options, CodeStyle } from './options'
 import { bundleRequire } from 'bundle-require'
-import { access } from '@module/helpers'
+import { access } from '@module/files'
 import YAML from 'yaml'
 
 export interface TargetsConfig {
   readonly allTargets: string[]
   readonly areValid: boolean
 
-  target(name: string): TargetConfig
+  getTarget(name: string): TargetConfig
 }
 
-export interface TargetConfig {
-  readonly translations: string
-  readonly output: OutputConfig
+export interface CommonOutputConfig {
   readonly interfaceName: string
-  readonly elzInstanceName: string
+  readonly functionName: string
   readonly singleFile: boolean
   readonly minify: boolean
   readonly sourcemap: boolean
   readonly style: CodeStyle
+}
+
+export interface TargetConfig extends CommonOutputConfig {
+  readonly translations: string
+  readonly output: OutputConfig
 }
 
 export interface OutputConfig {
@@ -65,14 +68,17 @@ export class Config {
     return this._color
   }
 
+  /**
+   * Requires the path to the root of the package the tool is being run in.
+   */
   public requireCurrentPackageRoot(): string {
     if (this._currentPackageRoot === undefined)
-      throwError("The root of the current package hasn't been resolved yet.", 'config')
+      throwError("The root of the current package hasn't been resolved yet.", 'internal')
     return this._currentPackageRoot
   }
 
   public requireTargets(): TargetsConfig {
-    if (this._targets === undefined) throwError("The targets haven't been loaded yet.", 'config')
+    if (this._targets === undefined) throwError("The targets haven't been loaded yet.", 'internal')
     return this._targets
   }
 
@@ -116,7 +122,7 @@ export class Config {
   private handleConfigFileErrors(error: unknown, source: string): boolean {
     this.show
       .warning(error)
-      .warning(`Unable to load the configuration from ${source} due to the error above.`)
+      .detailedWarning(`Unable to load the configuration from ${source} due to the error above.`)
     return false
   }
 
@@ -147,7 +153,9 @@ export class Config {
     if (foundConfig !== undefined) {
       if (this._debug) this.show.debugInfo('final target configuration:').debug(options)
 
-      if (!options.areValid) {
+      if (options.areValid) {
+        this._targets = options
+      } else {
         throwError(`The configuration in ${foundConfig} was invalid.`, 'config')
       }
     } else {

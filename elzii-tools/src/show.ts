@@ -1,5 +1,5 @@
 import chalk, { Chalk } from 'chalk'
-import { SingleError } from '@module/error'
+import { ElziiError } from '@module/error'
 import { Config } from '@module/config'
 
 export interface Debug {
@@ -7,7 +7,10 @@ export interface Debug {
 }
 
 export class Show {
-  private static detailsPadding = '|'
+  private static readonly detailsPadding = '| '
+  private static readonly internalErrorNotice =
+    'NOTICE: It seems this error was caused by a problem with the tool itself. Please report it to the developer here: https://github.com/louisdevie/elizalina2/issues.'
+
   private _config: Config
   private _lastLogWasDebug: boolean
 
@@ -17,10 +20,12 @@ export class Show {
   }
 
   private show(infos: unknown, tag: string, chalk: Chalk) {
-    if (infos instanceof SingleError) {
+    if (infos instanceof ElziiError) {
       console.log(chalk(`${tag} ${infos.message}`))
       for (const details of infos.details) {
         console.log(chalk(Show.detailsPadding + details))
+      }
+      if (infos.kind === 'internal') {
       }
     } else {
       console.log(chalk(`${tag} ${infos}`))
@@ -28,23 +33,37 @@ export class Show {
     this._lastLogWasDebug = false // reset the flag by default
   }
 
+  private appendNoticesFor(infos: unknown, chalk: Chalk) {
+    if (!(infos instanceof ElziiError) || infos.kind === 'internal') {
+      console.log(chalk(Show.detailsPadding + Show.internalErrorNotice))
+    }
+  }
+
   public fatal(error: unknown): Show {
     this.show(error, '[fatal]', chalk.redBright)
+    this.appendNoticesFor(error, chalk.redBright)
     return this
   }
 
   public error(error: unknown): Show {
     this.show(error, '[error]', chalk.redBright)
+    this.appendNoticesFor(error, chalk.redBright)
+    return this
+  }
+
+  public detailedError(...details: string[]): Show {
+    this.show(new ElziiError(details, 'other'), '[error]', chalk.redBright)
     return this
   }
 
   public warning(warning: unknown): Show {
     this.show(warning, '[warning]', chalk.yellow)
+    this.appendNoticesFor(warning, chalk.yellow)
     return this
   }
 
   public detailedWarning(...details: string[]): Show {
-    this.show(new SingleError(details, 'other'), '[warning]', chalk.yellow)
+    this.show(new ElziiError(details, 'other'), '[warning]', chalk.yellow)
     return this
   }
 

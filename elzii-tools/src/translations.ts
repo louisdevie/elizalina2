@@ -10,7 +10,7 @@ export interface Translation {
   /**
    * The translated messages.
    */
-  messages: Record<string, Message>
+  messages: Map<string, Message>
 
   /**
    * Custom code to be included at the beginning of compiled files.

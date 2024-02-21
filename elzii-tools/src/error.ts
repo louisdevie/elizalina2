@@ -1,7 +1,7 @@
 /**
  * A string describing the origin of an error.
  */
-export type ErrorKind = 'config' | 'parser' | 'other'
+export type ErrorKind = 'config' | 'parser' | 'files' | 'internal' | 'other'
 
 /**
  * Custom error class for exceptions specific to the tooling.

@@ -14,9 +14,9 @@ import {
   HeaderContext,
   MessageContext,
   Single_quoted_text_parameterContext,
-} from './gen/EtrParser'
-import EtrParserVisitor from './gen/EtrParserVisitor'
-import EtrLexer from './gen/EtrLexer'
+} from './gen/TMParser'
+import EtrParserVisitor from './gen/TMParserVisitor'
+import EtrLexer from './gen/TMLexer'
 import { ParserRuleContext, TerminalNode } from 'antlr4'
 
 export interface Builder<T> {
@@ -38,7 +38,7 @@ export class TranslationBuilder extends EtrParserVisitor<void> implements Builde
     this._report = report ?? new ErrorReport()
     this._translation = {
       id: '',
-      messages: {},
+      messages: new Map(),
     }
   }
 
@@ -57,7 +57,7 @@ export class TranslationBuilder extends EtrParserVisitor<void> implements Builde
 
     const messageBuilder = new MessageBuilder(this._report)
     messageBuilder.visit(ctx.single_quoted_text() || ctx.double_quoted_text())
-    this._translation.messages[key] = messageBuilder.finish().value
+    this._translation.messages.set(key, messageBuilder.finish().value)
   }
 }
 

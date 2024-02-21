@@ -29,7 +29,7 @@ export interface TargetOptions {
   /**
    * The name of the elizalina object used to load translations (the default is `elz`)
    */
-  elzInstanceName?: string
+  functionName?: string
 
   /**
    * If set to true, all translations will be compiled in a single file
@@ -84,6 +84,8 @@ export class TargetsConfigBuilder implements TargetsConfig, Debug {
 
   private static isSingleTarget(options: object): boolean {
     return (
+      typeof options === 'object' &&
+      options !== null &&
       'translations' in options &&
       typeof options.translations === 'string' &&
       'output' in options &&
@@ -91,7 +93,7 @@ export class TargetsConfigBuilder implements TargetsConfig, Debug {
     )
   }
 
-  public target(name: string): TargetConfigBuilder {
+  public getTarget(name: string): TargetConfigBuilder {
     return this._targets[name]
   }
 
@@ -139,7 +141,7 @@ export class TargetsConfigBuilder implements TargetsConfig, Debug {
     let debugOutput = []
 
     for (const targetName in this._targets) {
-      debugOutput.push(` - ${targetName}:`, ...this.target(targetName).debug())
+      debugOutput.push(` - ${targetName}:`, ...this.getTarget(targetName).debug())
     }
 
     if (debugOutput.length == 0) {
@@ -163,13 +165,13 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
   public isValid(thisName: string): boolean {
     let valid = true
 
-    if (this._translations !== undefined) {
-      show.error(`The 'translations' key is missing in the '${thisName}' target.`)
+    if (this._translations === undefined) {
+      show.detailedError(`The 'translations' key is missing in the '${thisName}' target.`)
       valid = false
     }
 
-    if (this._output !== undefined) {
-      show.error(`The 'output' key is missing in the '${thisName}' target.`)
+    if (this._output === undefined) {
+      show.detailedError(`The 'output' key is missing in the '${thisName}' target.`)
       valid = false
     }
 
@@ -188,7 +190,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     return this._interfaceName ?? 'Locale'
   }
 
-  public get elzInstanceName(): string {
+  public get functionName(): string {
     return this._elzInstanceName ?? 'elz'
   }
 
@@ -223,10 +225,10 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
       this._interfaceName = options.interfaceName
     }
 
-    if (options.elzInstanceName !== undefined) {
+    if (options.functionName !== undefined) {
       if (!shouldOverride && this._elzInstanceName !== undefined)
-        show.detailedWarning('The "elzInstanceName" option was overwritten', warningDetails)
-      this._elzInstanceName = options.elzInstanceName
+        show.detailedWarning('The "functionName" option was overwritten', warningDetails)
+      this._elzInstanceName = options.functionName
     }
 
     if (options.singleFile !== undefined) {
@@ -269,7 +271,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     )
 
     debugOutput.push(`     interfaceName: ${this.debugJsonify(() => this.interfaceName)}`)
-    debugOutput.push(`     elzInstanceName: ${this.debugJsonify(() => this.elzInstanceName)}`)
+    debugOutput.push(`     functionName: ${this.debugJsonify(() => this.functionName)}`)
     debugOutput.push(`     singleFile: ${this.debugJsonify(() => this.singleFile)}`)
     debugOutput.push(`     minify: ${this.debugJsonify(() => this.minify)}`)
     debugOutput.push(`     sourcemap: ${this.debugJsonify(() => this.sourcemap)}`)

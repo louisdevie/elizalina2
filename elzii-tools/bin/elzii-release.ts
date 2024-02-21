@@ -4,8 +4,11 @@ import yargs from 'yargs'
 import { show, config, version } from '@module'
 import { intoPromise, noColorEnv, doNothing } from '@module/helpers'
 import { handleErrorsAsync } from '@module/error'
-import { TranslationsDirectory } from '@module/files'
+import { resolveInPackage } from '@module/files'
 import { TargetConfig } from '@module/config'
+import { getTranslationFiles, TranslationFile } from '@module/files/translations'
+import { makeOutputTarget } from '../src/codeGeneration'
+import { ReleasePipeline } from '@module/pipelines'
 
 async function main() {
   let argv = await intoPromise(
@@ -36,26 +39,38 @@ async function main() {
   await config.init()
 
   const availableTargets = config.requireTargets()
-  const selectedTargets = argv._.length > 0 ? argv._ : availableTargets.allTargets
+  const selectedTargets =
+    argv._.length > 0 ? argv._.map((arg) => arg.toString()) : availableTargets.allTargets
 
-  for (const targetName in selectedTargets) {
+  if (selectedTargets.length == 0) {
+    show.detailedWarning('No targets were found, you may need to fix your configuration file.')
+  }
+
+  for (const targetName of selectedTargets) {
     if (availableTargets.allTargets.includes(targetName)) {
-      console.log(`Generating the ${targetName} target...`)
-      generateTarget(availableTargets.target(targetName))
+      show.debugInfo(`Generating the ${targetName} target...`)
+      await generateTarget(availableTargets.getTarget(targetName))
+    } else {
+      show.detailedError(`Target '${targetName}' does not exists.`)
     }
   }
 }
 
-function generateTarget(target: TargetConfig) {
-  let translationFiles = loadTranslationFiles(target.translations)
+async function generateTarget(target: TargetConfig) {
+  const sourceFiles = await getTranslations(target.translations)
+  const outputTarget = makeOutputTarget(target.output, target)
+  const pipeline = new ReleasePipeline({ sourceFiles, outputTarget })
+
+  await pipeline.execute()
 }
 
-async function* loadTranslationFiles(directory: string) {
-  let translations = new TranslationsDirectory(directory)
+async function getTranslations(directory: string): Promise<TranslationFile[]> {
+  const fullTranslationsPath = resolveInPackage(directory)
+  show.debugInfo(`Looking up translations in ${fullTranslationsPath}`)
 
-  for (const file of await translations.listFiles()) {
-    yield file.load()
-  }
+  const translations = await getTranslationFiles(fullTranslationsPath)
+
+  return translations.root.children
 }
 
 handleErrorsAsync(main, { all: (err) => show.fatal(err) }).then(doNothing)
