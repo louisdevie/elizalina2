@@ -1,6 +1,6 @@
 import { ElziiError, handleErrors, handleErrorsAsync, throwError } from '@module/error'
 
-test('error.Error.constructor', () => {
+test('Error.constructor', () => {
   let err1 = new ElziiError([], 'other')
   let err2 = new ElziiError(['abc'], 'config')
   let err3 = new ElziiError(['abc', 'def', 'ghi'], 'other')
@@ -22,7 +22,7 @@ test('error.Error.constructor', () => {
   expect(err3.kind).toEqual('other')
 })
 
-test('error.Error.cantHandle', () => {
+test('Error.cantHandle', () => {
   let err = new ElziiError(['abc'], 'other')
 
   try {
@@ -34,7 +34,7 @@ test('error.Error.cantHandle', () => {
   }
 })
 
-test('error.Error.replace', () => {
+test('Error.replace', () => {
   let err = new ElziiError(['abc'], 'other')
 
   try {
@@ -62,7 +62,7 @@ test('error.Error.replace', () => {
   }
 })
 
-test('error.Error.detail', () => {
+test('Error.detail', () => {
   let err = new ElziiError(['abc'], 'other')
 
   try {
@@ -82,7 +82,7 @@ test('error.Error.detail', () => {
   }
 })
 
-test('error.throwError', () => {
+test('throwError', () => {
   try {
     throwError('abc', 'config')
   } catch (e) {
@@ -90,7 +90,7 @@ test('error.throwError', () => {
   }
 })
 
-test('error.handleErrors', () => {
+test('handleErrors', () => {
   const throwsConfigError = (): string => throwError('something', 'config')
   const throwsOtherError = (): string => throwError('something', 'other')
   const throwsString = (): string => {
@@ -124,7 +124,7 @@ test('error.handleErrors', () => {
   expect(whoCaughtIt).toEqual('all handler')
 })
 
-test('error.handleErrorsAsync', async () => {
+test('handleErrorsAsync', async () => {
   const throwsConfigError = async (): Promise<string> => throwError('something', 'config')
   const throwsOtherError = async (): Promise<string> => throwError('something', 'other')
   const throwsString = async (): Promise<string> => {

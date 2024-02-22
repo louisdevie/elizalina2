@@ -1,6 +1,6 @@
 import { TargetsConfigBuilder, OutputConfigBuilder, TargetConfigBuilder } from '@module/options'
 
-test('options:OutputConfigBuilder', () => {
+test('OutputConfigBuilder', () => {
   let jsOnly = new OutputConfigBuilder({ js: 'path/to/js' })
   expect(jsOnly.js).toMatchObject({ enabled: true, directory: 'path/to/js' })
   expect(jsOnly.dts).toMatchObject({ enabled: false })
@@ -27,13 +27,13 @@ test('options:OutputConfigBuilder', () => {
   expect(ts.ts).toMatchObject({ enabled: true, directory: 'path/to/ts' })
 })
 
-test('options:TargetConfigBuilder', () => {
+test('TargetConfigBuilder', () => {
   let target = new TargetConfigBuilder()
 
   expect(() => target.translations).toThrow()
   expect(() => target.output).toThrow()
   expect(target.interfaceName).toEqual('Locale')
-  expect(target.elzInstanceName).toEqual('elz')
+  expect(target.functionName).toEqual('elz')
   expect(target.singleFile).toBeFalsy()
 
   target.merge(
@@ -42,7 +42,7 @@ test('options:TargetConfigBuilder', () => {
       output: {
         js: 'path/to/js',
       },
-      elzInstanceName: 'locale',
+      functionName: 'locale',
     },
     true,
     'in tests',
@@ -51,11 +51,11 @@ test('options:TargetConfigBuilder', () => {
   expect(target.translations).toEqual('path/to/translations')
   expect(target.output).toMatchObject({ js: { enabled: true, directory: 'path/to/js' } })
   expect(target.interfaceName).toEqual('Locale')
-  expect(target.elzInstanceName).toEqual('locale')
+  expect(target.functionName).toEqual('locale')
   expect(target.singleFile).toBeFalsy()
 })
 
-test('options:ConfigBuilder', () => {
+test('ConfigBuilder', () => {
   let singleTarget = new TargetsConfigBuilder()
 
   singleTarget.merge(
@@ -67,8 +67,8 @@ test('options:ConfigBuilder', () => {
     'in tests',
   )
 
-  expect(singleTarget.allTargets).toHaveProperty('default')
-  expect(singleTarget.target('default').translations).toEqual('something')
+  expect(singleTarget.allTargets).toContain('default')
+  expect(singleTarget.getTarget('default').translations).toEqual('something')
 
   let multipleTargets = new TargetsConfigBuilder()
 
@@ -87,8 +87,8 @@ test('options:ConfigBuilder', () => {
     'in tests',
   )
 
-  expect(multipleTargets.allTargets).toHaveProperty('targetA')
-  expect(multipleTargets.allTargets).toHaveProperty('targetB')
-  expect(multipleTargets.target('targetA').translations).toEqual('something')
-  expect(multipleTargets.target('targetB').translations).toEqual('something/else')
+  expect(multipleTargets.allTargets).toContain('targetA')
+  expect(multipleTargets.allTargets).toContain('targetB')
+  expect(multipleTargets.getTarget('targetA').translations).toEqual('something')
+  expect(multipleTargets.getTarget('targetB').translations).toEqual('something/else')
 })

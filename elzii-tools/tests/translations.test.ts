@@ -6,7 +6,7 @@ import {
   TypeHint as TH,
 } from '@module/translations'
 
-test('message content normalization', () => {
+test('normalizedMessageContent', () => {
   let rawContent: MessagePart[] = [
     { type: 'text', value: 'Try ' },
     { type: 'text', value: '"' },
@@ -26,7 +26,7 @@ test('message content normalization', () => {
   expect(normalizedMessageContent(rawContent)).toStrictEqual(expectedNormalizedContent)
 })
 
-test('merging type hints', () => {
+test('mergeTypeHints', () => {
   const hintsInOrder: TH[] = [TH.None, TH.Number, TH.String, TH.Datetime, TH.List, TH.Mixed]
 
   // the table is symmetric so the mirrored values are just null
