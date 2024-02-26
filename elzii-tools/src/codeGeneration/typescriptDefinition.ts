@@ -3,10 +3,10 @@ import { BaseBuilder, BaseTarget } from './decorators'
 import { throwError } from '@module/error'
 
 export class TypeScriptDefinitionTargetBuilder extends BaseBuilder {
-  protected makeThisOutputTarget(
+  protected async makeThisOutputTarget(
     outputs: OutputConfig,
     common: CommonOutputConfig,
-  ): BaseTarget | undefined {
+  ): Promise<BaseTarget | undefined> {
     throwError('The DTS output format is not available yet.')
   }
 }

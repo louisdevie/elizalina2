@@ -1,1 +1,1 @@
-export { default as AntlrEtrParserAdapter } from './AntlrTMParserAdapter'
+export { default as AntlrTMParserAdapter } from './AntlrTMParserAdapter'

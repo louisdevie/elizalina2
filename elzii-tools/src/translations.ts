@@ -1,3 +1,5 @@
+import { ElizalinaRuntimeConfig } from '@module/codeGeneration/codeConfig'
+
 /**
  * A translation of a project.
  */
@@ -121,8 +123,7 @@ export class UserCode {
   public getTypeHint(): TypeHint {
     let hint = TypeHint.None
 
-    // TODO : Remove literal value
-    if (this._code.startsWith('$f.number')) {
+    if (this._code.startsWith(ElizalinaRuntimeConfig.numberFormatAccessorPrefix)) {
       hint = TypeHint.Number
     }
 

@@ -2,6 +2,7 @@ import { Translation } from '@module/translations'
 import { OutputTarget, OutputTargetBuilder } from '.'
 import { OutputConfig, CommonOutputConfig } from '@module/config'
 import { throwError } from '@module/error'
+import { AllTranslationReports } from '@module/checks/translations'
 
 /**
  * A decorator implementation of {@link OutputTarget}.
@@ -18,19 +19,19 @@ export abstract class BaseTarget implements OutputTarget {
     return this
   }
 
-  public async init(): Promise<void> {
-    await this.initThis()
-    await this._otherTargets?.init()
+  public async init(reports: AllTranslationReports): Promise<void> {
+    await this.initThis(reports)
+    await this._otherTargets?.init(reports)
   }
 
-  protected abstract initThis(): Promise<void>
+  protected abstract initThis(reports: AllTranslationReports): Promise<void>
 
-  public async compile(translation: Translation): Promise<void> {
-    await this.compileThis(translation)
-    await this._otherTargets?.compile(translation)
+  public async compile(translation: Translation, source: string): Promise<void> {
+    await this.compileThis(translation, source)
+    await this._otherTargets?.compile(translation, source)
   }
 
-  protected abstract compileThis(translation: Translation): Promise<void>
+  protected abstract compileThis(translation: Translation, source: string): Promise<void>
 
   public async finish(): Promise<void> {
     await this.finishThis()
@@ -55,19 +56,22 @@ export abstract class BaseBuilder implements OutputTargetBuilder {
     return this
   }
 
-  public makeOutputTarget(outputs: OutputConfig, common: CommonOutputConfig): OutputTarget {
+  public async makeOutputTarget(
+    outputs: OutputConfig,
+    common: CommonOutputConfig,
+  ): Promise<OutputTarget> {
     return (
-      this.makeOutputTargetImpl(outputs, common) ??
+      (await this.makeOutputTargetImpl(outputs, common)) ??
       throwError('Could not create the compilation target.', 'internal')
     )
   }
 
-  private makeOutputTargetImpl(
+  private async makeOutputTargetImpl(
     outputs: OutputConfig,
     common: CommonOutputConfig,
-  ): BaseTarget | undefined {
-    let thisTarget = this.makeThisOutputTarget(outputs, common)
-    const otherTargets = this._otherBuilders?.makeOutputTargetImpl(outputs, common)
+  ): Promise<BaseTarget | undefined> {
+    let thisTarget = await this.makeThisOutputTarget(outputs, common)
+    const otherTargets = await this._otherBuilders?.makeOutputTargetImpl(outputs, common)
 
     if (thisTarget === undefined) {
       thisTarget = otherTargets
@@ -81,5 +85,5 @@ export abstract class BaseBuilder implements OutputTargetBuilder {
   protected abstract makeThisOutputTarget(
     outputs: OutputConfig,
     common: CommonOutputConfig,
-  ): BaseTarget | undefined
+  ): Promise<BaseTarget | undefined>
 }

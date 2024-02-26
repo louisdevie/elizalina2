@@ -3,6 +3,7 @@ import { Translation } from '@module/translations'
 import { JavaScriptTargetBuilder } from '@module/codeGeneration/javascript'
 import { TypeScriptDefinitionTargetBuilder } from '@module/codeGeneration/typescriptDefinition'
 import { TSTargetBuilder } from './typescript'
+import { AllTranslationReports } from '@module/checks/translations'
 
 /**
  * A code generation target for the "release" tool.
@@ -11,13 +12,14 @@ export interface OutputTarget {
   /**
    * Performs pre-compilation operations.
    */
-  init(): Promise<void>
+  init(reports: AllTranslationReports): Promise<void>
 
   /**
    * Compile a single translation.
    * @param translation The translation object to compile.
+   * @param source The path of the source file that contains the translation.
    */
-  compile(translation: Translation): Promise<void>
+  compile(translation: Translation, source: string): Promise<void>
 
   /**
    * Performs post-compilation operations. All generated files have been written when this promise resolves.
@@ -34,7 +36,7 @@ export interface OutputTargetBuilder {
    * @param outputs Configuration options of each format.
    * @param common Shared configuration options for all formats.
    */
-  makeOutputTarget(outputs: OutputConfig, common: CommonOutputConfig): OutputTarget
+  makeOutputTarget(outputs: OutputConfig, common: CommonOutputConfig): Promise<OutputTarget>
 }
 
 export const defaultOutputTargetBuilder = new JavaScriptTargetBuilder()

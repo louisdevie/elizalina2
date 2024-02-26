@@ -18,6 +18,7 @@ import {
 import EtrParserVisitor from './gen/TMParserVisitor'
 import EtrLexer from './gen/TMLexer'
 import { ParserRuleContext, TerminalNode } from 'antlr4'
+import { ElizalinaRuntimeConfig } from '@module/codeGeneration/codeConfig'
 
 export interface Builder<T> {
   finish(): Result<T>
@@ -214,8 +215,7 @@ export class FormatBuilder extends UserCodeBuilder {
 
     switch (node.symbol.type) {
       case EtrLexer.SHORTHAND_FORMAT_SEPARATOR:
-        // TODO: remove literal value
-        code = '$f.'
+        code = ElizalinaRuntimeConfig.globalFormatterShorthandPrefix
         break
     }
 

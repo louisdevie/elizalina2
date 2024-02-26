@@ -3,10 +3,10 @@ import { BaseBuilder, BaseTarget } from './decorators'
 import { throwError } from '@module/error'
 
 export class JavaScriptTargetBuilder extends BaseBuilder {
-  protected makeThisOutputTarget(
+  protected async makeThisOutputTarget(
     outputs: OutputConfig,
     common: CommonOutputConfig,
-  ): BaseTarget | undefined {
+  ): Promise<BaseTarget | undefined> {
     throwError('The JS output format is not available yet.')
   }
 }

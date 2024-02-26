@@ -2,12 +2,12 @@ import { Options } from './options'
 import { Show } from './show'
 import { Config } from './config'
 
-export { Show, Config }
-
 /**
  * The version of the package.
  */
 export const version = '0.1.0'
+
+export { Show, Config }
 
 /**
  * Create options to configure elzii tooling.

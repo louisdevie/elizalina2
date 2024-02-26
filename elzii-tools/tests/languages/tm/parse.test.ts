@@ -99,6 +99,46 @@ test('parsing an entry with custom format', async () => {
   expect(trFromShorthandSyntax.messages).toStrictEqual(expectedMessages)
 })
 
+test('parsing entries with different content structures', async () => {
+  const messages =
+    'formatOnly = "{and}"\n' +
+    'textBeforeOnly = "\'round {and}"\n' +
+    'textAfterOnly = "{and} around"\n' +
+    'textAround = "\'round {and} around"\n'
+
+  const expectedMessages: Map<string, Message> = new Map()
+  expectedMessages.set('formatOnly', {
+    parameters: [{ name: 'and', typeHint: TypeHint.None }],
+    content: [{ type: 'formatting', parameterName: 'and', format: undefined }],
+  })
+  expectedMessages.set('textBeforeOnly', {
+    parameters: [{ name: 'and', typeHint: TypeHint.None }],
+    content: [
+      { type: 'text', value: "'round " },
+      { type: 'formatting', parameterName: 'and', format: undefined },
+    ],
+  })
+  expectedMessages.set('textAfterOnly', {
+    parameters: [{ name: 'and', typeHint: TypeHint.None }],
+    content: [
+      { type: 'formatting', parameterName: 'and', format: undefined },
+      { type: 'text', value: ' around' },
+    ],
+  })
+  expectedMessages.set('textAround', {
+    parameters: [{ name: 'and', typeHint: TypeHint.None }],
+    content: [
+      { type: 'text', value: "'round " },
+      { type: 'formatting', parameterName: 'and', format: undefined },
+      { type: 'text', value: ' around' },
+    ],
+  })
+
+  const translation = await defaultTMParser.parse(messages)
+  expect(translation.header).toBeUndefined()
+  expect(translation.messages).toStrictEqual(expectedMessages)
+})
+
 test('parsing a translation with a header', async () => {
   const text = "@{ import { myFunction } from '../myModule' } \n nothing = 'Rien'"
 

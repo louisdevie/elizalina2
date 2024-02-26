@@ -129,8 +129,8 @@ function handleCaughtError<T>(error: unknown, handlers: Handlers<T>): T {
 /**
  * Helper to catch errors of different types.
  * @param tryBlock A piece of code that may throw exceptions.
- * @param handlers Maps error type with functions to handle them. You can use `'elzii'` to catch any internal error and
- *                 `'all'` to catch any object thrown.
+ * @param handlers Maps error type with functions to handle them. You can use `'elzii'` to catch all
+ *                 {@link ElziiError}s and `'all'` to catch any object thrown.
  */
 export function handleErrors<T>(tryBlock: () => T, handlers: Handlers<T>): T {
   let result: T
@@ -145,8 +145,8 @@ export function handleErrors<T>(tryBlock: () => T, handlers: Handlers<T>): T {
 /**
  * Helper to catch errors of different types thrown by asynchronous operations.
  * @param tryBlock A piece of code that may throw exceptions.
- * @param handlers Maps error type with functions to handle them. You can use `'elzii'` to catch any internal error and
- *                 `'all'` to catch any object thrown.
+ * @param handlers Maps error type with functions to handle them. You can use `'elzii'` to catch all
+ *                 {@link ElziiError}s and `'all'` to catch any object thrown.
  */
 export async function handleErrorsAsync<T>(
   tryBlock: () => Promise<T>,

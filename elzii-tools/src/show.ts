@@ -7,7 +7,7 @@ export interface Debug {
 }
 
 export class Show {
-  private static readonly detailsPadding = '| '
+  private static readonly detailsPadding = '|'
   private static readonly internalErrorNotice =
     'NOTICE: It seems this error was caused by a problem with the tool itself. Please report it to the developer here: https://github.com/louisdevie/elizalina2/issues.'
 
@@ -23,7 +23,7 @@ export class Show {
     if (infos instanceof ElziiError) {
       console.log(chalk(`${tag} ${infos.message}`))
       for (const details of infos.details) {
-        console.log(chalk(Show.detailsPadding + details))
+        console.log(chalk(`${Show.detailsPadding} ${details}`))
       }
       if (infos.kind === 'internal') {
       }
@@ -35,7 +35,7 @@ export class Show {
 
   private appendNoticesFor(infos: unknown, chalk: Chalk) {
     if (!(infos instanceof ElziiError) || infos.kind === 'internal') {
-      console.log(chalk(Show.detailsPadding + Show.internalErrorNotice))
+      console.log(chalk(`${Show.detailsPadding} ${Show.internalErrorNotice}`))
     }
   }
 

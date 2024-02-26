@@ -12,7 +12,7 @@ export class TypeScriptFile extends TextFile<TSProgram> {
   public constructor(name: string, options?: { createNew?: boolean; printer?: TSPrinter }) {
     super(name, options?.createNew)
 
-    this._printer = options?.printer ?? getTSPrinter('elizalina-default')
+    this._printer = options?.printer ?? getTSPrinter()
   }
 
   protected printContents(data: TSProgram): Promise<string> {

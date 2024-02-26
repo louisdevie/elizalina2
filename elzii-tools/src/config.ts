@@ -1,9 +1,10 @@
+import { version } from '@module/index'
 import { Show } from '@module/show'
 import chalk, { Chalk } from 'chalk'
 import fs from 'node:fs'
 import path from 'node:path'
 import { handleErrorsAsync, throwError } from '@module/error'
-import { TargetsConfigBuilder, Options, CodeStyle } from './options'
+import { TargetsConfigBuilder, Options } from './options'
 import { bundleRequire } from 'bundle-require'
 import { access } from '@module/files'
 import YAML from 'yaml'
@@ -21,7 +22,6 @@ export interface CommonOutputConfig {
   readonly singleFile: boolean
   readonly minify: boolean
   readonly sourcemap: boolean
-  readonly style: CodeStyle
 }
 
 export interface TargetConfig extends CommonOutputConfig {
@@ -42,6 +42,7 @@ export class Config {
   private readonly _color: Chalk
   private _currentPackageRoot?: string
   private _targets?: TargetsConfig
+  private _toolName?: string
 
   // We use a lazily initialized show object to break the circular dependency between the two classes
   private _show?: Show
@@ -80,6 +81,11 @@ export class Config {
   public requireTargets(): TargetsConfig {
     if (this._targets === undefined) throwError("The targets haven't been loaded yet.", 'internal')
     return this._targets
+  }
+
+  public requireToolInfo(): string {
+    if (this._toolName === undefined) throwError('The current tool is unknown.', 'internal')
+    return `${this._toolName} v${version}`
   }
 
   public enableDebugMode() {
@@ -166,7 +172,8 @@ export class Config {
   /**
    * Required steps at the launch of any tool.
    */
-  public async init() {
+  public async init(toolName: string) {
+    this._toolName = toolName
     await this.resolveCurrentPackage()
     await this.loadConfigFiles()
   }
