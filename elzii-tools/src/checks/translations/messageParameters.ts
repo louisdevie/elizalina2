@@ -21,24 +21,29 @@ type NameMappingResult = {
     | { in: 'other'; indexes: number[] }
 }
 
-class Signature implements MessageSignature {
-  private readonly _parameters: MessageParameter[]
+export class Signature implements MessageSignature {
+  private _parameters: MessageParameter[]
   private readonly _usedIn: Set<string>
 
-  constructor(translationId: string, parameters: MessageParameter[]) {
+  public constructor(translationId: string | null, parameters: MessageParameter[]) {
     this._parameters = parameters
-    this._usedIn = new Set([translationId])
+    this._usedIn = new Set(translationId === null ? [] : [translationId])
+  }
+
+  public get parameters(): Iterable<MessageParameter> {
+    return this._parameters
+  }
+
+  public get usedIn(): Iterable<string> {
+    return this._usedIn
   }
 
   public tryToMergeWith(other: Signature): boolean {
     let success = false
-    const newParameters: MessageParameter[] = []
 
-    const mappingResult: NameMappingResult = {
-      mapped: new Map<number, number>(),
-      additional: { in: 'none' },
-    }
-    if (this.tryToMapNamesWith(other._parameters, mappingResult)) {
+    const mappingResult = this.tryToMapNamesWith(other._parameters)
+    if (mappingResult !== undefined) {
+      const newParameters: MessageParameter[] = []
       for (const [thisIndex, otherIndex] of mappingResult.mapped) {
         newParameters.push({
           name: this._parameters[thisIndex].name,
@@ -67,50 +72,50 @@ class Signature implements MessageSignature {
           }
           break
       }
+      this._parameters = newParameters
+      for (const tid of this._usedIn) this._usedIn.add(tid)
+      for (const tid of other._usedIn) this._usedIn.add(tid)
+      success = true
     }
 
     return success
   }
 
-  private tryToMapNamesWith(
-    otherParameters: MessageParameter[],
-    result: NameMappingResult,
-  ): boolean {
+  private tryToMapNamesWith(otherParameters: MessageParameter[]): NameMappingResult | undefined {
     const notInOther = new Set<number>()
     const notInThis = new Set(otherParameters.keys())
 
+    const mapped = new Map()
     this._parameters.forEach(({ name: thisName }, thisIndex) => {
       const otherIndex = otherParameters.findIndex((other) => other.name === thisName)
       if (otherIndex === -1) {
         notInOther.add(thisIndex)
       } else {
         notInThis.delete(otherIndex)
-        result.mapped.set(thisIndex, otherIndex)
+        mapped.set(thisIndex, otherIndex)
       }
     })
 
-    let success
+    let result: NameMappingResult | undefined
     if (notInOther.size > 0) {
       if (notInThis.size > 0) {
         // this and the other signature have their own different parameters, stop trying to merge
-        success = false
+        result = undefined
       } else {
         // this is a superset of the other signature
-        success = true
-        result.additional = { in: 'this', indexes: Array.from(notInOther) }
+        result = { mapped, additional: { in: 'this', indexes: Array.from(notInOther) } }
       }
     } else {
       if (notInThis.size > 0) {
         // the other signature is a superset of this
-        success = true
-        result.additional = { in: 'other', indexes: Array.from(notInThis) }
+        result = { mapped, additional: { in: 'other', indexes: Array.from(notInThis) } }
       } else {
         // they both have the same set of parameters
-        success = true
-        result.additional = { in: 'none' }
+        result = { mapped, additional: { in: 'none' } }
       }
     }
-    return success
+
+    return result
   }
 }
 
