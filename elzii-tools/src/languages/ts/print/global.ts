@@ -42,9 +42,9 @@ const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
   },
 
   visitProgram(this: Visitor, program: ts.Program): PrintedCode {
-    return PrintedCode.join(
-      program.body.map((statement) => this.visitAnyNode(statement)).concat(new PrintedCode('')),
-    )
+    let comments = (program.comments ?? []).map((comment) => this.visitAnyNode(comment))
+    let statements = program.body.map((statement) => this.visitAnyNode(statement))
+    return PrintedCode.join(comments.concat(statements, new PrintedCode('')))
   },
 }
 

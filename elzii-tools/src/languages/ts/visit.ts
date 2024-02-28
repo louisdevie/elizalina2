@@ -32,6 +32,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'BinaryExpression':
           result = this.visitBinaryExpression(node as ts.BinaryExpression)
            break*/
+      case 'Block':
+        result = this.visitBlockComment(node as ts.BlockComment)
+        break
       case 'BlockStatement':
         result = this.visitBlockStatement(node as ts.BlockStatement)
         break
@@ -524,6 +527,8 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitAssignmentPattern(assignmentPattern: ts.AssignmentPattern): T
   // public abstract visitAwaitExpression(awaitExpression: ts.AwaitExpression): T
   // public abstract visitBinaryExpression(binaryExpression: ts.BinaryExpression): T
+
+  public abstract visitBlockComment(blockComment: ts.BlockComment): T
 
   public abstract visitBlockStatement(blockStatement: ts.BlockStatement): T
 

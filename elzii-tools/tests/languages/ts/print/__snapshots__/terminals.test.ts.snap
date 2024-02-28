@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`printing a BlockComment 1`] = `"/* Single line */"`;
+
+exports[`printing a BlockComment 2`] = `
+"/* Multi
+ * line
+ */"
+`;
+
+exports[`printing a Literal 1`] = `"'Hello chat'"`;

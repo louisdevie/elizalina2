@@ -34,6 +34,8 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   // region Visitor implementation
 
+  public visitBlockComment = TSPrinterImpl_terminals.visitBlockComment
+
   public visitBlockStatement = TSPrinterImpl_misc.visitBlockStatement
 
   public visitClassBody = TSPrinterImpl_classes.visitClassBody

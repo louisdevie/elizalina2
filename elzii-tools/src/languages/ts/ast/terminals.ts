@@ -9,7 +9,7 @@ import {
 export function blockComment(text: string): BlockComment {
   return {
     type: AST_TOKEN_TYPES.Block,
-    value: '// ' + text,
+    value: text,
   }
 }
 

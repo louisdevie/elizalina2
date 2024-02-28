@@ -4,9 +4,23 @@ import { escapeDoubleQuotedString, escapeSingleQuotedString, Visitor } from './h
 import { countOccurrences } from '@module/helpers'
 import { throwError } from '@module/error'
 
-type VisitMisc = 'visitLiteral'
+type VisitMisc = 'visitBlockComment' | 'visitLiteral'
 
 const TSPrinterImpl_terminals: Pick<Visitor, VisitMisc> = {
+  visitBlockComment(blockComment: ts.BlockComment): PrintedCode {
+    let comment = blockComment.value.split('\n')
+
+    let firstLine = '/* ' + comment.shift()
+    if (comment.length === 0) {
+      firstLine += ' */'
+    } else {
+      comment = comment.map((line) => ' * ' + line)
+      comment.push(' */')
+    }
+
+    return new PrintedCode(firstLine, ...comment)
+  },
+
   visitLiteral(this: Visitor, literal: ts.Literal): PrintedCode {
     let code
 
