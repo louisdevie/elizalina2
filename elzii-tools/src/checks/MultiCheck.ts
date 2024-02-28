@@ -8,6 +8,10 @@ export default class MultiCheck<T> implements Check<T, never> {
     this._checks = checks
   }
 
+  public get isValidGlobally(): boolean {
+    return this._checks.every((check) => check.isValidGlobally)
+  }
+
   public validate(value: T): boolean {
     return this._checks.every((check) => check.validate(value))
   }

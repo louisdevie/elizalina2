@@ -8,10 +8,16 @@ import {
 import { Check } from '@module/checks'
 import { findSourceMap } from 'node:module'
 import { textChangeRangeNewSpan } from 'typescript'
+import { throwError } from '@module/error'
+import { show } from '@module'
 
-export interface MessageParametersReport {}
+export interface MessageParametersReport {
+  signatureOf(key: string): MessageSignature
+}
 
-interface MessageSignature {}
+interface MessageSignature {
+  readonly parameters: Iterable<MessageParameter>
+}
 
 type NameMappingResult = {
   mapped: Map<number, number>
@@ -24,18 +30,25 @@ type NameMappingResult = {
 export class Signature implements MessageSignature {
   private _parameters: MessageParameter[]
   private readonly _usedIn: Set<string>
-
   public constructor(translationId: string | null, parameters: MessageParameter[]) {
     this._parameters = parameters
     this._usedIn = new Set(translationId === null ? [] : [translationId])
   }
 
-  public get parameters(): Iterable<MessageParameter> {
+  get parameters(): Iterable<MessageParameter> {
     return this._parameters
   }
 
   public get usedIn(): Iterable<string> {
     return this._usedIn
+  }
+
+  public get description(): string {
+    const params = this._parameters.map((param) =>
+      param.typeHint === TypeHint.None ? param.name : `${param.name}: ${param.typeHint}`,
+    )
+    const usage = Array.from(this._usedIn).join(', ')
+    return `(${params.join(', ')}) used in ${usage}`
   }
 
   public tryToMergeWith(other: Signature): boolean {
@@ -126,6 +139,12 @@ class Report implements MessageParametersReport {
     this._messages = new Map()
   }
 
+  public signatureOf(key: string): MessageSignature {
+    return (
+      this._messages.get(key)?.at(0) ?? throwError('Found an empty signature array', 'internal')
+    )
+  }
+
   public tryToMerge(messageKey: string, signature: Signature): boolean {
     let merged = false
 
@@ -147,6 +166,20 @@ class Report implements MessageParametersReport {
 
     return merged
   }
+
+  public checkForInvalidMessages(): boolean {
+    let ok = true
+
+    for (const [key, signatures] of this._messages) {
+      if (signatures.length > 1) {
+        const usageDetails = signatures.map((signature) => signature.description)
+        show.detailedError(`Different parameters found for message '${key}':`, ...usageDetails)
+        ok = false
+      }
+    }
+
+    return ok
+  }
 }
 
 export class MessageParametersCheck implements Check<Translation, MessageParametersReport> {
@@ -154,6 +187,10 @@ export class MessageParametersCheck implements Check<Translation, MessageParamet
 
   public constructor() {
     this._report = new Report()
+  }
+
+  public get isValidGlobally(): boolean {
+    return this._report.checkForInvalidMessages()
   }
 
   public validate(value: Translation): boolean {

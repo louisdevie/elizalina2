@@ -67,6 +67,10 @@ export class MissingTranslationsCheck implements Check<Translation, MissingTrans
     this._knownTranslations = []
   }
 
+  public get isValidGlobally(): boolean {
+    return true
+  }
+
   public validate(value: Translation): boolean {
     const notFound = this._report.copyAllKeys()
 

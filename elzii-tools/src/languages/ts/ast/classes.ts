@@ -40,10 +40,10 @@ export function classDeclaration(name: string, options?: ClassOptions): ClassDec
 }
 
 export interface MethodOptions extends FunctionOptions<BlockStatement> {
-  kind?: 'constructor' | 'get' | 'method' | 'set'
-  accessibility?: Accessibility | undefined
-  static?: boolean
-  override?: boolean
+  kind?: 'get' | 'method' // | 'constructor' | 'set'
+  // accessibility?: Accessibility | undefined
+  // static?: boolean
+  // override?: boolean
 }
 
 export function methodDefinition(
@@ -55,10 +55,10 @@ export function methodDefinition(
     key: identifier(name),
     computed: false,
     value: functionExpression(null, options),
-    static: options.static ?? false,
-    override: options.override ?? false,
+    static: /* options.static ?? */ false,
+    override: /* options.override ?? */ false,
     kind: options.kind ?? 'method',
-    accessibility: options.accessibility,
+    accessibility: undefined /* options.accessibility */,
     optional: false,
     decorators: [],
   }

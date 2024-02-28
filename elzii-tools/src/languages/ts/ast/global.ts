@@ -9,7 +9,7 @@ import {
   Program,
   ProgramStatement,
 } from '@module/languages/ts/tsestree-spec'
-import { identifier, literal } from './terminals'
+import { literal } from './terminals'
 import { identifier } from '@module/languages/ts/ast/misc'
 
 export function expressionStatement(expression: Expression): ExpressionStatement {

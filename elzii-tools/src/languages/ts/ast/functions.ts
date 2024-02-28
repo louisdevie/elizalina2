@@ -55,10 +55,10 @@ export function callExpression(
 export interface FunctionOptions<Body> {
   params: Parameter[]
   body: Body
-  async?: boolean
-  generator?: boolean
+  // async?: boolean
+  // generator?: boolean
   returnType?: TSTypeAnnotation | undefined
-  typeParameters?: TSTypeParameterDeclaration | undefined
+  // typeParameters?: TSTypeParameterDeclaration | undefined
 }
 
 export function functionExpression(
@@ -70,10 +70,10 @@ export function functionExpression(
     id: name === null ? null : identifier(name),
     params: options.params,
     body: options.body,
-    async: options.async ?? false,
-    generator: options.generator ?? false,
+    async: /* options.async ?? */ false,
+    generator: /* options.generator ?? */ false,
     returnType: options.returnType,
-    typeParameters: options.typeParameters,
+    typeParameters: undefined /* options.typeParameters */,
     expression: false,
     declare: false,
   }

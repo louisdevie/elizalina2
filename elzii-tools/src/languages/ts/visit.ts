@@ -32,9 +32,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'BinaryExpression':
           result = this.visitBinaryExpression(node as ts.BinaryExpression)
            break*/
-      /* case 'BlockStatement':
-          result = this.visitBlockStatement(node as ts.BlockStatement)
-           break*/
+      case 'BlockStatement':
+        result = this.visitBlockStatement(node as ts.BlockStatement)
+        break
       /* case 'BreakStatement':
           result = this.visitBreakStatement(node as ts.BreakStatement)
            break*/
@@ -47,12 +47,12 @@ export abstract class TSVisitor<T = void> {
       /* case 'ChainExpression':
           result = this.visitChainExpression(node as ts.ChainExpression)
            break*/
-      /* case 'ClassBody':
-          result = this.visitClassBody(node as ts.ClassBody)
-           break*/
-      /* case 'ClassDeclaration':
-          result = this.visitClassDeclaration(node as ts.ClassDeclaration)
-           break*/
+      case 'ClassBody':
+        result = this.visitClassBody(node as ts.ClassBody)
+        break
+      case 'ClassDeclaration':
+        result = this.visitClassDeclaration(node as ts.ClassDeclaration)
+        break
       /* case 'ClassExpression':
           result = this.visitClassExpression(node as ts.ClassExpression)
            break*/
@@ -101,9 +101,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'FunctionDeclaration':
           result = this.visitFunctionDeclaration(node as ts.FunctionDeclaration)
            break*/
-      /* case 'FunctionExpression':
-          result = this.visitFunctionExpression(node as ts.FunctionExpression)
-           break*/
+      case 'FunctionExpression':
+        result = this.visitFunctionExpression(node as ts.FunctionExpression)
+        break
       case 'Identifier':
         result = this.visitIdentifier(node as ts.Identifier)
         break
@@ -188,9 +188,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'MetaProperty':
           result = this.visitMetaProperty(node as ts.MetaProperty)
            break*/
-      /* case 'MethodDefinition':
-          result = this.visitMethodDefinition(node as ts.MethodDefinition)
-           break*/
+      case 'MethodDefinition':
+        result = this.visitMethodDefinition(node as ts.MethodDefinition)
+        break
       /* case 'NewExpression':
           result = this.visitNewExpression(node as ts.NewExpression)
            break*/
@@ -308,9 +308,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSCallSignatureDeclaration':
           result = this.visitTSCallSignatureDeclaration(node as ts.TSCallSignatureDeclaration)
            break*/
-      /* case 'TSClassImplements':
-          result = this.visitTSClassImplements(node as ts.TSClassImplements)
-           break*/
+      case 'TSClassImplements':
+        result = this.visitTSClassImplements(node as ts.TSClassImplements)
+        break
       /* case 'TSConditionalType':
           result = this.visitTSConditionalType(node as ts.TSConditionalType)
            break*/
@@ -410,9 +410,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSNullKeyword':
           result = this.visitTSNullKeyword(node as ts.TSNullKeyword)
            break*/
-      /* case 'TSNumberKeyword':
-          result = this.visitTSNumberKeyword(node as ts.TSNumberKeyword)
-           break*/
+      case 'TSNumberKeyword':
+        result = this.visitTSNumberKeyword(node as ts.TSNumberKeyword)
+        break
       /* case 'TSObjectKeyword':
           result = this.visitTSObjectKeyword(node as ts.TSObjectKeyword)
            break*/
@@ -467,9 +467,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSTypeAliasDeclaration':
           result = this.visitTSTypeAliasDeclaration(node as ts.TSTypeAliasDeclaration)
            break*/
-      /* case 'TSTypeAnnotation':
-          result = this.visitTSTypeAnnotation(node as ts.TSTypeAnnotation)
-           break*/
+      case 'TSTypeAnnotation':
+        result = this.visitTSTypeAnnotation(node as ts.TSTypeAnnotation)
+        break
       /* case 'TSTypeAssertion':
           result = this.visitTSTypeAssertion(node as ts.TSTypeAssertion)
            break*/
@@ -524,13 +524,18 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitAssignmentPattern(assignmentPattern: ts.AssignmentPattern): T
   // public abstract visitAwaitExpression(awaitExpression: ts.AwaitExpression): T
   // public abstract visitBinaryExpression(binaryExpression: ts.BinaryExpression): T
-  // public abstract visitBlockStatement(blockStatement: ts.BlockStatement): T
+
+  public abstract visitBlockStatement(blockStatement: ts.BlockStatement): T
+
   // public abstract visitBreakStatement(breakStatement: ts.BreakStatement): T
   // public abstract visitCallExpression(callExpression: ts.CallExpression): T
   // public abstract visitCatchClause(catchClause: ts.CatchClause): T
   // public abstract visitChainExpression(chainExpression: ts.ChainExpression): T
-  // public abstract visitClassBody(classBody: ts.ClassBody): T
-  // public abstract visitClassDeclaration(classDeclaration: ts.ClassDeclaration): T
+
+  public abstract visitClassBody(classBody: ts.ClassBody): T
+
+  public abstract visitClassDeclaration(classDeclaration: ts.ClassDeclaration): T
+
   // public abstract visitClassExpression(classExpression: ts.ClassExpression): T
   // public abstract visitConditionalExpression(conditionalExpression: ts.ConditionalExpression): T
   // public abstract visitContinueStatement(continueStatement: ts.ContinueStatement): T
@@ -547,7 +552,8 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitForOfStatement(forOfStatement: ts.ForOfStatement): T
   // public abstract visitForStatement(forStatement: ts.ForStatement): T
   // public abstract visitFunctionDeclaration(functionDeclaration: ts.FunctionDeclaration): T
-  // public abstract visitFunctionExpression(functionExpression: ts.FunctionExpression): T
+
+  public abstract visitFunctionExpression(functionExpression: ts.FunctionExpression): T
 
   public abstract visitIdentifier(identifier: ts.Identifier): T
 
@@ -584,7 +590,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitLogicalExpression(logicalExpression: ts.LogicalExpression): T
   // public abstract visitMemberExpression(memberExpression: ts.MemberExpression): T
   // public abstract visitMetaProperty(metaProperty: ts.MetaProperty): T
-  // public abstract visitMethodDefinition(methodDefinition: ts.MethodDefinition): T
+
+  public abstract visitMethodDefinition(methodDefinition: ts.MethodDefinition): T
+
   // public abstract visitNewExpression(newExpression: ts.NewExpression): T
   // public abstract visitObjectExpression(objectExpression: ts.ObjectExpression): T
   // public abstract visitObjectPattern(objectPattern: ts.ObjectPattern): T
@@ -626,7 +634,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSBigIntKeyword(tsBigIntKeyword: ts.TSBigIntKeyword): T
   // public abstract visitTSBooleanKeyword(tsBooleanKeyword: ts.TSBooleanKeyword): T
   // public abstract visitTSCallSignatureDeclaration(tsCallSignatureDeclaration: ts.TSCallSignatureDeclaration): T
-  // public abstract visitTSClassImplements(tsClassImplements: ts.TSClassImplements): T
+
+  public abstract visitTSClassImplements(tsClassImplements: ts.TSClassImplements): T
+
   // public abstract visitTSConditionalType(tsConditionalType: ts.TSConditionalType): T
   // public abstract visitTSConstructorType(tsConstructorType: ts.TSConstructorType): T
   // public abstract visitTSConstructSignatureDeclaration(tsConstructSignatureDeclaration: ts.TSConstructSignatureDeclaration): T
@@ -660,7 +670,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSNeverKeyword(tsNeverKeyword: ts.TSNeverKeyword): T
   // public abstract visitTSNonNullExpression(tsNonNullExpression: ts.TSNonNullExpression): T
   // public abstract visitTSNullKeyword(tsNullKeyword: ts.TSNullKeyword): T
-  // public abstract visitTSNumberKeyword(tsNumberKeyword: ts.TSNumberKeyword): T
+
+  public abstract visitTSNumberKeyword(tsNumberKeyword: ts.TSNumberKeyword): T
+
   // public abstract visitTSObjectKeyword(tsObjectKeyword: ts.TSObjectKeyword): T
   // public abstract visitTSOptionalType(tsOptionalType: ts.TSOptionalType): T
   // public abstract visitTSParameterProperty(tsParameterProperty: ts.TSParameterProperty): T
@@ -679,7 +691,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSThisType(tsThisType: ts.TSThisType): T
   // public abstract visitTSTupleType(tsTupleType: ts.TSTupleType): T
   // public abstract visitTSTypeAliasDeclaration(tsTypeAliasDeclaration: ts.TSTypeAliasDeclaration): T
-  // public abstract visitTSTypeAnnotation(tsTypeAnnotation: ts.TSTypeAnnotation): T
+
+  public abstract visitTSTypeAnnotation(tsTypeAnnotation: ts.TSTypeAnnotation): T
+
   // public abstract visitTSTypeAssertion(tsTypeAssertion: ts.TSTypeAssertion): T
   // public abstract visitTSTypeLiteral(tsTypeLiteral: ts.TSTypeLiteral): T
   // public abstract visitTSTypeOperator(tsTypeOperator: ts.TSTypeOperator): T

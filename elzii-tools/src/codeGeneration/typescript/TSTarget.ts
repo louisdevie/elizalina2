@@ -3,9 +3,17 @@ import * as ts from '@module/languages/ts/ast'
 import { Parameter } from '@module/languages/ts/ast'
 import { ElizalinaRuntimeConfig, PlaceholdersConfig } from '@module/codeGeneration/codeConfig'
 import { randomHex } from '@module/helpers'
-import { Message, MessageParameter, Translation, TypeHint, UserCode } from '@module/translations'
+import {
+  Message,
+  MessageParameter,
+  MessagePart,
+  Translation,
+  TypeHint,
+  UserCode,
+} from '@module/translations'
 import { UserCodeInsertion } from '@module/codeGeneration/postProcessing'
 import { AllTranslationReports } from '@module/checks/translations'
+import { throwError } from '@module/error'
 
 export default abstract class TSTarget extends BaseTarget {
   private readonly _interfaceName: string
@@ -81,38 +89,58 @@ export default abstract class TSTarget extends BaseTarget {
       implements: [ts.tsClassImplements(this.interfaceName)],
     })
 
-    for (const [key, message] of translation.messages) {
-      cls.body.body.push(this.makeMessageMethod(key, message))
-    })
+    if (this._reports === undefined)
+      throwError('Reports were unavailable during compilation', 'internal')
 
-    if (this._reports !== undefined) {
-      for (const key of this._reports.missing.missingKeysIn(translation.id)) {
-        cls.body.body.push(this.makeMissingMessageMethod(key))
+    for (const key of this._reports.missing.allKeys) {
+      const message = translation.messages.get(key)
+      const signature = Array.from(this._reports.parameters.signatureOf(key).parameters)
+      if (message !== undefined) {
+        cls.body.body.push(this.makeDefinedMessageMethod(key, signature, message.content))
+      } else {
+        cls.body.body.push(this.makeMissingMessageMethod(key, signature))
       }
     }
 
     return cls
   }
 
-  private makeMessageMethod(key: string, message: Message): ts.MethodDefinition {
-    const params = message.parameters.map(this.makeMessageParameter.bind(this))
+  private makeMessageMethod(
+    key: string,
+    messageParameters: MessageParameter[],
+    body: ts.BlockStatement,
+  ) {
+    const params = messageParameters.map(this.makeMessageParameter.bind(this))
     return ts.methodDefinition(key, {
       accessibility: 'public',
       kind: params.length === 0 ? 'get' : 'method', // use getters when there are no parameters
       params,
       returnType: ts.tsTypeAnnotation(ts.tsStringKeyword()),
-      body: ts.blockStatement(ts.returnStatement(this.makeMessageTemplate(message))),
+      body,
     })
   }
 
-  private makeMissingMessageMethod(key: string): ts.MethodDefinition {
-    return ts.methodDefinition(key, {
-      accessibility: 'public',
-      kind: 'get',
-      params: [],
-      returnType: ts.tsTypeAnnotation(ts.tsStringKeyword()),
-      body: ts.blockStatement(ts.returnStatement(ts.literal(`<${key}>`))),
-    })
+  private makeDefinedMessageMethod(
+    key: string,
+    messageParameters: MessageParameter[],
+    messageContent: MessagePart[],
+  ): ts.MethodDefinition {
+    return this.makeMessageMethod(
+      key,
+      messageParameters,
+      ts.blockStatement(ts.returnStatement(this.makeMessageTemplate(messageContent))),
+    )
+  }
+
+  private makeMissingMessageMethod(
+    key: string,
+    messageParameters: MessageParameter[],
+  ): ts.MethodDefinition {
+    return this.makeMessageMethod(
+      key,
+      messageParameters,
+      ts.blockStatement(ts.returnStatement(ts.literal(`<${key}>`))),
+    )
   }
 
   private makeMessageParameter(param: MessageParameter): Parameter {
@@ -148,12 +176,12 @@ export default abstract class TSTarget extends BaseTarget {
     return type
   }
 
-  private makeMessageTemplate(message: Message): ts.TemplateLiteral {
+  private makeMessageTemplate(messageContent: MessagePart[]): ts.TemplateLiteral {
     const textElements = []
     const expressions = []
 
     let firstPart = true
-    for (const part of message.content) {
+    for (const part of messageContent) {
       switch (part.type) {
         case 'text':
           textElements.push(part.value)
