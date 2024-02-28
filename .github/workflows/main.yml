@@ -30,7 +30,7 @@ jobs:
     - name: Install ANTLR4 tooling
       run: pip install antlr4-tools
     - name: Generate ANTLR4 recognizers
-      run: node scripts/antlr4Gen.mjs
+      run: node scripts/antlrGen.mjs
 
     - run: npm run type-check
     - run: npm test -- --collectCoverage --coverageDirectory .
