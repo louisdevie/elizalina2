@@ -21,7 +21,17 @@ jobs:
         node-version: 16
         cache: 'npm'
         cache-dependency-path: './elzii-tools/package-lock.json'
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
     - run: npm ci
+
+    - name: Install ANTLR4 tooling
+      run: pip install antlr4-tools
+    - name: Generate ANTLR4 recognizers
+      run: node scripts/antlr4Gen.mjs
+
     - run: npm run type-check
     - run: npm test -- --collectCoverage --coverageDirectory .
     - uses: codecov/codecov-action@v3
