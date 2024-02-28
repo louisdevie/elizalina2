@@ -11,6 +11,10 @@ export function escapeDoubleQuotedString(string: string): string {
   return escapeAnyString(string).replace('"', '\\"')
 }
 
+export function escapeTemplateString(string: string): string {
+  return escapeAnyString(string).replace('`', '\\`').replace('${', '\\${')
+}
+
 const escapeSequences = new Map([
   ['\\', '\\\\'], // backslashes must be replaced first, otherwise the others would be escaped twice
   ['\0', '\\0'],

@@ -239,12 +239,12 @@ export abstract class TSVisitor<T = void> {
       /* case 'TaggedTemplateExpression':
           result = this.visitTaggedTemplateExpression(node as ts.TaggedTemplateExpression)
            break*/
-      /* case 'TemplateElement':
-          result = this.visitTemplateElement(node as ts.TemplateElement)
-           break*/
-      /* case 'TemplateLiteral':
-          result = this.visitTemplateLiteral(node as ts.TemplateLiteral)
-           break*/
+      case 'TemplateElement':
+        result = this.visitTemplateElement(node as ts.TemplateElement)
+        break
+      case 'TemplateLiteral':
+        result = this.visitTemplateLiteral(node as ts.TemplateLiteral)
+        break
       /* case 'ThisExpression':
           result = this.visitThisExpression(node as ts.ThisExpression)
            break*/
@@ -613,8 +613,11 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitSwitchCase(switchCase: ts.SwitchCase): T
   // public abstract visitSwitchStatement(switchStatement: ts.SwitchStatement): T
   // public abstract visitTaggedTemplateExpression(taggedTemplateExpression: ts.TaggedTemplateExpression): T
-  // public abstract visitTemplateElement(templateElement: ts.TemplateElement): T
-  // public abstract visitTemplateLiteral(templateLiteral: ts.TemplateLiteral): T
+
+  public abstract visitTemplateElement(templateElement: ts.TemplateElement): T
+
+  public abstract visitTemplateLiteral(templateLiteral: ts.TemplateLiteral): T
+
   // public abstract visitThisExpression(thisExpression: ts.ThisExpression): T
   // public abstract visitThrowStatement(throwStatement: ts.ThrowStatement): T
   // public abstract visitTryStatement(tryStatement: ts.TryStatement): T

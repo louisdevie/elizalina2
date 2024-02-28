@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`printing a BlockStatement 1`] = `"{ }"`;
+
+exports[`printing a BlockStatement 2`] = `
+"{
+  line1
+  line2
+  line3
+}"
+`;
+
+exports[`printing a TemplateElement 1`] = `"' " \\\` $ { } \\\${} blah blah"`;
+
+exports[`printing a TemplateLiteral 1`] = `"\`something \${something} something, we win\`"`;
+
+exports[`printing a TemplateLiteral 2`] = `"\`\${something} something something, we \${win}\`"`;
+
+exports[`printing an Identifier 1`] = `"something"`;

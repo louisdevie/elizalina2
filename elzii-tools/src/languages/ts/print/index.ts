@@ -56,6 +56,10 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   public visitProgram = TSPrinterImpl_global.visitProgram
 
+  public visitTemplateElement = TSPrinterImpl_misc.visitTemplateElement
+
+  public visitTemplateLiteral = TSPrinterImpl_misc.visitTemplateLiteral
+
   public visitTSClassImplements = TSPrinterImpl_classes.visitTSClassImplements
 
   public visitTSNumberKeyword = TSPrinterImpl_types.visitTSNumberKeyword
