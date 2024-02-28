@@ -1,8 +1,6 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
 import { Visitor } from '@module/languages/ts/print/helpers'
-import { importDeclaration, importSpecifier, program } from '@module/languages/ts/ast'
-import { spec } from 'node:test/reporters'
 
 type VisitGlobal =
   | 'visitExpressionStatement'

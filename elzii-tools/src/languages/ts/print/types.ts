@@ -3,11 +3,9 @@ import * as ts from '@module/languages/ts/ast'
 import { Visitor } from './helpers'
 import {
   TSAnyKeyword,
-  tsArrayType,
   TSArrayType,
   TSNumberKeyword,
   TSStringKeyword,
-  tsTypeAnnotation,
   TSTypeReference,
 } from '@module/languages/ts/ast'
 
@@ -20,7 +18,7 @@ type VisitTypes =
   | 'visitTSTypeReference'
 
 const TSPrinterImpl_types: Pick<Visitor, VisitTypes> = {
-  visitTSAnyKeyword(this: Visitor, tsAnyKeyword: TSAnyKeyword): PrintedCode {
+  visitTSAnyKeyword(this: Visitor, _: TSAnyKeyword): PrintedCode {
     return new PrintedCode('any')
   },
 
@@ -28,11 +26,11 @@ const TSPrinterImpl_types: Pick<Visitor, VisitTypes> = {
     return new PrintedCode(this.visitAnyNode(tsArrayType.elementType) + '[]')
   },
 
-  visitTSNumberKeyword(this: Visitor, tsNumberKeyword: TSNumberKeyword): PrintedCode {
+  visitTSNumberKeyword(this: Visitor, _: TSNumberKeyword): PrintedCode {
     return new PrintedCode('number')
   },
 
-  visitTSStringKeyword(this: Visitor, tsStringKeyword: TSStringKeyword): PrintedCode {
+  visitTSStringKeyword(this: Visitor, _: TSStringKeyword): PrintedCode {
     return new PrintedCode('string')
   },
 

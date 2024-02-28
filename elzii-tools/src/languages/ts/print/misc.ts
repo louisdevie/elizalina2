@@ -1,7 +1,6 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
 import { escapeTemplateString, Visitor, wrapInBlock } from './helpers'
-import { blockStatement, identifier, templateElement } from '@module/languages/ts/ast'
 
 type VisitMisc =
   | 'visitBlockStatement'

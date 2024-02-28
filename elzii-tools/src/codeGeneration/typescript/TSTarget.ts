@@ -4,7 +4,6 @@ import { Parameter } from '@module/languages/ts/ast'
 import { ElizalinaRuntimeConfig, PlaceholdersConfig } from '@module/codeGeneration/codeConfig'
 import { randomHex } from '@module/helpers'
 import {
-  Message,
   MessageParameter,
   MessagePart,
   Translation,
@@ -27,10 +26,6 @@ export default abstract class TSTarget extends BaseTarget {
 
   public get interfaceName(): string {
     return this._interfaceName
-  }
-
-  public get functionName(): string {
-    return this._functionName
   }
 
   protected constructor(interfaceName: string, functionName: string) {
@@ -112,7 +107,6 @@ export default abstract class TSTarget extends BaseTarget {
   ) {
     const params = messageParameters.map(this.makeMessageParameter.bind(this))
     return ts.methodDefinition(key, {
-      accessibility: 'public',
       kind: params.length === 0 ? 'get' : 'method', // use getters when there are no parameters
       params,
       returnType: ts.tsTypeAnnotation(ts.tsStringKeyword()),

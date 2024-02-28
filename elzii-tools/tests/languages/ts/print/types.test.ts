@@ -1,6 +1,5 @@
 import { getTSPrinter } from '@module/languages/ts'
 import * as ts from '@module/languages/ts/ast'
-import { type } from 'node:os'
 
 test('printing a TSAnyKeyword', async () => {
   const printer = getTSPrinter()

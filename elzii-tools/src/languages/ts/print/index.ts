@@ -8,7 +8,6 @@ import TSPrinterImpl_global from './global'
 import TSPrinterImpl_misc from './misc'
 import TSPrinterImpl_terminals from './terminals'
 import TSPrinterImpl_types from './types'
-import { TSArrayType } from '../ast'
 
 // the implementation of this class is split into the objects imported above
 
