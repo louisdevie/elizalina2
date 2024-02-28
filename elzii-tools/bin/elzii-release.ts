@@ -7,8 +7,8 @@ import { handleErrorsAsync } from '@module/error'
 import { resolveInPackage } from '@module/files'
 import { TargetConfig } from '@module/config'
 import { getTranslationFiles, TranslationFile } from '@module/files/translations'
-import { makeOutputTarget } from '../src/codeGeneration'
 import { ReleasePipeline } from '@module/pipelines'
+import { defaultOutputTargetBuilder } from '@module/codeGeneration'
 
 async function main() {
   let argv = await intoPromise(
@@ -36,7 +36,7 @@ async function main() {
     .debugInfo(`elzii-release from elzii-tools v${version}`)
     .debugInfo(`command-line options: debug=${argv.debug} no-color=${argv['no-color']}`)
 
-  await config.init()
+  await config.init('elzii-release')
 
   const availableTargets = config.requireTargets()
   const selectedTargets =
@@ -58,8 +58,8 @@ async function main() {
 
 async function generateTarget(target: TargetConfig) {
   const sourceFiles = await getTranslations(target.translations)
-  const outputTarget = makeOutputTarget(target.output, target)
-  const pipeline = new ReleasePipeline({ sourceFiles, outputTarget })
+  const outputTarget = await defaultOutputTargetBuilder.makeOutputTarget(target.output, target)
+  const pipeline = new ReleasePipeline(sourceFiles, outputTarget)
 
   await pipeline.execute()
 }
