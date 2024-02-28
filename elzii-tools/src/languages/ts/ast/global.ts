@@ -21,17 +21,17 @@ export function expressionStatement(expression: Expression): ExpressionStatement
 }
 
 export function importDeclaration(
-  importKind: 'type' | 'value',
+  importKind: 'value', // or 'type', but never used
   source: string,
   specifiers: ImportClause[] = [],
-  attributes: ImportAttribute[] = [],
+  // attributes: ImportAttribute[] = [],
 ): ImportDeclaration {
   return {
     type: AST_NODE_TYPES.ImportDeclaration,
     importKind,
     source: literal(source),
     specifiers,
-    attributes,
+    attributes: [],
     assertions: [],
   }
 }

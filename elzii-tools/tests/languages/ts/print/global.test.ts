@@ -1,6 +1,13 @@
 import { getTSPrinter } from '@module/languages/ts'
 import * as ts from '@module/languages/ts/ast'
 
+test('printing an ExpressionStatement', async () => {
+  const printer = getTSPrinter()
+
+  const expr = ts.expressionStatement(ts.identifier('test'))
+  expect(await printer.print(expr)).toMatchSnapshot()
+})
+
 test('printing an ImportDeclaration', async () => {
   const printer = getTSPrinter()
 
@@ -23,7 +30,12 @@ test('printing an ImportSpecifier', async () => {
 test('printing a Program', async () => {
   const printer = getTSPrinter()
 
-  const emptyProgram = ts.program('module')
+  const program = ts.program(
+    'module',
+    ts.expressionStatement(ts.identifier('line1')),
+    ts.expressionStatement(ts.identifier('line2')),
+    ts.expressionStatement(ts.identifier('line3')),
+  )
 
-  expect(await printer.print(emptyProgram)).toMatchSnapshot()
+  expect(await printer.print(program)).toMatchSnapshot()
 })
