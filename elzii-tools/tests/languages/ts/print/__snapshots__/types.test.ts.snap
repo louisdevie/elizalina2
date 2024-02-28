@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`printing a TSAnyKeyword 1`] = `"any"`;
+
+exports[`printing a TSArrayType 1`] = `"string[]"`;
+
+exports[`printing a TSNumberKeyword 1`] = `"number"`;
+
+exports[`printing a TSStringKeyword 1`] = `"string"`;
+
+exports[`printing a TSTypeAnnotation 1`] = `": string"`;
+
+exports[`printing a TSTypeReference 1`] = `"MyType"`;
