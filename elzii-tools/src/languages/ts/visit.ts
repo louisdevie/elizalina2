@@ -290,12 +290,12 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSAbstractPropertyDefinition':
           result = this.visitTSAbstractPropertyDefinition(node as ts.TSAbstractPropertyDefinition)
            break*/
-      /* case 'TSAnyKeyword':
+      case 'TSAnyKeyword':
           result = this.visitTSAnyKeyword(node as ts.TSAnyKeyword)
-           break*/
-      /* case 'TSArrayType':
+           break
+      case 'TSArrayType':
           result = this.visitTSArrayType(node as ts.TSArrayType)
-           break*/
+           break
       /* case 'TSAsExpression':
           result = this.visitTSAsExpression(node as ts.TSAsExpression)
            break*/
@@ -452,9 +452,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSStaticKeyword':
           result = this.visitTSStaticKeyword(node as ts.TSStaticKeyword)
            break*/
-      /* case 'TSStringKeyword':
+      case 'TSStringKeyword':
           result = this.visitTSStringKeyword(node as ts.TSStringKeyword)
-           break*/
+           break
       /* case 'TSSymbolKeyword':
           result = this.visitTSSymbolKeyword(node as ts.TSSymbolKeyword)
            break*/
@@ -497,9 +497,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSTypeQuery':
           result = this.visitTSTypeQuery(node as ts.TSTypeQuery)
            break*/
-      /* case 'TSTypeReference':
+      case 'TSTypeReference':
           result = this.visitTSTypeReference(node as ts.TSTypeReference)
-           break*/
+           break
       /* case 'TSUndefinedKeyword':
           result = this.visitTSUndefinedKeyword(node as ts.TSUndefinedKeyword)
            break*/
@@ -637,8 +637,11 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSAbstractKeyword(tsAbstractKeyword: ts.TSAbstractKeyword): T
   // public abstract visitTSAbstractMethodDefinition(tsAbstractMethodDefinition: ts.TSAbstractMethodDefinition): T
   // public abstract visitTSAbstractPropertyDefinition(tsAbstractPropertyDefinition: ts.TSAbstractPropertyDefinition): T
-  // public abstract visitTSAnyKeyword(tsAnyKeyword: ts.TSAnyKeyword): T
-  // public abstract visitTSArrayType(tsArrayType: ts.TSArrayType): T
+
+  public abstract visitTSAnyKeyword(tsAnyKeyword: ts.TSAnyKeyword): T
+
+  public abstract visitTSArrayType(tsArrayType: ts.TSArrayType): T
+
   // public abstract visitTSAsExpression(tsAsExpression: ts.TSAsExpression): T
   // public abstract visitTSAsyncKeyword(tsAsyncKeyword: ts.TSAsyncKeyword): T
   // public abstract visitTSBigIntKeyword(tsBigIntKeyword: ts.TSBigIntKeyword): T
@@ -695,7 +698,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSRestType(tsRestType: ts.TSRestType): T
   // public abstract visitTSSatisfiesExpression(tsSatisfiesExpression: ts.TSSatisfiesExpression): T
   // public abstract visitTSStaticKeyword(tsStaticKeyword: ts.TSStaticKeyword): T
-  // public abstract visitTSStringKeyword(tsStringKeyword: ts.TSStringKeyword): T
+
+  public abstract visitTSStringKeyword(tsStringKeyword: ts.TSStringKeyword): T
+
   // public abstract visitTSSymbolKeyword(tsSymbolKeyword: ts.TSSymbolKeyword): T
   // public abstract visitTSTemplateLiteralType(tsTemplateLiteralType: ts.TSTemplateLiteralType): T
   // public abstract visitTSThisType(tsThisType: ts.TSThisType): T
@@ -712,7 +717,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSTypeParameterInstantiation(tsTypeParameterInstantiation: ts.TSTypeParameterInstantiation): T
   // public abstract visitTSTypePredicate(tsTypePredicate: ts.TSTypePredicate): T
   // public abstract visitTSTypeQuery(tsTypeQuery: ts.TSTypeQuery): T
-  // public abstract visitTSTypeReference(tsTypeReference: ts.TSTypeReference): T
+
+  public abstract visitTSTypeReference(tsTypeReference: ts.TSTypeReference): T
+
   // public abstract visitTSUndefinedKeyword(tsUndefinedKeyword: ts.TSUndefinedKeyword): T
   // public abstract visitTSUnionType(tsUnionType: ts.TSUnionType): T
   // public abstract visitTSUnknownKeyword(tsUnknownKeyword: ts.TSUnknownKeyword): T

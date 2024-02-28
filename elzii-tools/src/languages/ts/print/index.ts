@@ -8,6 +8,7 @@ import TSPrinterImpl_global from './global'
 import TSPrinterImpl_misc from './misc'
 import TSPrinterImpl_terminals from './terminals'
 import TSPrinterImpl_types from './types'
+import { TSArrayType } from '../ast'
 
 // the implementation of this class is split into the objects imported above
 
@@ -62,11 +63,19 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   public visitTemplateLiteral = TSPrinterImpl_misc.visitTemplateLiteral
 
+  public visitTSAnyKeyword = TSPrinterImpl_types.visitTSAnyKeyword
+
+  public visitTSArrayType = TSPrinterImpl_types.visitTSArrayType
+
   public visitTSClassImplements = TSPrinterImpl_classes.visitTSClassImplements
+
+  public visitTSStringKeyword = TSPrinterImpl_types.visitTSStringKeyword
 
   public visitTSNumberKeyword = TSPrinterImpl_types.visitTSNumberKeyword
 
   public visitTSTypeAnnotation = TSPrinterImpl_types.visitTSTypeAnnotation
+
+  public visitTSTypeReference = TSPrinterImpl_types.visitTSTypeReference
 
   // endregion Visitor implementation
 }
