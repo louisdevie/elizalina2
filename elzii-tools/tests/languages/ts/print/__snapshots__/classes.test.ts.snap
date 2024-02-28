@@ -4,7 +4,7 @@ exports[`printing a ClassBody 1`] = `"{ }"`;
 
 exports[`printing a ClassBody 2`] = `
 "{
-   doNothing() { }
+  doNothing() { }
 }"
 `;
 
