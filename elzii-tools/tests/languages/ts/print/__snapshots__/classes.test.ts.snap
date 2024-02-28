@@ -14,10 +14,6 @@ exports[`printing a ClassDeclarationWithName 2`] = `"class MyClass implements My
 
 exports[`printing a MethodDefinitionNonComputedName 1`] = `"myMethod() { }"`;
 
-exports[`printing a MethodDefinitionNonComputedName 2`] = `"myMethod(x, y) { }"`;
-
-exports[`printing a MethodDefinitionNonComputedName 3`] = `"myMethod(x: number, y: number): number { }"`;
-
-exports[`printing a MethodDefinitionNonComputedName 4`] = `"get myProperty() { }"`;
+exports[`printing a MethodDefinitionNonComputedName 2`] = `"get myProperty() { }"`;
 
 exports[`printing a TSClassImplements 1`] = `"MyInterface"`;

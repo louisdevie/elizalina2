@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`printing a FunctionExpression 1`] = `"() { }"`;
+
+exports[`printing a FunctionExpression 2`] = `"(x, y) { }"`;
+
+exports[`printing a FunctionExpression 3`] = `"(x: number, y: number): number { }"`;

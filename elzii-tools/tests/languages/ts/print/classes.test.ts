@@ -29,27 +29,12 @@ test('printing a ClassDeclarationWithName', async () => {
 test('printing a MethodDefinitionNonComputedName', async () => {
   const printer = getTSPrinter()
 
-  const noParameters = ts.methodDefinition('myMethod', {
+  const method = ts.methodDefinition('myMethod', {
     kind: 'method',
     params: [],
     body: ts.blockStatement(),
   })
-  expect(await printer.print(noParameters)).toMatchSnapshot()
-
-  const withParameters = ts.methodDefinition('myMethod', {
-    kind: 'method',
-    params: [ts.identifier('x'), ts.identifier('y')],
-    body: ts.blockStatement(),
-  })
-  expect(await printer.print(withParameters)).toMatchSnapshot()
-
-  const withTypes = ts.methodDefinition('myMethod', {
-    kind: 'method',
-    params: [ts.identifier('x', ts.tsNumberKeyword()), ts.identifier('y', ts.tsNumberKeyword())],
-    returnType: ts.tsTypeAnnotation(ts.tsNumberKeyword()),
-    body: ts.blockStatement(),
-  })
-  expect(await printer.print(withTypes)).toMatchSnapshot()
+  expect(await printer.print(method)).toMatchSnapshot()
 
   const getter = ts.methodDefinition('myProperty', {
     kind: 'get',

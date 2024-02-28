@@ -62,7 +62,7 @@ export interface FunctionOptions<Body> {
 }
 
 export function functionExpression(
-  name: string | null,
+  name: null, // or string, but never used
   options: FunctionOptions<BlockStatement>,
 ): FunctionExpression {
   return {
