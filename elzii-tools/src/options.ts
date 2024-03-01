@@ -29,7 +29,7 @@ export interface TargetOptions {
   /**
    * The name of the elizalina object used to load translations (the default is `elz`)
    */
-  functionName?: string
+  objectName?: string
 
   /**
    * If set to true, all translations will be compiled in a single file
@@ -148,7 +148,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
   private _translations?: string
   private _output?: OutputConfigBuilder
   private _interfaceName?: string
-  private _elzInstanceName?: string
+  private _objectName?: string
   private _singleFile?: boolean
   private _minify?: boolean
   private _sourcemap?: boolean
@@ -181,8 +181,8 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     return this._interfaceName ?? 'Locale'
   }
 
-  public get functionName(): string {
-    return this._elzInstanceName ?? 'elz'
+  public get objectName(): string {
+    return this._objectName ?? 'elz'
   }
 
   public get singleFile(): boolean {
@@ -195,20 +195,6 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
 
   public get sourcemap(): boolean {
     return this._sourcemap ?? false
-  }
-
-  private mergeOptionalAttribute(
-    optionName: keyof TargetOptions,
-    attributeName: keyof TargetConfigBuilder,
-    options: TargetOptions,
-    shouldOverride: boolean,
-    warningDetails: string,
-  ) {
-    if (options[optionName] !== undefined) {
-      if (!shouldOverride && this[attributeName] !== undefined)
-        show.detailedWarning('The "interfaceName" option was overwritten', warningDetails)
-      this._interfaceName = options.interfaceName
-    }
   }
 
   public merge(options: TargetOptions, shouldOverride: boolean, warningDetails: string) {
@@ -226,10 +212,10 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
       this._interfaceName = options.interfaceName
     }
 
-    if (options.functionName !== undefined) {
-      if (!shouldOverride && this._elzInstanceName !== undefined)
-        show.detailedWarning('The "functionName" option was overwritten', warningDetails)
-      this._elzInstanceName = options.functionName
+    if (options.objectName !== undefined) {
+      if (!shouldOverride && this._objectName !== undefined)
+        show.detailedWarning('The "objectName" option was overwritten', warningDetails)
+      this._objectName = options.objectName
     }
 
     if (options.singleFile !== undefined) {
@@ -266,7 +252,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     )
 
     debugOutput.push(`     interfaceName: ${this.debugJsonify(() => this.interfaceName)}`)
-    debugOutput.push(`     functionName: ${this.debugJsonify(() => this.functionName)}`)
+    debugOutput.push(`     objectName: ${this.debugJsonify(() => this.objectName)}`)
     debugOutput.push(`     singleFile: ${this.debugJsonify(() => this.singleFile)}`)
     debugOutput.push(`     minify: ${this.debugJsonify(() => this.minify)}`)
     debugOutput.push(`     sourcemap: ${this.debugJsonify(() => this.sourcemap)}`)

@@ -16,7 +16,7 @@ import { throwError } from '@module/error'
 
 export default abstract class TSTarget extends BaseTarget {
   private readonly _interfaceName: string
-  private readonly _functionName: string
+  private readonly _objectName: string
   private readonly _userCodeInsertion: UserCodeInsertion
   private _reports?: AllTranslationReports
 
@@ -28,11 +28,11 @@ export default abstract class TSTarget extends BaseTarget {
     return this._interfaceName
   }
 
-  protected constructor(interfaceName: string, functionName: string) {
+  protected constructor(interfaceName: string, objectName: string) {
     super()
 
     this._interfaceName = interfaceName
-    this._functionName = functionName
+    this._objectName = objectName
     this._userCodeInsertion = new UserCodeInsertion()
   }
 

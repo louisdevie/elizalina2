@@ -9,6 +9,7 @@ import { TargetConfig } from '@module/config'
 import { getTranslationFiles, TranslationFile } from '@module/files/translations'
 import { ReleasePipeline } from '@module/pipelines'
 import { defaultOutputTargetBuilder } from '@module/codeGeneration'
+import chalk from 'chalk'
 
 async function main() {
   let argv = await intoPromise(
@@ -42,13 +43,20 @@ async function main() {
   const selectedTargets =
     argv._.length > 0 ? argv._.map((arg) => arg.toString()) : availableTargets.allTargets
 
+  let needToShowTargetNames
   if (selectedTargets.length == 0) {
     show.detailedWarning('No targets were found, you may need to fix your configuration file.')
+    needToShowTargetNames = false
+  } else {
+    needToShowTargetNames = selectedTargets.length > 1 || selectedTargets[0] !== 'default'
   }
 
   for (const targetName of selectedTargets) {
     if (availableTargets.allTargets.includes(targetName)) {
       show.debugInfo(`Generating the ${targetName} target...`)
+      if (needToShowTargetNames) {
+        console.log(chalk.bold(`[${targetName}]`))
+      }
       await generateTarget(availableTargets.getTarget(targetName))
     } else {
       show.detailedError(`Target '${targetName}' does not exists.`)
@@ -58,10 +66,17 @@ async function main() {
 
 async function generateTarget(target: TargetConfig) {
   const sourceFiles = await getTranslations(target.translations)
-  const outputTarget = await defaultOutputTargetBuilder.makeOutputTarget(target.output, target)
-  const pipeline = new ReleasePipeline(sourceFiles, outputTarget)
 
-  await pipeline.execute()
+  if (sourceFiles.length == 0) {
+    show.detailedWarning('No translation files were found, skipping compilation.')
+  } else {
+    show.debugInfo('Creating output target(s)...')
+    const outputTarget = await defaultOutputTargetBuilder.makeOutputTarget(target.output, target)
+
+    const pipeline = new ReleasePipeline(sourceFiles, outputTarget)
+
+    await pipeline.execute()
+  }
 }
 
 async function getTranslations(directory: string): Promise<TranslationFile[]> {

@@ -18,7 +18,7 @@ export interface TargetsConfig {
 
 export interface CommonOutputConfig {
   readonly interfaceName: string
-  readonly functionName: string
+  readonly objectName: string
   readonly singleFile: boolean
   readonly minify: boolean
   readonly sourcemap: boolean

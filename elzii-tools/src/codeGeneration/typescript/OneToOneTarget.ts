@@ -14,9 +14,9 @@ export default class OneToOneTarget extends TSTarget {
   public constructor(
     outputDirectory: TypeScriptOutputDirectory,
     interfaceName: string,
-    functionName: string,
+    objectName: string,
   ) {
-    super(interfaceName, functionName)
+    super(interfaceName, objectName)
 
     this._outputDirectory = outputDirectory
   }
