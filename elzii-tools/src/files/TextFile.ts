@@ -1,6 +1,6 @@
 import { PathNode } from '.'
 import fs from 'node:fs'
-import { throwError } from '@module/error'
+import { handleErrorsAsync, throwError } from '@module/error'
 
 export default abstract class TextFile<D> extends PathNode {
   private readonly _shouldExists: boolean
@@ -11,9 +11,16 @@ export default abstract class TextFile<D> extends PathNode {
   }
 
   public async resolve(): Promise<void> {
+    const stat = await handleErrorsAsync(() => fs.promises.stat(this.path), {
+      all: () => undefined,
+    })
+
     if (this._shouldExists) {
-      let stat = await fs.promises.stat(this.path)
-      if (!stat.isFile()) throwError(`${this.path} is not a file.`, 'files')
+      if (stat === undefined) {
+        throwError(`The file ${this.path} does not exists.`, 'files')
+      } else if (!stat.isFile()) {
+        throwError(`${this.path} is not a file.`, 'files')
+      }
     }
   }
 

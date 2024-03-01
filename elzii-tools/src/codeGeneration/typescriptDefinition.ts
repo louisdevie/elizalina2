@@ -7,6 +7,9 @@ export class TypeScriptDefinitionTargetBuilder extends BaseBuilder {
     outputs: OutputConfig,
     common: CommonOutputConfig,
   ): Promise<BaseTarget | undefined> {
-    throwError('The DTS output format is not available yet.')
+    if (outputs.js.enabled) {
+      throwError('The DTS output format is not available yet.')
+    }
+    return undefined
   }
 }

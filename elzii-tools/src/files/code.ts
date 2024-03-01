@@ -23,6 +23,10 @@ export class TypeScriptFile extends TextFile<TSProgram> {
 export type AnyCodeFile = TypeScriptFile
 
 export class TypeScriptOutputDirectory extends Directory<TypeScriptFile> {
+  constructor(name: string) {
+    super(name, true)
+  }
+
   protected override createExistingFile(name: string): TypeScriptFile | null {
     return name.endsWith(FileExtensions.TypeScript) ? new TypeScriptFile(name) : null
   }

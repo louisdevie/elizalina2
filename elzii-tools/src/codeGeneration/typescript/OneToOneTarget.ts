@@ -48,8 +48,8 @@ export default class OneToOneTarget extends TSTarget {
     await file.write(program)
   }
 
-  protected finishThis(): Promise<void> {
-    throw new Error('Method not implemented.')
+  protected override async finishThis(): Promise<void> {
+    // TODO !
   }
 
   private makeInterfaceImport(): ts.ProgramStatement {
