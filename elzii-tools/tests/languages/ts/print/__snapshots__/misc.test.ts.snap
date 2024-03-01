@@ -4,9 +4,9 @@ exports[`printing a BlockStatement 1`] = `"{ }"`;
 
 exports[`printing a BlockStatement 2`] = `
 "{
-  line1
-  line2
-  line3
+  line1;
+  line2;
+  line3;
 }"
 `;
 

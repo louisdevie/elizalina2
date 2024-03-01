@@ -17,36 +17,12 @@ import { identifier } from '@module/languages/ts/ast/misc'
 export function callExpression(
   callee: LeftHandSideExpression,
   ...args: CallExpressionArgument[]
-): CallExpression
-export function callExpression(
-  callee: LeftHandSideExpression,
-  typeArgs: TSTypeParameterInstantiation,
-  ...args: CallExpressionArgument[]
-): CallExpression
-export function callExpression(
-  callee: LeftHandSideExpression,
-  typeArgsOrFirstArg: TSTypeParameterInstantiation | CallExpressionArgument | undefined,
-  ...args: CallExpressionArgument[]
 ): CallExpression {
-  let allTypeArgs: TSTypeParameterInstantiation | undefined
-  let allArgs: CallExpressionArgument[]
-
-  if (typeArgsOrFirstArg?.type === AST_NODE_TYPES.TSTypeParameterInstantiation) {
-    allTypeArgs = typeArgsOrFirstArg
-    allArgs = args
-  } else if (typeArgsOrFirstArg === undefined) {
-    allTypeArgs = undefined
-    allArgs = []
-  } else {
-    allTypeArgs = undefined
-    allArgs = [typeArgsOrFirstArg, ...args]
-  }
-
   return {
     type: AST_NODE_TYPES.CallExpression,
     callee,
-    arguments: allArgs,
-    typeArguments: allTypeArgs,
+    arguments: args,
+    typeArguments: undefined,
     optional: false,
     typeParameters: undefined,
   }

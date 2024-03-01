@@ -13,7 +13,7 @@ const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
     this: Visitor,
     expressionStatement: ts.ExpressionStatement,
   ): PrintedCode {
-    return this.visitAnyNode(expressionStatement.expression)
+    return new PrintedCode(this.visitAnyNode(expressionStatement.expression) + ';')
   },
 
   visitImportDeclaration(this: Visitor, importDeclaration: ts.ImportDeclaration): PrintedCode {
@@ -22,7 +22,7 @@ const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
       .join(',')
     const source = this.visitLiteral(importDeclaration.source)
 
-    return new PrintedCode(`import {${specifiers} } from ${source}`)
+    return new PrintedCode(`import {${specifiers} } from ${source};`)
   },
 
   visitImportSpecifier(this: Visitor, importSpecifier: ts.ImportSpecifier): PrintedCode {

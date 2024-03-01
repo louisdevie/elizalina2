@@ -1,6 +1,20 @@
 import { getTSPrinter } from '@module/languages/ts'
 import * as ts from '@module/languages/ts/ast'
 
+test('printing a CallExpression', async () => {
+  const printer = getTSPrinter()
+
+  const noArguments = ts.callExpression(ts.identifier('myFunction'))
+  expect(await printer.print(noArguments)).toMatchSnapshot()
+
+  const withArguments = ts.callExpression(
+    ts.identifier('myFunction'),
+    ts.literal('arg1'),
+    ts.literal('arg2'),
+  )
+  expect(await printer.print(withArguments)).toMatchSnapshot()
+})
+
 test('printing a FunctionExpression', async () => {
   const printer = getTSPrinter()
 
@@ -22,4 +36,14 @@ test('printing a FunctionExpression', async () => {
     body: ts.blockStatement(),
   })
   expect(await printer.print(withTypes)).toMatchSnapshot()
+})
+
+test('printing a ReturnStatement', async () => {
+  const printer = getTSPrinter()
+
+  const noValue = ts.returnStatement()
+  expect(await printer.print(noValue)).toMatchSnapshot()
+
+  const withValue = ts.returnStatement(ts.identifier('someValue'))
+  expect(await printer.print(withValue)).toMatchSnapshot()
 })

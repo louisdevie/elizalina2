@@ -1,7 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`printing a CallExpression 1`] = `"myFunction()"`;
+
+exports[`printing a CallExpression 2`] = `"myFunction('arg1', 'arg2')"`;
+
 exports[`printing a FunctionExpression 1`] = `"() { }"`;
 
 exports[`printing a FunctionExpression 2`] = `"(x, y) { }"`;
 
 exports[`printing a FunctionExpression 3`] = `"(x: number, y: number): number { }"`;
+
+exports[`printing a ReturnStatement 1`] = `"return;"`;
+
+exports[`printing a ReturnStatement 2`] = `"return someValue;"`;

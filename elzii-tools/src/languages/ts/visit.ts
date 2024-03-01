@@ -41,9 +41,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'BreakStatement':
           result = this.visitBreakStatement(node as ts.BreakStatement)
            break*/
-      /* case 'CallExpression':
-          result = this.visitCallExpression(node as ts.CallExpression)
-           break*/
+      case 'CallExpression':
+        result = this.visitCallExpression(node as ts.CallExpression)
+        break
       /* case 'CatchClause':
           result = this.visitCatchClause(node as ts.CatchClause)
            break*/
@@ -218,9 +218,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'RestElement':
           result = this.visitRestElement(node as ts.RestElement)
            break*/
-      /* case 'ReturnStatement':
-          result = this.visitReturnStatement(node as ts.ReturnStatement)
-           break*/
+      case 'ReturnStatement':
+        result = this.visitReturnStatement(node as ts.ReturnStatement)
+        break
       /* case 'SequenceExpression':
           result = this.visitSequenceExpression(node as ts.SequenceExpression)
            break*/
@@ -291,11 +291,11 @@ export abstract class TSVisitor<T = void> {
           result = this.visitTSAbstractPropertyDefinition(node as ts.TSAbstractPropertyDefinition)
            break*/
       case 'TSAnyKeyword':
-          result = this.visitTSAnyKeyword(node as ts.TSAnyKeyword)
-           break
+        result = this.visitTSAnyKeyword(node as ts.TSAnyKeyword)
+        break
       case 'TSArrayType':
-          result = this.visitTSArrayType(node as ts.TSArrayType)
-           break
+        result = this.visitTSArrayType(node as ts.TSArrayType)
+        break
       /* case 'TSAsExpression':
           result = this.visitTSAsExpression(node as ts.TSAsExpression)
            break*/
@@ -453,8 +453,8 @@ export abstract class TSVisitor<T = void> {
           result = this.visitTSStaticKeyword(node as ts.TSStaticKeyword)
            break*/
       case 'TSStringKeyword':
-          result = this.visitTSStringKeyword(node as ts.TSStringKeyword)
-           break
+        result = this.visitTSStringKeyword(node as ts.TSStringKeyword)
+        break
       /* case 'TSSymbolKeyword':
           result = this.visitTSSymbolKeyword(node as ts.TSSymbolKeyword)
            break*/
@@ -498,8 +498,8 @@ export abstract class TSVisitor<T = void> {
           result = this.visitTSTypeQuery(node as ts.TSTypeQuery)
            break*/
       case 'TSTypeReference':
-          result = this.visitTSTypeReference(node as ts.TSTypeReference)
-           break
+        result = this.visitTSTypeReference(node as ts.TSTypeReference)
+        break
       /* case 'TSUndefinedKeyword':
           result = this.visitTSUndefinedKeyword(node as ts.TSUndefinedKeyword)
            break*/
@@ -533,7 +533,9 @@ export abstract class TSVisitor<T = void> {
   public abstract visitBlockStatement(blockStatement: ts.BlockStatement): T
 
   // public abstract visitBreakStatement(breakStatement: ts.BreakStatement): T
-  // public abstract visitCallExpression(callExpression: ts.CallExpression): T
+
+  public abstract visitCallExpression(callExpression: ts.CallExpression): T
+
   // public abstract visitCatchClause(catchClause: ts.CatchClause): T
   // public abstract visitChainExpression(chainExpression: ts.ChainExpression): T
 
@@ -610,7 +612,9 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitProperty(property: ts.Property): T
   // public abstract visitPropertyDefinition(propertyDefinition: ts.PropertyDefinition): T
   // public abstract visitRestElement(restElement: ts.RestElement): T
-  // public abstract visitReturnStatement(returnStatement: ts.ReturnStatement): T
+
+  public abstract visitReturnStatement(returnStatement: ts.ReturnStatement): T
+
   // public abstract visitSequenceExpression(sequenceExpression: ts.SequenceExpression): T
   // public abstract visitSpreadElement(spreadElement: ts.SpreadElement): T
   // public abstract visitStaticBlock(staticBlock: ts.StaticBlock): T
