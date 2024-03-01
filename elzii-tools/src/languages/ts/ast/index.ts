@@ -29,7 +29,6 @@ export * from './types'
 // export function doWhileStatement(): ts.DoWhileStatement {}
 // export function emptyStatement(): ts.EmptyStatement {}
 // export function exportAllDeclaration(): ts.ExportAllDeclaration {}
-// export function exportDefaultDeclaration(): ts.ExportDefaultDeclaration {}
 // export function exportNamedDeclaration(): ts.ExportNamedDeclaration {}
 // export function exportSpecifier(): ts.ExportSpecifier {}
 // export function forInStatement(): ts.ForInStatement {}

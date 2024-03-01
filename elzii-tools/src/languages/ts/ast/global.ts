@@ -1,8 +1,9 @@
 import {
   AST_NODE_TYPES,
+  DefaultExportDeclarations,
+  ExportDefaultDeclaration,
   Expression,
   ExpressionStatement,
-  ImportAttribute,
   ImportClause,
   ImportDeclaration,
   ImportSpecifier,
@@ -11,6 +12,16 @@ import {
 } from '@module/languages/ts/tsestree-spec'
 import { literal } from './terminals'
 import { identifier } from '@module/languages/ts/ast/misc'
+
+export function exportDefaultDeclaration(
+  declaration: DefaultExportDeclarations,
+): ExportDefaultDeclaration {
+  return {
+    type: AST_NODE_TYPES.ExportDefaultDeclaration,
+    declaration,
+    exportKind: 'value',
+  }
+}
 
 export function expressionStatement(expression: Expression): ExpressionStatement {
   return {

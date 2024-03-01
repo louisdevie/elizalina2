@@ -80,9 +80,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'ExportAllDeclaration':
           result = this.visitExportAllDeclaration(node as ts.ExportAllDeclaration)
            break*/
-      /* case 'ExportDefaultDeclaration':
-          result = this.visitExportDefaultDeclaration(node as ts.ExportDefaultDeclaration)
-           break*/
+      case 'ExportDefaultDeclaration':
+        result = this.visitExportDefaultDeclaration(node as ts.ExportDefaultDeclaration)
+        break
       /* case 'ExportNamedDeclaration':
           result = this.visitExportNamedDeclaration(node as ts.ExportNamedDeclaration)
            break*/
@@ -551,7 +551,11 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitDoWhileStatement(doWhileStatement: ts.DoWhileStatement): T
   // public abstract visitEmptyStatement(emptyStatement: ts.EmptyStatement): T
   // public abstract visitExportAllDeclaration(exportAllDeclaration: ts.ExportAllDeclaration): T
-  // public abstract visitExportDefaultDeclaration(exportDefaultDeclaration: ts.ExportDefaultDeclaration): T
+
+  public abstract visitExportDefaultDeclaration(
+    exportDefaultDeclaration: ts.ExportDefaultDeclaration,
+  ): T
+
   // public abstract visitExportNamedDeclaration(exportNamedDeclaration: ts.ExportNamedDeclaration): T
   // public abstract visitExportSpecifier(exportSpecifier: ts.ExportSpecifier): T
 

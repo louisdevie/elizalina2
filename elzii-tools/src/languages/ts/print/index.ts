@@ -44,6 +44,8 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   public visitClassDeclaration = TSPrinterImpl_classes.visitClassDeclaration
 
+  public visitExportDefaultDeclaration = TSPrinterImpl_global.visitExportDefaultDeclaration
+
   public visitExpressionStatement = TSPrinterImpl_global.visitExpressionStatement
 
   public visitFunctionExpression = TSPrinterImpl_functions.visitFunctionExpression

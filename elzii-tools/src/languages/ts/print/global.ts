@@ -3,12 +3,22 @@ import * as ts from '@module/languages/ts/ast'
 import { Visitor } from '@module/languages/ts/print/helpers'
 
 type VisitGlobal =
+  | 'visitExportDefaultDeclaration'
   | 'visitExpressionStatement'
   | 'visitImportDeclaration'
   | 'visitImportSpecifier'
   | 'visitProgram'
 
 const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
+  visitExportDefaultDeclaration(
+    this: Visitor,
+    exportDefaultDeclaration: ts.ExportDefaultDeclaration,
+  ): PrintedCode {
+    return new PrintedCode(
+      'export default ' + this.visitAnyNode(exportDefaultDeclaration.declaration) + ';',
+    )
+  },
+
   visitExpressionStatement(
     this: Visitor,
     expressionStatement: ts.ExpressionStatement,
