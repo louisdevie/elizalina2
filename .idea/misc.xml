@@ -4,30 +4,10 @@
     <option name="perGrammarGenerationSettings">
       <list>
         <PerGrammarGenerationSettings>
-          <option name="fileName" value="*" />
+          <option name="fileName" value="$PROJECT_DIR$/elzii-tools/src/languages/tm/parse/TMParser.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="elzii-tools/src/etrFormat/parser/gen" />
-          <option name="libDir" value="elzii-tools/src/etrFormat" />
-          <option name="encoding" value="" />
-          <option name="pkg" value="" />
-          <option name="language" value="TypeScript" />
-          <option name="generateVisitor" value="true" />
-        </PerGrammarGenerationSettings>
-        <PerGrammarGenerationSettings>
-          <option name="fileName" value="$PROJECT_DIR$/elzii-tools/src/languages/tm/parser/TMLexer.g4" />
-          <option name="autoGen" value="true" />
-          <option name="outputDir" value="elzii-tools/src/languages/tm/parser/gen" />
-          <option name="libDir" value="elzii-tools/src/languages/tm/parser" />
-          <option name="encoding" value="" />
-          <option name="pkg" value="" />
-          <option name="language" value="TypeScript" />
-          <option name="generateVisitor" value="true" />
-        </PerGrammarGenerationSettings>
-        <PerGrammarGenerationSettings>
-          <option name="fileName" value="$PROJECT_DIR$/elzii-tools/src/languages/tm/parser/TMParser.g4" />
-          <option name="autoGen" value="true" />
-          <option name="outputDir" value="elzii-tools/src/languages/tm/parser/gen" />
-          <option name="libDir" value="elzii-tools/src/languages/tm/parser" />
+          <option name="outputDir" value="elzii-tools/src/languages/tm/parse/gen" />
+          <option name="libDir" value="elzii-tools/src/languages/tm/parse/gen" />
           <option name="encoding" value="" />
           <option name="pkg" value="" />
           <option name="language" value="TypeScript" />

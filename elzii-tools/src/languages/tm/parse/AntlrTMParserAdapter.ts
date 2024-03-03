@@ -14,6 +14,8 @@ export default class AntlrTMParserAdapter implements TMParser {
     const tokens = new CommonTokenStream(lexer)
 
     const parser = new GeneratedTMParser(tokens)
+    // parser.removeErrorListeners()
+    // TODO: uncomment this once the error listener is implemented
     const errorListener = new AntlrErrorListener()
     parser.addErrorListener(errorListener)
 

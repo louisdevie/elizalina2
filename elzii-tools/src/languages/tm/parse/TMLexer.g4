@@ -9,6 +9,11 @@ LINE_COMMENT_START
     -> pushMode(LINE_COMMENT_MODE)
     ;
 
+DIRECTIVE_NAME
+    : '@' IDENTIFIER
+    -> pushMode(DIRECTIVE_MODE)
+    ;
+
 HEADER_START
     : '@{'
     -> pushMode(EMBEDDED_CODE_MODE)
@@ -38,7 +43,8 @@ DOUBLE_QUOTE
 
 SPACE
     : [ \t]+
-    -> skip;
+    -> skip
+    ;
 
 
 mode LINE_COMMENT_MODE;
@@ -48,6 +54,22 @@ LINE_COMMENT_TEXT
     -> popMode
     ;
 
+
+mode DIRECTIVE_MODE;
+
+DIRECTIVE_ARGUMENT
+    : ~[ \t\r\n]+
+    ;
+
+DIRECTIVE_ARGUMENT_SEPARATOR
+    : [ \t]+
+    -> skip
+    ;
+
+END_OF_DIRECTIVE
+    : '\r'? '\n'
+    -> popMode
+    ;
 
 mode EMBEDDED_CODE_MODE;
 

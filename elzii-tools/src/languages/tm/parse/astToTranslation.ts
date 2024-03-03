@@ -10,10 +10,10 @@ import {
 } from '@module/translations'
 import { ErrorReport, throwError } from '@module/error'
 import {
-  Double_quoted_text_parameterContext,
+  DoubleQuotedTextParameterContext,
   HeaderContext,
   MessageContext,
-  Single_quoted_text_parameterContext,
+  SingleQuotedTextParameterContext,
 } from './gen/TMParser'
 import EtrParserVisitor from './gen/TMParserVisitor'
 import EtrLexer from './gen/TMLexer'
@@ -57,7 +57,7 @@ export class TranslationBuilder extends EtrParserVisitor<void> implements Builde
     const key = ctx.KEY().getText()
 
     const messageBuilder = new MessageBuilder(this._report)
-    messageBuilder.visit(ctx.single_quoted_text() || ctx.double_quoted_text())
+    messageBuilder.visit(ctx.singleQuotedText() || ctx.doubleQuotedText())
     this._translation.messages.set(key, messageBuilder.finish().value)
   }
 }
@@ -108,16 +108,12 @@ export class MessageBuilder extends EtrParserVisitor<void> implements Builder<Me
     })
   }
 
-  public override visitSingle_quoted_text_parameter = (
-    ctx: Single_quoted_text_parameterContext,
-  ) => {
+  public override visitSingleQuotedTextParameter = (ctx: SingleQuotedTextParameterContext) => {
     this.foundParameter(ctx.PARAMETER_NAME().getText())
   }
 
-  public override visitDouble_quoted_text_parameter = (
-    ctx: Double_quoted_text_parameterContext,
-  ) => {
-    let formatNode: ParserRuleContext = ctx.parameter_format() || ctx.shorthand_parameter_format()
+  public override visitDoubleQuotedTextParameter = (ctx: DoubleQuotedTextParameterContext) => {
+    let formatNode: ParserRuleContext = ctx.parameterFormat() || ctx.shorthandParameterFormat()
     let format = undefined
 
     if (formatNode !== null) {
