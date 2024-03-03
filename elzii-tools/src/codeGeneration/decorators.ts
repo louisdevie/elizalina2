@@ -10,6 +10,13 @@ import { AllTranslationReports } from '@module/checks/translations'
 export abstract class BaseTarget implements OutputTarget {
   private _otherTargets?: BaseTarget
 
+  private readonly _id: number
+  private static lastId: number = 0
+
+  protected constructor() {
+    this._id = BaseTarget.lastId++
+  }
+
   public addOther(target: BaseTarget): BaseTarget {
     if (this._otherTargets === undefined) {
       this._otherTargets = target
@@ -17,6 +24,10 @@ export abstract class BaseTarget implements OutputTarget {
       this._otherTargets.addOther(target)
     }
     return this
+  }
+
+  public get id(): string {
+    return `#${this._id}`
   }
 
   public async init(reports: AllTranslationReports): Promise<void> {

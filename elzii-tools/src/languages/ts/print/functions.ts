@@ -1,7 +1,6 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
 import { Visitor } from '@module/languages/ts/print/helpers'
-import { callExpression, functionExpression } from '@module/languages/ts/ast'
 
 type VisitFunctions = 'visitCallExpression' | 'visitFunctionExpression' | 'visitReturnStatement'
 

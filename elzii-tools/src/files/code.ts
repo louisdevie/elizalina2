@@ -4,7 +4,7 @@ import { Program as TSProgram } from '@module/languages/ts/ast'
 import { TSPrinter, getTSPrinter } from '@module/languages/ts'
 
 export class TypeScriptFile extends TextFile<TSProgram> {
-  private _printer: TSPrinter
+  private readonly _printer: TSPrinter
 
   public readonly readable = false
   public readonly writable = true
@@ -36,10 +36,24 @@ export class TypeScriptOutputDirectory extends Directory<TypeScriptFile> {
   }
 
   public createNewFile(name: string, printer?: TSPrinter): TypeScriptFile {
+    const existing = this.children.findIndex((file) => file.name === name)
     const file = new TypeScriptFile(name, { createNew: true, printer })
-    this.children.push(file)
+    if (existing === -1) {
+      this.children.push(file)
+    } else {
+      this.children[existing] = file
+    }
     file.attachToTree(this)
     return file
+  }
+
+  public async cleanUp(filesToKeep: string[]) {
+    for (const file of this.children) {
+      if (!filesToKeep.includes(file.name)) {
+        await file.remove()
+        this.children.splice(this.children.indexOf(file), 1)
+      }
+    }
   }
 }
 

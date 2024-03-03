@@ -56,4 +56,8 @@ export default abstract class TextFile<D> extends PathNode {
       encoding: 'utf-8',
     })
   }
+
+  public async remove() {
+    await fs.promises.rm(this.path)
+  }
 }

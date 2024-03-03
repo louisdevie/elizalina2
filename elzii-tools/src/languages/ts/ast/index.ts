@@ -29,7 +29,6 @@ export * from './types'
 // export function doWhileStatement(): ts.DoWhileStatement {}
 // export function emptyStatement(): ts.EmptyStatement {}
 // export function exportAllDeclaration(): ts.ExportAllDeclaration {}
-// export function exportNamedDeclaration(): ts.ExportNamedDeclaration {}
 // export function exportSpecifier(): ts.ExportSpecifier {}
 // export function forInStatement(): ts.ForInStatement {}
 // export function forOfStatement(): ts.ForOfStatement {}
@@ -110,14 +109,11 @@ export * from './types'
 // export function tsIndexedAccessType(): ts.TSIndexedAccessType {}
 // export function tsIndexSignature(): ts.TSIndexSignature {}
 // export function tsInferType(): ts.TSInferType {}
-// export function tsInterfaceBody(): ts.TSInterfaceBody {}
-// export function tsInterfaceDeclaration(): ts.TSInterfaceDeclaration {}
 // export function tsInterfaceHeritage(): ts.TSInterfaceHeritage {}
 // export function tsIntersectionType(): ts.TSIntersectionType {}
 // export function tsIntrinsicKeyword(): ts.TSIntrinsicKeyword {}
 // export function tsLiteralType(): ts.TSLiteralType {}
 // export function tsMappedType(): ts.TSMappedType {}
-// export function tsMethodSignature(): ts.TSMethodSignature {}
 // export function tsModuleBlock(): ts.TSModuleBlock {}
 // export function tsModuleDeclaration(): ts.TSModuleDeclaration {}
 // export function tsNamedTupleMember(): ts.TSNamedTupleMember {}

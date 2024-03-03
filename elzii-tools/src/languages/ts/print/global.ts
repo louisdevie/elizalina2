@@ -1,9 +1,11 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
 import { Visitor } from '@module/languages/ts/print/helpers'
+import { throwError } from '@module/error'
 
 type VisitGlobal =
   | 'visitExportDefaultDeclaration'
+  | 'visitExportNamedDeclaration'
   | 'visitExpressionStatement'
   | 'visitImportDeclaration'
   | 'visitImportSpecifier'
@@ -17,6 +19,15 @@ const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
     return new PrintedCode(
       'export default ' + this.visitAnyNode(exportDefaultDeclaration.declaration) + ';',
     )
+  },
+
+  visitExportNamedDeclaration(
+    this: Visitor,
+    exportNamedDeclaration: ts.ExportNamedDeclaration,
+  ): PrintedCode {
+    if (exportNamedDeclaration.declaration == null)
+      throwError('Cannot print an export-from statement', 'internal')
+    return new PrintedCode('export ' + this.visitAnyNode(exportNamedDeclaration.declaration))
   },
 
   visitExpressionStatement(

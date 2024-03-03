@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Printing a TSInterfaceBody 1`] = `"{ }"`;
+
+exports[`Printing a TSInterfaceBody 2`] = `
+"{
+  doNothing()
+}"
+`;
+
+exports[`Printing a TSInterfaceDeclaration 1`] = `"interface MyInterface { }"`;
+
+exports[`Printing a TSMethodSignature 1`] = `"myMethod()"`;
+
+exports[`Printing a TSMethodSignature 2`] = `"myMethod(x, y)"`;
+
+exports[`Printing a TSMethodSignature 3`] = `"myMethod(x: number, y: number): number"`;
+
+exports[`Printing a TSMethodSignature 4`] = `"get myProperty()"`;
+
 exports[`printing a ClassBody 1`] = `"{ }"`;
 
 exports[`printing a ClassBody 2`] = `

@@ -2,11 +2,13 @@ import {
   AST_NODE_TYPES,
   DefaultExportDeclarations,
   ExportDefaultDeclaration,
+  ExportNamedDeclaration,
   Expression,
   ExpressionStatement,
   ImportClause,
   ImportDeclaration,
   ImportSpecifier,
+  NamedExportDeclarations,
   Program,
   ProgramStatement,
 } from '@module/languages/ts/tsestree-spec'
@@ -20,6 +22,20 @@ export function exportDefaultDeclaration(
     type: AST_NODE_TYPES.ExportDefaultDeclaration,
     declaration,
     exportKind: 'value',
+  }
+}
+
+export function exportNamedDeclaration(
+  declaration: NamedExportDeclarations,
+): ExportNamedDeclaration {
+  return {
+    type: AST_NODE_TYPES.ExportNamedDeclaration,
+    declaration,
+    exportKind: 'value',
+    source: null,
+    specifiers: [],
+    attributes: [],
+    assertions: [],
   }
 }
 

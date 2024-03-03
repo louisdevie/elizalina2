@@ -4,8 +4,15 @@ import * as ts from '@module/languages/ts/ast'
 test('printing an ExportDefaultDeclaration', async () => {
   const printer = getTSPrinter()
 
-  const expr = ts.exportDefaultDeclaration(ts.identifier('test'))
-  expect(await printer.print(expr)).toMatchSnapshot()
+  const exportDefault = ts.exportDefaultDeclaration(ts.identifier('test'))
+  expect(await printer.print(exportDefault)).toMatchSnapshot()
+})
+
+test('printing an ExportNamedDeclaration', async () => {
+  const printer = getTSPrinter()
+
+  const exportNamed = ts.exportNamedDeclaration(ts.classDeclaration('MyClass'))
+  expect(await printer.print(exportNamed)).toMatchSnapshot()
 })
 
 test('printing an ExpressionStatement', async () => {

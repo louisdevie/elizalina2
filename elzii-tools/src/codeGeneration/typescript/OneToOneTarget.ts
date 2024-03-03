@@ -3,13 +3,18 @@ import { FileExtensions } from '@module/files'
 import { Translation } from '@module/translations'
 import { TypeScriptOutputDirectory } from '@module/files/code'
 import * as ts from '@module/languages/ts/ast'
-import { config } from '@module'
+import { config, show } from '@module'
 import { toIdentifier } from '@module/languages/js/helpers'
 import { AllTranslationReports } from '@module/checks/translations'
 import { getTSPrinter } from '@module/languages/ts'
+import chalk from 'chalk'
+import { ShowProgress } from '@module/show'
 
 export default class OneToOneTarget extends TSTarget {
   private _outputDirectory: TypeScriptOutputDirectory
+  private readonly _sourcesList: string[]
+  private readonly _outputList: string[]
+  private readonly _show: ShowProgress
 
   public constructor(
     outputDirectory: TypeScriptOutputDirectory,
@@ -19,20 +24,29 @@ export default class OneToOneTarget extends TSTarget {
     super(interfaceName, objectName)
 
     this._outputDirectory = outputDirectory
+    this._sourcesList = []
+    this._outputList = []
+    this._show = new ShowProgress('TS')
   }
 
   protected override async initThis(reports: AllTranslationReports): Promise<void> {
     await super.initThis(reports)
 
     await this._outputDirectory.resolve()
+
+    this._show.progress('Compiling translations...')
   }
 
   protected async compileThis(translation: Translation, source: string): Promise<void> {
+    this._sourcesList.push(source)
     const className = toIdentifier(translation.id + '_' + this.interfaceName)
+    const fileName = className + FileExtensions.TypeScript
+    show.debugInfo(`(${this.id}) Generating ${fileName}...`)
 
     const printerWithPostProcessor = getTSPrinter(this.userCodeInsertion)
-    const file = this._outputDirectory.createNewFile(className + FileExtensions.TypeScript)
+    const file = this._outputDirectory.createNewFile(fileName, printerWithPostProcessor)
 
+    show.debugInfo(`   Building AST`)
     const program = ts.program('module')
 
     program.comments = [this.makeGeneratedNoticeComment([source], config.requireToolInfo())]
@@ -43,16 +57,54 @@ export default class OneToOneTarget extends TSTarget {
       program.body.push(ts.expressionStatement(this.makePlaceholderExpression(translation.header)))
     }
 
-    program.body.push(this.makeTranslationClass(translation, className))
+    const cls = this.makeTranslationClass(translation, className)
+    program.body.push(ts.exportDefaultDeclaration(cls))
 
+    show.debugInfo(`   Writing to file`)
     await file.write(program)
+    this._outputList.push(file.name)
+    this.userCodeInsertion.clear()
+
+    const missing = this.requireMissingReport()
+    this.showFileSuccess(fileName, missing.missingKeysCountIn(translation.id), missing.allKeysCount)
   }
 
   protected override async finishThis(): Promise<void> {
-    // TODO !
+    await this.generateIndex()
+    await this._outputDirectory.cleanUp(this._outputList)
+    this._show.success('Finished')
+  }
+
+  private async generateIndex() {
+    const fileName = 'index' + FileExtensions.TypeScript
+    const file = this._outputDirectory.createNewFile(fileName)
+
+    const program = ts.program('module')
+
+    program.comments = [
+      this.makeGeneratedNoticeComment(this._sourcesList, config.requireToolInfo()),
+    ]
+
+    const intf = this.makeTranslationInterface()
+    program.body.push(ts.exportNamedDeclaration(intf))
+
+    await file.write(program)
+    this._outputList.push(file.name)
+
+    this.showFileSuccess(fileName, 0, 0)
   }
 
   private makeInterfaceImport(): ts.ProgramStatement {
     return ts.importDeclaration('value', '.', [ts.importSpecifier('value', this.interfaceName)])
+  }
+
+  private showFileSuccess(fileName: string, missingCount: number, totalCount: number) {
+    let missingCountFormatted = ''
+    if (missingCount > 0) {
+      const color = missingCount / totalCount < 0.05 ? chalk.yellow : chalk.redBright
+      missingCountFormatted = color(`[!] ${missingCount} missing translation(s)`)
+    }
+
+    this._show.success(`${chalk.bold(fileName)} ${missingCountFormatted}`)
   }
 }

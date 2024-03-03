@@ -12,10 +12,21 @@ export interface MissingTranslationsReport {
   readonly allKeys: Iterable<string>
 
   /**
+   * The total number of keys.
+   */
+  readonly allKeysCount: number
+
+  /**
    * Gets a list of the missing keys for a specific translation.
    * @param id The ID of the translation.
    */
   missingKeysIn(id: string): Iterable<string>
+
+  /**
+   * Gets the number of missing keys for a specific translation.
+   * @param id The ID of the translation.
+   */
+  missingKeysCountIn(id: string): number
 }
 
 class Report implements MissingTranslationsReport {
@@ -31,8 +42,16 @@ class Report implements MissingTranslationsReport {
     return this._allKeys
   }
 
+  public get allKeysCount(): number {
+    return this._allKeys.size
+  }
+
   public missingKeysIn(id: string): Iterable<string> {
     return this._missingKeys.get(id) ?? []
+  }
+
+  public missingKeysCountIn(id: string): number {
+    return this._missingKeys.get(id)?.length ?? 0
   }
 
   public copyAllKeys(): Set<string> {

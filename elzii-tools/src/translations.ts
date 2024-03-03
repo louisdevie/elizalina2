@@ -120,6 +120,10 @@ export class UserCode {
     return '<user code>'
   }
 
+  public print(): string {
+    return this._code
+  }
+
   public getTypeHint(): TypeHint {
     let hint = TypeHint.None
 

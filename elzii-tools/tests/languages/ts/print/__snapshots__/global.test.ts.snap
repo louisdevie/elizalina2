@@ -9,6 +9,8 @@ line3;
 
 exports[`printing an ExportDefaultDeclaration 1`] = `"export default test;"`;
 
+exports[`printing an ExportNamedDeclaration 1`] = `"export class MyClass { }"`;
+
 exports[`printing an ExpressionStatement 1`] = `"test;"`;
 
 exports[`printing an ImportDeclaration 1`] = `"import { myFunction } from 'myModule';"`;

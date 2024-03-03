@@ -83,9 +83,9 @@ export abstract class TSVisitor<T = void> {
       case 'ExportDefaultDeclaration':
         result = this.visitExportDefaultDeclaration(node as ts.ExportDefaultDeclaration)
         break
-      /* case 'ExportNamedDeclaration':
-          result = this.visitExportNamedDeclaration(node as ts.ExportNamedDeclaration)
-           break*/
+      case 'ExportNamedDeclaration':
+        result = this.visitExportNamedDeclaration(node as ts.ExportNamedDeclaration)
+        break
       /* case 'ExportSpecifier':
           result = this.visitExportSpecifier(node as ts.ExportSpecifier)
            break*/
@@ -368,12 +368,12 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSInferType':
           result = this.visitTSInferType(node as ts.TSInferType)
            break*/
-      /* case 'TSInterfaceBody':
-          result = this.visitTSInterfaceBody(node as ts.TSInterfaceBody)
-           break*/
-      /* case 'TSInterfaceDeclaration':
-          result = this.visitTSInterfaceDeclaration(node as ts.TSInterfaceDeclaration)
-           break*/
+      case 'TSInterfaceBody':
+        result = this.visitTSInterfaceBody(node as ts.TSInterfaceBody)
+        break
+      case 'TSInterfaceDeclaration':
+        result = this.visitTSInterfaceDeclaration(node as ts.TSInterfaceDeclaration)
+        break
       /* case 'TSInterfaceHeritage':
           result = this.visitTSInterfaceHeritage(node as ts.TSInterfaceHeritage)
            break*/
@@ -389,9 +389,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSMappedType':
           result = this.visitTSMappedType(node as ts.TSMappedType)
            break*/
-      /* case 'TSMethodSignature':
-          result = this.visitTSMethodSignature(node as ts.TSMethodSignature)
-           break*/
+      case 'TSMethodSignature':
+        result = this.visitTSMethodSignature(node as ts.TSMethodSignature)
+        break
       /* case 'TSModuleBlock':
           result = this.visitTSModuleBlock(node as ts.TSModuleBlock)
            break*/
@@ -556,7 +556,8 @@ export abstract class TSVisitor<T = void> {
     exportDefaultDeclaration: ts.ExportDefaultDeclaration,
   ): T
 
-  // public abstract visitExportNamedDeclaration(exportNamedDeclaration: ts.ExportNamedDeclaration): T
+  public abstract visitExportNamedDeclaration(exportNamedDeclaration: ts.ExportNamedDeclaration): T
+
   // public abstract visitExportSpecifier(exportSpecifier: ts.ExportSpecifier): T
 
   public abstract visitExpressionStatement(expressionStatement: ts.ExpressionStatement): T
@@ -676,14 +677,19 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSIndexedAccessType(tsIndexedAccessType: ts.TSIndexedAccessType): T
   // public abstract visitTSIndexSignature(tsIndexSignature: ts.TSIndexSignature): T
   // public abstract visitTSInferType(tsInferType: ts.TSInferType): T
-  // public abstract visitTSInterfaceBody(tsInterfaceBody: ts.TSInterfaceBody): T
-  // public abstract visitTSInterfaceDeclaration(tsInterfaceDeclaration: ts.TSInterfaceDeclaration): T
+
+  public abstract visitTSInterfaceBody(tsInterfaceBody: ts.TSInterfaceBody): T
+
+  public abstract visitTSInterfaceDeclaration(tsInterfaceDeclaration: ts.TSInterfaceDeclaration): T
+
   // public abstract visitTSInterfaceHeritage(tsInterfaceHeritage: ts.TSInterfaceHeritage): T
   // public abstract visitTSIntersectionType(tsIntersectionType: ts.TSIntersectionType): T
   // public abstract visitTSIntrinsicKeyword(tsIntrinsicKeyword: ts.TSIntrinsicKeyword): T
   // public abstract visitTSLiteralType(tsLiteralType: ts.TSLiteralType): T
   // public abstract visitTSMappedType(tsMappedType: ts.TSMappedType): T
-  // public abstract visitTSMethodSignature(tsMethodSignature: ts.TSMethodSignature): T
+
+  public abstract visitTSMethodSignature(tsMethodSignature: ts.TSMethodSignature): T
+
   // public abstract visitTSModuleBlock(tsModuleBlock: ts.TSModuleBlock): T
   // public abstract visitTSModuleDeclaration(tsModuleDeclaration: ts.TSModuleDeclaration): T
   // public abstract visitTSNamedTupleMember(tsNamedTupleMember: ts.TSNamedTupleMember): T

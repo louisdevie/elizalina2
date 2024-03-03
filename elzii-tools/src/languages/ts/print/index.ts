@@ -46,6 +46,8 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   public visitExportDefaultDeclaration = TSPrinterImpl_global.visitExportDefaultDeclaration
 
+  public visitExportNamedDeclaration = TSPrinterImpl_global.visitExportNamedDeclaration
+
   public visitExpressionStatement = TSPrinterImpl_global.visitExpressionStatement
 
   public visitFunctionExpression = TSPrinterImpl_functions.visitFunctionExpression
@@ -73,6 +75,12 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
   public visitTSArrayType = TSPrinterImpl_types.visitTSArrayType
 
   public visitTSClassImplements = TSPrinterImpl_classes.visitTSClassImplements
+
+  public visitTSInterfaceBody = TSPrinterImpl_classes.visitTSInterfaceBody
+
+  public visitTSInterfaceDeclaration = TSPrinterImpl_classes.visitTSInterfaceDeclaration
+
+  public visitTSMethodSignature = TSPrinterImpl_classes.visitTSMethodSignature
 
   public visitTSStringKeyword = TSPrinterImpl_types.visitTSStringKeyword
 

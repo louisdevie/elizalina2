@@ -93,3 +93,23 @@ export class Show {
     return this
   }
 }
+
+export class ShowProgress {
+  private _tag: string
+
+  public constructor(tag: string) {
+    this._tag = tag.toUpperCase().padEnd(3)
+  }
+
+  public progress(infos: string) {
+    console.log(`${chalk.blue(this._tag)} ${infos}`)
+  }
+
+  public success(infos: string) {
+    console.log(`${chalk.green(this._tag)} ${infos}`)
+  }
+
+  public failure(infos: string) {
+    console.log(`${chalk.blue(this._tag)} ${infos}`)
+  }
+}

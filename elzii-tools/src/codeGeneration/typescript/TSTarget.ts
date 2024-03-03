@@ -11,7 +11,7 @@ import {
   UserCode,
 } from '@module/translations'
 import { UserCodeInsertion } from '@module/codeGeneration/postProcessing'
-import { AllTranslationReports } from '@module/checks/translations'
+import { AllTranslationReports, MissingTranslationsReport } from '@module/checks/translations'
 import { throwError } from '@module/error'
 
 export default abstract class TSTarget extends BaseTarget {
@@ -20,6 +20,13 @@ export default abstract class TSTarget extends BaseTarget {
   private readonly _userCodeInsertion: UserCodeInsertion
   private _reports?: AllTranslationReports
 
+  protected constructor(interfaceName: string, objectName: string) {
+    super()
+
+    this._interfaceName = interfaceName
+    this._objectName = objectName
+    this._userCodeInsertion = new UserCodeInsertion()
+  }
   public get userCodeInsertion(): UserCodeInsertion {
     return this._userCodeInsertion
   }
@@ -28,12 +35,14 @@ export default abstract class TSTarget extends BaseTarget {
     return this._interfaceName
   }
 
-  protected constructor(interfaceName: string, objectName: string) {
-    super()
+  private requireAllReports(): AllTranslationReports {
+    if (this._reports === undefined)
+      throwError('Reports were unavailable during compilation', 'internal')
+    return this._reports
+  }
 
-    this._interfaceName = interfaceName
-    this._objectName = objectName
-    this._userCodeInsertion = new UserCodeInsertion()
+  public requireMissingReport(): MissingTranslationsReport {
+    return this.requireAllReports().missing
   }
 
   private static generatePlaceholderKey(): string {
@@ -84,12 +93,11 @@ export default abstract class TSTarget extends BaseTarget {
       implements: [ts.tsClassImplements(this.interfaceName)],
     })
 
-    if (this._reports === undefined)
-      throwError('Reports were unavailable during compilation', 'internal')
+    const reports = this.requireAllReports()
 
-    for (const key of this._reports.missing.allKeys) {
+    for (const key of reports.missing.allKeys) {
       const message = translation.messages.get(key)
-      const signature = Array.from(this._reports.parameters.signatureOf(key).parameters)
+      const signature = Array.from(reports.parameters.signatureOf(key).parameters)
       if (message !== undefined) {
         cls.body.body.push(this.makeDefinedMessageMethod(key, signature, message.content))
       } else {
@@ -199,5 +207,30 @@ export default abstract class TSTarget extends BaseTarget {
     }
 
     return ts.templateLiteral(textElements, expressions)
+  }
+
+  protected makeTranslationInterface(): ts.TSInterfaceDeclaration {
+    const intf = ts.tsInterfaceDeclaration(this.interfaceName)
+
+    const reports = this.requireAllReports()
+
+    for (const key of reports.missing.allKeys) {
+      const signature = Array.from(reports.parameters.signatureOf(key).parameters)
+      intf.body.body.push(this.makeMessageMethodSignature(key, signature))
+    }
+
+    return intf
+  }
+
+  private makeMessageMethodSignature(
+    key: string,
+    messageParameters: MessageParameter[],
+  ): ts.TSMethodSignature {
+    const params = messageParameters.map(this.makeMessageParameter.bind(this))
+    return ts.tsMethodSignature(key, {
+      kind: params.length === 0 ? 'get' : 'method', // use getters when there are no parameters
+      params,
+      returnType: ts.tsTypeAnnotation(ts.tsStringKeyword()),
+    })
   }
 }
