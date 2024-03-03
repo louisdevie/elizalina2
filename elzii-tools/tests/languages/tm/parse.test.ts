@@ -152,3 +152,18 @@ test('parsing a translation with a header', async () => {
   expect(tr.header).toEqual(new UserCode(" import { myFunction } from '../myModule' "))
   expect(tr.messages).toStrictEqual(expectedMessages)
 })
+
+test('parsing a translation with directives', async () => {
+  // they should be valid but ignored
+  const text = "@noArguments \n @withArguments x y z \n nothing = 'Rien'"
+
+  const expectedMessages: Map<string, Message> = new Map()
+  expectedMessages.set('nothing', {
+    parameters: [],
+    content: [{ type: 'text', value: 'Rien' }],
+  })
+
+  const tr = await defaultTMParser.parse(text)
+  expect(tr.header).toBeUndefined()
+  expect(tr.messages).toStrictEqual(expectedMessages)
+})
