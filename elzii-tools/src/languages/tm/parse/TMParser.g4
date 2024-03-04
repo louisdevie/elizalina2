@@ -42,7 +42,7 @@ message
 // this rule is used to recover from an out-of-order translation file.
 // it matches invalid sections so that every message can still be parsed correctly.
 notAMessage
-    : ( HEADER_START | DIRECTIVE_NAME ) { badRule(this, localctx) }
+    : ( HEADER_START | DIRECTIVE_NAME ) { badRule(this) }
       ~( NEW_LINE | END_OF_DIRECTIVE )*
     ;
 
