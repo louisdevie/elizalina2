@@ -14,6 +14,7 @@ export type FormatOptions =
   | DatetimeFormatOptions
   | PluralFormatOptions
 
+
 export interface AnyFormat {
   toOptions(): FormatOptions
 }
