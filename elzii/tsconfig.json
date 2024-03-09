@@ -7,6 +7,14 @@
     "module": "commonjs",
     "sourceMap": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "@module": [
+        "./src/index"
+      ],
+      "@module/*": [
+        "./src/*"
+      ]
+    }
   }
 }
