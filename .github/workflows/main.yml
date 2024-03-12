@@ -84,7 +84,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-        cache: 'npm'
     - name: Merge coverage reports
       run: npx cobertura-merge -o merged.xml elzii=lib/coverage.xml elzii-tools=tools/input2.xml
     - uses: codecov/codecov-action@v3
