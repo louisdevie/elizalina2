@@ -162,34 +162,38 @@ test('locale resolution from the environment', async () => {
 
 interface TestLocale {
   get helloWorld(): string
+  results(n: number): string
 }
 
-test('locale object proxy', () => {
+test('locale object proxy', async () => {
   const elz = new Elz<TestLocale>({
     locales: [
       {
         id: 'en-US',
-        messages: { helloWorld: 'Hello, world!' },
+        messages: { helloWorld: 'Hello, world!', results: (n) => `${n} result(s) found.` },
       },
       {
         id: 'fr-FR',
-        messages: { helloWorld: 'Bonjour, le monde!' },
+        messages: { helloWorld: 'Bonjour, le monde!', results: (n) => `${n} résultat(s) trouvés.` },
       },
       {
         id: 'de-DE',
-        messages: { helloWorld: 'Hallo welt!' },
+        messages: { helloWorld: 'Hallo welt!', results: (n) => `${n} gefundene(s) Ergebnis(se).` },
       },
     ],
   })
 
   const __ = elz.makeLocaleProxy()
 
-  elz.useLocale('fr-FR')
+  await elz.useLocale('fr-FR')
   expect(__.helloWorld).toEqual('Bonjour, le monde!')
+  expect(__.results(8)).toEqual('8 résultat(s) trouvés.')
 
-  elz.useLocale('de-DE')
+  await elz.useLocale('de-DE')
   expect(__.helloWorld).toEqual('Hallo welt!')
+  expect(__.results(8)).toEqual('8 gefundene(s) Ergebnis(se).')
 
-  elz.useLocale('en-US')
+  await elz.useLocale('en-US')
   expect(__.helloWorld).toEqual('Hello, world!')
+  expect(__.results(8)).toEqual('8 result(s) found.')
 })
