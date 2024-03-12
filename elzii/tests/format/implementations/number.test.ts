@@ -103,6 +103,26 @@ test('integer digit grouping', () => {
   expect(opts.useGrouping).toEqual(false)
 })
 
+test('notations', () => {
+  let opts = fmt().notation('engineering').toOptions()
+  expect(opts.notation).toEqual('engineering')
+
+  opts = fmt().standardNotation.toOptions()
+  expect(opts.notation).toEqual('standard')
+
+  opts = fmt().scientific.toOptions()
+  expect(opts.notation).toEqual('scientific')
+
+  opts = fmt().engineering.toOptions()
+  expect(opts.notation).toEqual('engineering')
+
+  opts = fmt().longCompact.toOptions()
+  expect(opts.notation).toEqual('longCompact')
+
+  opts = fmt().compact.toOptions()
+  expect(opts.notation).toEqual('compact')
+})
+
 test('numbering system', () => {
   let opts = fmt().numberingSystem('mathbold').toOptions()
   expect(opts.numberingSystem).toEqual('mathbold')
@@ -140,7 +160,7 @@ test('currency style: sign modes', () => {
   let opts = fmt().currencySign('accounting').toOptions()
   expect(opts.currencySign).toEqual('accounting')
 
-  opts = fmt().standard.toOptions()
+  opts = fmt().standardSign.toOptions()
   expect(opts.currencySign).toEqual('standard')
 
   opts = fmt().accounting.toOptions()

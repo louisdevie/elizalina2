@@ -26,6 +26,16 @@ export type RoundingMode =
   | 'halfTrunc'
   | 'halfEven'
 
+/**
+ * The different number notations. Possible values are :
+ * + `standard` - basic decimal notation, e.g. "123456"
+ * + `scientific` - the number is written with an exponent, e.g. "1.23456E5"
+ * + `engineering` - the number is written with an exponent that is a multiple of 3, e.g. "123.456E3"
+ * + `compact` - uses a symbol to represent the exponent, e.g. "123K"
+ * + `longCompact` - uses a word to represent the exponent, e.g. "123 thousand"
+ */
+export type NumberNotation = 'standard' | 'scientific' | 'engineering' | 'compact' | 'longCompact'
+
 export interface DigitsFormatOptions extends AnyFormatOptions {
   minimumIntegerDigits?: number
   minimumFractionDigits?: number
@@ -33,6 +43,7 @@ export interface DigitsFormatOptions extends AnyFormatOptions {
   maximumSignificantDigits?: number
   roundingMode?: RoundingMode
   useGrouping?: boolean
+  notation?: NumberNotation
 }
 
 /**
@@ -190,6 +201,46 @@ export interface DigitsFormat<This> {
    * @see useGrouping
    */
   get dontGroup(): This
+
+  /**
+   * Specify which notation to use. See {@link NumberNotation} for more details on the possible
+   * values.
+   *
+   * This option can also be set with the shortcuts of the same name as the notations.
+   *
+   * @param notation The name of the notation to use.
+   */
+  notation(notation: NumberNotation): This
+
+  /**
+   * Use basic decimal notation, e.g. "123456".
+   * @see notation
+   */
+  get standardNotation(): This
+
+  /**
+   * Use an exponent to display the number, e.g. "1.23456E5"
+   * @see notation
+   */
+  get scientific(): This
+
+  /**
+   * Use an exponent that is a multiple of 3, e.g. "123.456E3"
+   * @see notation
+   */
+  get engineering(): This
+
+  /**
+   * Use an exponent represented by a symbol, e.g. "123K"
+   * @see notation
+   */
+  get compact(): This
+
+  /**
+   * Uses an exponent represented by a word, e.g. "123 thousand"
+   * @see notation
+   */
+  get longCompact(): This
 }
 
 interface BaseNumberFormat<F> extends AnyFormat, DigitsFormat<F> {
@@ -275,7 +326,7 @@ export interface CurrencyNumberFormat extends BaseNumberFormat<CurrencyNumberFor
    * Use the standard style for displaying the sign of the number, i.e. a minus sign.
    * @see currencySign
    */
-  get standard(): CurrencyNumberFormat
+  get standardSign(): CurrencyNumberFormat
 
   /**
    * Use the accounting style for displaying the sign of the number, i.e. wrapping negative numbers

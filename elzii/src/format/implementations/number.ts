@@ -6,6 +6,7 @@ import {
   DigitsFormatOptions,
   NumberFormat,
   NumberFormatOptions,
+  NumberNotation,
   PercentNumberFormat,
   RoundingMode,
   SignDisplay,
@@ -100,6 +101,31 @@ export abstract class DigitsFormatImpl<This> implements DigitsFormat<This> {
   public get dontGroup(): This {
     return this.useGrouping(false)
   }
+
+  notation(notation: NumberNotation): This {
+    this.options.notation = notation
+    return this as unknown as This
+  }
+
+  get standardNotation(): This {
+    return this.notation('standard')
+  }
+
+  get scientific(): This {
+    return this.notation('scientific')
+  }
+
+  get engineering(): This {
+    return this.notation('engineering')
+  }
+
+  get longCompact(): This {
+    return this.notation('longCompact')
+  }
+
+  get compact(): This {
+    return this.notation('compact')
+  }
 }
 
 export class NumberFormatImpl
@@ -164,7 +190,7 @@ export class NumberFormatImpl
     return this
   }
 
-  get standard(): NumberFormatImpl {
+  get standardSign(): NumberFormatImpl {
     return this.currencySign('standard')
   }
 
