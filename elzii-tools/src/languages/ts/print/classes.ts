@@ -6,6 +6,7 @@ type VisitClasses =
   | 'visitClassBody'
   | 'visitClassDeclaration'
   | 'visitMethodDefinition'
+  | 'visitPropertyDefinition'
   | 'visitTSClassImplements'
   | 'visitTSInterfaceBody'
   | 'visitTSInterfaceDeclaration'
@@ -39,12 +40,23 @@ const TSPrinterImpl_classes: Pick<Visitor, VisitClasses> = {
   },
 
   visitMethodDefinition(this: Visitor, methodDefinition: ts.MethodDefinition): PrintedCode {
-    const modifiers = []
+    const modifiers = ['public ']
     if (methodDefinition.kind === 'get') modifiers.push('get ')
     const name = this.visitAnyNode(methodDefinition.key)
     const nameWithModifiers = new PrintedCode(`${modifiers.join('')}${name}`)
 
     return PrintedCode.joinInline([nameWithModifiers, this.visitAnyNode(methodDefinition.value)])
+  },
+
+  visitPropertyDefinition(this: Visitor, propertyDefinition: ts.PropertyDefinition): PrintedCode {
+    const key = this.visitAnyNode(propertyDefinition.key)
+
+    let type = ''
+    if (propertyDefinition.typeAnnotation !== undefined) {
+      type = this.visitTSTypeAnnotation(propertyDefinition.typeAnnotation).toString()
+    }
+
+    return new PrintedCode(`private ${key}${type};`)
   },
 
   visitTSClassImplements(this: Visitor, tsClassImplements: ts.TSClassImplements): PrintedCode {

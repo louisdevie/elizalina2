@@ -22,7 +22,7 @@ exports[`printing a ClassBody 1`] = `"{ }"`;
 
 exports[`printing a ClassBody 2`] = `
 "{
-  doNothing() { }
+  public doNothing() { }
 }"
 `;
 
@@ -30,8 +30,12 @@ exports[`printing a ClassDeclarationWithName 1`] = `"class MyClass { }"`;
 
 exports[`printing a ClassDeclarationWithName 2`] = `"class MyClass implements MyInterface { }"`;
 
-exports[`printing a MethodDefinitionNonComputedName 1`] = `"myMethod() { }"`;
+exports[`printing a MethodDefinitionNonComputedName 1`] = `"public myMethod() { }"`;
 
-exports[`printing a MethodDefinitionNonComputedName 2`] = `"get myProperty() { }"`;
+exports[`printing a MethodDefinitionNonComputedName 2`] = `"public get myProperty() { }"`;
+
+exports[`printing a MethodDefinitionNonComputedName 3`] = `"public constructor() { }"`;
+
+exports[`printing a PropertyDefinition 1`] = `"private _myProperty: string;"`;
 
 exports[`printing a TSClassImplements 1`] = `"MyInterface"`;

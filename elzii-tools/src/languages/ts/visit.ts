@@ -212,9 +212,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'Property':
           result = this.visitProperty(node as ts.Property)
            break*/
-      /* case 'PropertyDefinition':
-          result = this.visitPropertyDefinition(node as ts.PropertyDefinition)
-           break*/
+      case 'PropertyDefinition':
+        result = this.visitPropertyDefinition(node as ts.PropertyDefinition)
+        break
       /* case 'RestElement':
           result = this.visitRestElement(node as ts.RestElement)
            break*/
@@ -615,7 +615,9 @@ export abstract class TSVisitor<T = void> {
   public abstract visitProgram(program: ts.Program): T
 
   // public abstract visitProperty(property: ts.Property): T
-  // public abstract visitPropertyDefinition(propertyDefinition: ts.PropertyDefinition): T
+
+  public abstract visitPropertyDefinition(propertyDefinition: ts.PropertyDefinition): T
+
   // public abstract visitRestElement(restElement: ts.RestElement): T
 
   public abstract visitReturnStatement(returnStatement: ts.ReturnStatement): T

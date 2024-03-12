@@ -63,7 +63,6 @@ export * from './types'
 // export function objectPattern(): ts.ObjectPattern {}
 // export function privateIdentifier(): ts.PrivateIdentifier {}
 // export function property(): ts.Property {}
-// export function propertyDefinition(): ts.PropertyDefinition {}
 // export function restElement(): ts.RestElement {}
 // export function sequenceExpression(): ts.SequenceExpression {}
 // export function spreadElement(): ts.SpreadElement {}

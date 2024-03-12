@@ -42,6 +42,20 @@ test('printing a MethodDefinitionNonComputedName', async () => {
     body: ts.blockStatement(),
   })
   expect(await printer.print(getter)).toMatchSnapshot()
+
+  const constructor = ts.methodDefinition('constructor', {
+    kind: 'constructor',
+    params: [],
+    body: ts.blockStatement(),
+  })
+  expect(await printer.print(constructor)).toMatchSnapshot()
+})
+
+test('printing a PropertyDefinition', async () => {
+  const printer = getTSPrinter()
+
+  const property = ts.propertyDefinition('_myProperty', ts.tsStringKeyword())
+  expect(await printer.print(property)).toMatchSnapshot()
 })
 
 test('printing a TSClassImplements', async () => {

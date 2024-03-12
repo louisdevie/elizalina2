@@ -7,17 +7,18 @@ import {
   ClassElement,
   MethodDefinitionNonComputedName,
   Parameter,
+  PropertyDefinition,
   TSClassImplements,
   TSInterfaceBody,
   TSInterfaceDeclaration,
   TSMethodSignature,
-  TSPropertySignature,
   TSTypeAnnotation,
   TypeElement,
+  TypeNode,
 } from '@module/languages/ts/tsestree-spec'
 import { functionExpression, FunctionOptions } from './functions'
 import { identifier } from './misc'
-import { TypeAliasDeclaration } from 'typescript'
+import { tsTypeAnnotation } from '@module/languages/ts/ast/types'
 
 export function classBody(...elements: ClassElement[]): ClassBody {
   return { type: AST_NODE_TYPES.ClassBody, body: elements }
@@ -47,7 +48,7 @@ export function classDeclaration(name: string, options?: ClassOptions): ClassDec
 }
 
 export interface MethodOptions extends FunctionOptions<BlockStatement> {
-  kind?: 'get' | 'method' // | 'constructor' | 'set'
+  kind?: 'get' | 'method' | 'constructor' //  | 'set'
   // accessibility?: Accessibility | undefined
   // static?: boolean
   // override?: boolean
@@ -65,8 +66,26 @@ export function methodDefinition(
     static: /* options.static ?? */ false,
     override: /* options.override ?? */ false,
     kind: options.kind ?? 'method',
-    accessibility: undefined /* options.accessibility */,
+    accessibility: 'public' /* options.accessibility */,
     optional: false,
+    decorators: [],
+  }
+}
+
+export function propertyDefinition(name: string, type: TypeNode): PropertyDefinition {
+  return {
+    type: AST_NODE_TYPES.PropertyDefinition,
+    key: identifier(name),
+    typeAnnotation: tsTypeAnnotation(type),
+    accessibility: 'private',
+    value: null,
+    readonly: false,
+    optional: false,
+    static: false,
+    computed: false,
+    override: false,
+    declare: false,
+    definite: false,
     decorators: [],
   }
 }

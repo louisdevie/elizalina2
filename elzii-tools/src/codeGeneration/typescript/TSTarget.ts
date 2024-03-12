@@ -93,6 +93,8 @@ export default abstract class TSTarget extends BaseTarget {
       implements: [ts.tsClassImplements(this.interfaceName)],
     })
 
+    // cls.body.body.push(ts.)
+
     const reports = this.requireAllReports()
 
     for (const key of reports.missing.allKeys) {
