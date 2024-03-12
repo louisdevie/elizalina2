@@ -159,3 +159,37 @@ test('locale resolution from the environment', async () => {
   expect(elzMainOnly.currentLocaleId).toEqual('fr-FR')
   expect(elzMainAndFallback.currentLocaleId).toEqual('en')
 })
+
+interface TestLocale {
+  get helloWorld(): string
+}
+
+test('locale object proxy', () => {
+  const elz = new Elz<TestLocale>({
+    locales: [
+      {
+        id: 'en-US',
+        messages: { helloWorld: 'Hello, world!' },
+      },
+      {
+        id: 'fr-FR',
+        messages: { helloWorld: 'Bonjour, le monde!' },
+      },
+      {
+        id: 'de-DE',
+        messages: { helloWorld: 'Hallo welt!' },
+      },
+    ],
+  })
+
+  const __ = elz.makeLocaleProxy()
+
+  elz.useLocale('fr-FR')
+  expect(__.helloWorld).toEqual('Bonjour, le monde!')
+
+  elz.useLocale('de-DE')
+  expect(__.helloWorld).toEqual('Hallo welt!')
+
+  elz.useLocale('en-US')
+  expect(__.helloWorld).toEqual('Hello, world!')
+})

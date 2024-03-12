@@ -12,7 +12,7 @@ export class Fmt {
     this._cache = new Map()
   }
 
-  protected format(value: any, config: (f: Format) => AnyFormat, cacheKey?: string): string {
+  public format(value: any, config: (f: Format) => AnyFormat, cacheKey?: string): string {
     const shouldBeCached = cacheKey !== undefined
     const isCached = shouldBeCached && this._cache.has(cacheKey)
 
