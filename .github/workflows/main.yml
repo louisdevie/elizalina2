@@ -85,7 +85,7 @@ jobs:
       with:
         node-version: 18
     - name: Merge coverage reports
-      run: npx cobertura-merge -o merged.xml elzii=lib/coverage.xml elzii-tools=tools/input2.xml
+      run: npx cobertura-merge -o merged.xml elzii=lib/coverage.xml elzii-tools=tools/coverage.xml
     - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
