@@ -15,10 +15,10 @@ jobs:
         working-directory: ./elzii-tools
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js 16
+    - name: Use Node.js 18
       uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
         cache: 'npm'
         cache-dependency-path: './elzii-tools/package-lock.json'
     - uses: actions/setup-python@v5
@@ -34,7 +34,60 @@ jobs:
 
     - run: npm run type-check
     - run: npm test -- --collectCoverage --coverageDirectory .
+
+    - name: Upload coverage artifacts for the tools
+      uses: actions/upload-artifact@v3
+      with:
+        name: tools-coverage
+        path: ./elzii-tools/coverage.xml
+        
+  elzii:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./elzii
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: './elzii-tools/package-lock.json'
+
+    - run: npm ci
+    - run: npm run type-check
+    - run: npm test -- --collectCoverage --coverageDirectory .
+
+    - name: Upload coverage artifacts for the library
+      uses: actions/upload-artifact@v3
+      with:
+        name: lib-coverage
+        path: ./elzii/coverage.xml
+        
+  merge-and-report:
+    runs-on: ubuntu-latest
+    needs: [elzii, elzii-tools]
+    steps:
+    - name: Download coverage report of tools tests
+      uses: actions/download-artifact@v3
+      with:
+        name: tools-coverage
+        path: tools
+    - name: Download coverage report of library tests
+      uses: actions/download-artifact@v3
+      with:
+        name: lib-coverage
+        path: lib
+  
+    - name: Use Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+    - name: Merge coverage reports
+      run: npx cobertura-merge -o merged.xml elzii=lib/coverage.xml elzii-tools=tools/input2.xml
     - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: elzii-tools/coverage.xml
+        files: ./merged.xml
