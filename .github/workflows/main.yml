@@ -42,12 +42,12 @@ jobs:
       run: pipx install antlr4-tools
     - name: Generate ANTLR4 recognizers
       run: node scripts/antlrGen.mjs
-      working-directory: elzii
+      working-directory: elzii-tools
       
     - run: npm run type-check
-      working-directory: elzii
+      working-directory: elzii-tools
     - run: npm test -- --collectCoverage --coverageDirectory .
-      working-directory: elzii
+      working-directory: elzii-tools
 
     # merge and report
     
