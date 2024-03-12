@@ -7,6 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/elzii-tools/dist" />
       <excludeFolder url="file://$MODULE_DIR$/elzii/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/elzii-tools/lcov-report" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
