@@ -33,6 +33,9 @@ jobs:
     - run: npm test -- --collectCoverage --coverageDirectory .
       working-directory: elzii
 
+    # where tf are my files
+    - run: find . -name coverage.xml
+
     # tooling tests
 
     - run: npm ci
