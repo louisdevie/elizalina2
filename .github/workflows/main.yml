@@ -10,9 +10,6 @@ on:
 jobs:
   test-all:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./elzii-tools
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js 18
@@ -32,9 +29,6 @@ jobs:
       working-directory: elzii
     - run: npm test -- --collectCoverage --coverageDirectory .
       working-directory: elzii
-
-    # where tf are my files
-    - run: find . -name coverage.xml
 
     # tooling tests
 
