@@ -8,7 +8,7 @@ on:
   workflow_dispatch: { }
 
 jobs:
-  elzii-tools:
+  test-all:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,71 +20,40 @@ jobs:
       with:
         node-version: 18
         cache: 'npm'
-        cache-dependency-path: './elzii-tools/package-lock.json'
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+        cache-dependency-path: |
+          ./elzii/package-lock.json
+          ./elzii-tools/package-lock.json
+
+    # library tests
 
     - run: npm ci
+      working-directory: elzii      
+    - run: npm run type-check
+      working-directory: elzii
+    - run: npm test -- --collectCoverage --coverageDirectory .
+      working-directory: elzii
 
+    # tooling tests
+
+    - run: npm ci
+      working-directory: elzii-tools
+      
     - name: Install ANTLR4 tooling
-      run: pip install antlr4-tools
+      run: pipx install antlr4-tools
     - name: Generate ANTLR4 recognizers
       run: node scripts/antlrGen.mjs
-
+      working-directory: elzii
+      
     - run: npm run type-check
+      working-directory: elzii
     - run: npm test -- --collectCoverage --coverageDirectory .
+      working-directory: elzii
 
-    - name: Upload coverage artifacts for the tools
-      uses: actions/upload-artifact@v3
-      with:
-        name: tools-coverage
-        path: ./elzii-tools/coverage.xml
-        
-  elzii:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./elzii
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js 18
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
-        cache: 'npm'
-        cache-dependency-path: './elzii-tools/package-lock.json'
-
-    - run: npm ci
-    - run: npm run type-check
-    - run: npm test -- --collectCoverage --coverageDirectory .
-
-    - name: Upload coverage artifacts for the library
-      uses: actions/upload-artifact@v3
-      with:
-        name: lib-coverage
-        path: ./elzii/coverage.xml
-        
-  merge-and-report:
-    runs-on: ubuntu-latest
-    needs: [elzii, elzii-tools]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Download coverage report of tools tests
-      uses: actions/download-artifact@v3
-      with:
-        name: tools-coverage
-        path: tools
-    - name: Download coverage report of library tests
-      uses: actions/download-artifact@v3
-      with:
-        name: lib-coverage
-        path: lib
-  
-    - name: Install coverage merging tool
-      run: pipx install merge_cobertura
+    # merge and report
+    
+    - run: pipx install merge_cobertura
     - name: Merge coverage reports
-      run: merge-cobertura lib/coverage.xml tools/coverage.xml > merged.xml
+      run: merge-cobertura elzii/coverage.xml elzii-tools/coverage.xml > merged.xml
     - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
