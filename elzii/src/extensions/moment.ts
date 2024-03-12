@@ -20,4 +20,3 @@ export class MomentExtension implements DatetimeExtension {
     return moment.toDate()
   }
 }
-
