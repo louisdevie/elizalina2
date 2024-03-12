@@ -8,7 +8,7 @@ import { resolveInPackage } from '@module/files'
 import { TargetConfig } from '@module/config'
 import { getTranslationFiles, TranslationFile } from '@module/files/translations'
 import { ReleasePipeline } from '@module/pipelines'
-import { defaultOutputTargetBuilder } from '@module/codeGeneration'
+import { defaultOutputTargetBuilder } from '@module/generation'
 import chalk from 'chalk'
 
 async function main() {

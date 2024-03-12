@@ -1,5 +1,5 @@
 import { TranslationFile } from '@module/files/translations'
-import { OutputTarget } from '../codeGeneration'
+import { OutputTarget } from '../generation'
 import { relative } from 'node:path'
 import { config, show } from '@module'
 import { Translation } from '@module/translations'

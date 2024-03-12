@@ -1,4 +1,4 @@
-import { ElizalinaRuntimeConfig } from '@module/codeGeneration/codeConfig'
+import { ElizalinaRuntimeConfig } from '@module/generation/codeConfig'
 
 /**
  * A translation of a project.

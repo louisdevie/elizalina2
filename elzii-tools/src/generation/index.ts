@@ -1,7 +1,7 @@
 import { CommonOutputConfig, OutputConfig } from '@module/config'
 import { Translation } from '@module/translations'
-import { JavaScriptTargetBuilder } from '@module/codeGeneration/javascript'
-import { TypeScriptDefinitionTargetBuilder } from '@module/codeGeneration/typescriptDefinition'
+import { JavaScriptTargetBuilder } from '@module/generation/javascript'
+import { TypeScriptDefinitionTargetBuilder } from '@module/generation/typescriptDefinition'
 import { TSTargetBuilder } from './typescript'
 import { AllTranslationReports } from '@module/checks/translations'
 

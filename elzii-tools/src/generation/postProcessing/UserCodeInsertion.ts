@@ -1,6 +1,6 @@
 import { TextProcessor } from '@module/printing'
 import { UserCode } from '@module/translations'
-import { PlaceholdersConfig } from '@module/codeGeneration/codeConfig'
+import { PlaceholdersConfig } from '@module/generation/codeConfig'
 import { show } from '@module'
 
 export default class UserCodeInsertion implements TextProcessor {

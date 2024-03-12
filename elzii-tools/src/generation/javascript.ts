@@ -3,7 +3,7 @@ import { BaseBuilder, BaseTarget } from './decorators'
 import { throwError } from '@module/error'
 import { getTSOutputDirectory } from '@module/files/code'
 import { resolveInPackage } from '@module/files'
-import { OneToOneTSTarget } from '@module/codeGeneration/typescript'
+import { OneToOneTSTarget } from '@module/generation/typescript'
 
 export class JavaScriptTargetBuilder extends BaseBuilder {
   protected async makeThisOutputTarget(

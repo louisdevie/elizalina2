@@ -18,7 +18,7 @@ import {
 import EtrParserVisitor from './gen/TMParserVisitor'
 import EtrLexer from './gen/TMLexer'
 import { ParserRuleContext, TerminalNode } from 'antlr4'
-import { ElizalinaRuntimeConfig } from '@module/codeGeneration/codeConfig'
+import { ElizalinaRuntimeConfig } from '@module/generation/codeConfig'
 
 export interface Builder<T> {
   finish(): Result<T>

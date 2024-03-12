@@ -1,7 +1,7 @@
 import { BaseTarget } from '../decorators'
 import * as ts from '@module/languages/ts/ast'
 import { Parameter } from '@module/languages/ts/ast'
-import { ElizalinaRuntimeConfig, PlaceholdersConfig } from '@module/codeGeneration/codeConfig'
+import { ElizalinaRuntimeConfig, PlaceholdersConfig } from '@module/generation/codeConfig'
 import { randomHex } from '@module/helpers'
 import {
   MessageParameter,
@@ -10,7 +10,7 @@ import {
   TypeHint,
   UserCode,
 } from '@module/translations'
-import { UserCodeInsertion } from '@module/codeGeneration/postProcessing'
+import { UserCodeInsertion } from '@module/generation/postProcessing'
 import { AllTranslationReports, MissingTranslationsReport } from '@module/checks/translations'
 import { throwError } from '@module/error'
 
