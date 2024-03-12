@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "strict": true,
     "target": "es6",
@@ -16,5 +16,6 @@
         "./src/*"
       ]
     }
-  }
+  },
+  "include": ["src", "tests"]
 }
