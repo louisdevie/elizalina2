@@ -80,12 +80,10 @@ jobs:
         name: lib-coverage
         path: lib
   
-    - name: Use Node.js 18
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+    - name: Install coverage merging tool
+      run: pipx install merge_cobertura
     - name: Merge coverage reports
-      run: npx cobertura-merge -o merged.xml elzii=lib/coverage.xml elzii-tools=tools/coverage.xml
+      run: merge-cobertura lib/coverage.xml tools/coverage.xml > merged.xml
     - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
