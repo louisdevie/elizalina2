@@ -71,8 +71,8 @@ class ElzLocale<T extends object> {
     )
   }
 
-  public async load(factory: FormatterFactory) {
-    this._fmt = new Fmt(new FormatImpl(this._id), factory)
+  public async load(factory: FormatterFactory, context: Ctx) {
+    this._fmt = new Fmt(new FormatImpl(this._id), factory, context)
     if (typeof this._messages === 'function') {
       const module = await this._messages()
       this._instance = new module.default(this._fmt)
@@ -184,7 +184,7 @@ export class Elz<T extends object> {
 
     this._currentLocale?.unload()
     this._currentLocale = chosen
-    await this._currentLocale?.load(this._factory)
+    await this._currentLocale?.load(this._factory, this._context)
   }
 
   public async useEnvironmentLocale() {
@@ -217,6 +217,14 @@ export class Elz<T extends object> {
   public async format(value: any, config: (f: Format) => AnyFormat): Promise<string> {
     await this.requireLocale()
     return this._currentLocale?.fmt?.format(value, config) ?? '' // just in case
+  }
+
+  public enableStrictMode() {
+    this._context.enableStrictMode()
+  }
+
+  public disableStrictMode() {
+    this._context.disableStrictMode()
   }
 
   public makeLocaleProxy(): T {

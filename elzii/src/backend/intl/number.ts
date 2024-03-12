@@ -1,17 +1,22 @@
 import { Formatter } from '@module/backend'
 import { DigitsFormatOptions, NumberFormatOptions, NumberNotation } from '@module/format/number'
+import { Ctx } from '@module/ctx'
 
 export class IntlNumberFormatAdapter implements Formatter {
   private _intl: Intl.NumberFormat
 
-  constructor(options: DigitsFormatOptions, extendedOptions: NumberFormatOptions | null) {
+  constructor(
+    options: DigitsFormatOptions,
+    extendedOptions: NumberFormatOptions | null,
+    context: Ctx,
+  ) {
     const intlOptions = IntlNumberFormatAdapter.extractIntlOptions(options, extendedOptions)
 
     try {
       // cast to any to try anyway and handle errors dynamically
       this._intl = new Intl.NumberFormat(options.language, intlOptions as any)
     } catch {
-      IntlNumberFormatAdapter.switchToFallbackIntlOptions(intlOptions)
+      IntlNumberFormatAdapter.switchToFallbackIntlOptions(intlOptions, context)
       this._intl = new Intl.NumberFormat(options.language, intlOptions as any)
     }
   }
@@ -53,13 +58,13 @@ export class IntlNumberFormatAdapter implements Formatter {
     }
   }
 
-  private static switchToFallbackIntlOptions(options: any) {
+  private static switchToFallbackIntlOptions(options: any, context: Ctx) {
     // if an option is not supported, it will just get ignored.
     // the 'negative' value is a special case because there are browsers that will recognize the
     // option and throw an error because they don't understand the value.
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#browser_compatibility
     if ('signDisplay' in options && options.signDisplay === 'negative') {
-      console.warn('[elzii] the "negative" value for the "signDisplay" option is not supported.')
+      context.warn('the "negative" value for the "signDisplay" option is not supported.')
       options.signDisplay = 'auto'
     }
   }

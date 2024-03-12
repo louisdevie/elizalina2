@@ -7,7 +7,7 @@ const mockedPlatform = jest.mocked(platform)
 
 const mockedLocaleModule = {
   default: class {
-    constructor(fmt: Fmt) {}
+    constructor(_: Fmt) {}
   },
 }
 

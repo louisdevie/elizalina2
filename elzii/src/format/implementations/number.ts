@@ -13,7 +13,6 @@ import {
   UnitDisplay,
   UnitNumberFormat,
 } from '../number'
-import { FormatOptions } from '..'
 
 export abstract class DigitsFormatImpl<This> implements DigitsFormat<This> {
   protected abstract get options(): DigitsFormatOptions

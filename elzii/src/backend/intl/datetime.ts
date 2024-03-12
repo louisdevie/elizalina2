@@ -2,18 +2,19 @@ import { Formatter } from '@module/backend'
 import { DatetimeFormatOptions } from '@module/format'
 import { HourCycle } from '@module/format/datetime'
 import extensions from '@module/extensions'
+import { Ctx } from '@module/ctx'
 
 export class IntlDatetimeFormatAdapter implements Formatter {
   private _intl: Intl.DateTimeFormat
 
-  constructor(options: DatetimeFormatOptions) {
+  constructor(options: DatetimeFormatOptions, context: Ctx) {
     const intlOptions = IntlDatetimeFormatAdapter.extractIntlOptions(options)
 
     try {
       // cast to any to try anyway and handle errors dynamically
       this._intl = new Intl.DateTimeFormat(options.language, intlOptions as any)
     } catch {
-      IntlDatetimeFormatAdapter.switchToFallbackIntlOptions(intlOptions)
+      IntlDatetimeFormatAdapter.switchToFallbackIntlOptions(intlOptions, context)
       this._intl = new Intl.DateTimeFormat(options.language, intlOptions as any)
     }
   }
@@ -42,11 +43,11 @@ export class IntlDatetimeFormatAdapter implements Formatter {
     }
   }
 
-  private static warnTZNotSupported(value: string) {
-    console.warn(`[elzii] the "${value}" value for the "timeZoneName" component is not supported.`)
+  private static tzNotSupportedWarning(value: string): string {
+    return `the "${value}" value for the "timeZoneName" component is not supported.`
   }
 
-  private static switchToFallbackIntlOptions(options: any) {
+  private static switchToFallbackIntlOptions(options: any, context: Ctx) {
     // if an option is not supported, it will just get ignored.
     // the timeZoneName option is a special case because there are browsers that will recognize it
     // and throw errors because they don't understand certain values.
@@ -54,19 +55,19 @@ export class IntlDatetimeFormatAdapter implements Formatter {
     if ('timeZoneName' in options) {
       switch (options.timeZoneName) {
         case 'shortGeneric':
-          this.warnTZNotSupported('shortGeneric')
+          context.warn(this.tzNotSupportedWarning('shortGeneric'))
           options.timeZoneName = 'short'
           break
         case 'longGeneric':
-          this.warnTZNotSupported('longGeneric')
+          context.warn(this.tzNotSupportedWarning('longGeneric'))
           options.timeZoneName = 'long'
           break
         case 'shortOffset':
-          this.warnTZNotSupported('shortOffset')
+          context.warn(this.tzNotSupportedWarning('shortOffset'))
           options.timeZoneName = 'short'
           break
         case 'longOffset':
-          this.warnTZNotSupported('longOffset')
+          context.warn(this.tzNotSupportedWarning('longOffset'))
           options.timeZoneName = 'long'
           break
       }

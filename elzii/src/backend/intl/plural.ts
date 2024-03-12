@@ -2,6 +2,7 @@ import { PluralFormatOptions } from '@module/format'
 import { IntlNumberFormatAdapter } from './number'
 import { Formatter } from '@module/backend'
 import { formatPluralForm } from '@module/pluralFormat'
+import { Ctx } from '@module/ctx'
 
 interface PluralForms {
   zero: string | undefined
@@ -17,12 +18,12 @@ export class IntlPluralRulesAdapter implements Formatter {
   private _numberFormatter: Formatter
   private _forms: PluralForms
 
-  public constructor(options: PluralFormatOptions) {
+  public constructor(options: PluralFormatOptions, context: Ctx) {
     const intlOptions = IntlPluralRulesAdapter.extractIntlOptions(options)
 
     // if a browser doesn't support some of the options, it will just ignore them
     this._intl = new Intl.PluralRules(options.language, intlOptions)
-    this._numberFormatter = new IntlNumberFormatAdapter(options, null)
+    this._numberFormatter = new IntlNumberFormatAdapter(options, null, context)
     this._forms = {
       zero: options.zeroForm,
       one: options.oneForm,
@@ -43,14 +44,14 @@ export class IntlPluralRulesAdapter implements Formatter {
     }
   }
 
-  public applyTo(value: any): string {
+  public applyTo(value: any, context: Ctx): string {
     let numberValue
     if (typeof value === 'number') {
       numberValue = value
     } else {
       let parsed = Number.parseFloat(value)
       if (Number.isNaN(parsed)) {
-        console.warn(`[elzii] ${value} is not a number and cannot be used for pluralization.`)
+        context.warn(`${value} is not a number and cannot be used for pluralization.`)
         numberValue = 1
       } else {
         numberValue = parsed
@@ -58,7 +59,7 @@ export class IntlPluralRulesAdapter implements Formatter {
     }
 
     // here we use 'value' because 'numberValue' might not reflect correctly the original value
-    let formattedValue = this._numberFormatter.applyTo(value)
+    let formattedValue = this._numberFormatter.applyTo(value, context)
 
     let selectedForm = this.selectFormFor(numberValue)
 
