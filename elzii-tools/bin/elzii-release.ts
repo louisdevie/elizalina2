@@ -10,6 +10,8 @@ import { getTranslationFiles, TranslationFile } from '@module/files/translations
 import { ReleasePipeline } from '@module/pipelines'
 import { defaultOutputTargetBuilder } from '@module/generation'
 import chalk from 'chalk'
+import { TranslationsExtractor } from '@module/extraction'
+import { TranslationsDirectoryExtractor } from '@module/extraction/translationFiles'
 
 async function main() {
   let argv = await intoPromise(
@@ -67,7 +69,7 @@ async function main() {
 async function generateTarget(target: TargetConfig) {
   const sourceFiles = await getTranslations(target.translations)
 
-  if (sourceFiles.length == 0) {
+  if (sourceFiles === null) {
     show.detailedWarning('No translation files were found, skipping compilation.')
   } else {
     show.debugInfo('Creating output target(s)...')
@@ -79,13 +81,19 @@ async function generateTarget(target: TargetConfig) {
   }
 }
 
-async function getTranslations(directory: string): Promise<TranslationFile[]> {
+async function getTranslations(directory: string): Promise<TranslationsExtractor | null> {
   const fullTranslationsPath = resolveInPackage(directory)
   show.debugInfo(`Looking up translations in ${fullTranslationsPath}`)
 
   const translations = await getTranslationFiles(fullTranslationsPath)
 
-  return translations.root.children
+  let extractor
+  if (translations.root.children.length == 0) {
+    extractor = null // do not create extractor if there are no files
+  } else {
+    extractor = new TranslationsDirectoryExtractor(translations.root)
+  }
+  return extractor
 }
 
 handleErrorsAsync(main, { all: (err) => show.fatal(err) }).then(doNothing)

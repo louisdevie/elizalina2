@@ -1,17 +1,14 @@
 import { Directory, FileExtensions, FileTree } from '@module/files'
-import { Translation } from '@module/translations'
 import { defaultTMParser } from '../languages/tm'
 import { TextFile } from './index'
-import { parse } from 'node:path'
+import { Translation as TMTranslation } from '@module/languages/tm/ast'
 
-export class TranslationFile extends TextFile<Translation> {
+export class TranslationFile extends TextFile<TMTranslation> {
   public readonly readable = true
   public readonly writable = false
 
-  protected override async parseContents(contents: string): Promise<Translation> {
-    const tr = await defaultTMParser.parse(contents)
-    tr.id = parse(this.name).name
-    return tr
+  protected override async parseContents(contents: string): Promise<TMTranslation> {
+    return await defaultTMParser.parse(contents)
   }
 }
 

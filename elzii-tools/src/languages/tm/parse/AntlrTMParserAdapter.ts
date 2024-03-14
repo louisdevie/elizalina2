@@ -1,13 +1,12 @@
 import { TMParser } from '../index'
-import { Translation } from '@module/translations'
 import { CharStream, CommonTokenStream } from 'antlr4'
 import GeneratedTMLexer from './gen/TMLexer'
 import GeneratedTMParser from './gen/TMParser'
 import AntlrErrorListener from './AntlrErrorListener'
-import { TranslationBuilder } from './astToTranslation'
+import { Translation as TMTranslation } from '../ast'
 
 export default class AntlrTMParserAdapter implements TMParser {
-  async parse(text: string): Promise<Translation> {
+  async parse(text: string): Promise<TMTranslation> {
     const chars = new CharStream(text) // replace this with a FileStream as required
 
     const lexer = new GeneratedTMLexer(chars)
@@ -19,12 +18,6 @@ export default class AntlrTMParserAdapter implements TMParser {
     const errorListener = new AntlrErrorListener()
     parser.addErrorListener(errorListener)
 
-    const trBuilder = new TranslationBuilder()
-    const tree = parser.translation()
-    tree.accept(trBuilder)
-
-    const { errors: builderErrors, value } = trBuilder.finish()
-
-    return value
+    return parser.translation()
   }
 }

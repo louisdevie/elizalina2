@@ -1,30 +1,30 @@
-import { TranslationFile } from '@module/files/translations'
-import { OutputTarget } from '../generation'
 import { relative } from 'node:path'
 import { config, show } from '@module'
 import { Translation } from '@module/translations'
-import { handleErrors, handleErrorsAsync, throwError } from '@module/error'
-import { MessageParametersCheck, MissingTranslationsCheck } from '@module/checks/translations'
+import { ExtractedTranslation, TranslationsExtractor } from '@module/extraction'
+import { OutputTarget } from '@module/generation'
 import { MultiCheck } from '@module/checks'
+import { MessageParametersCheck, MissingTranslationsCheck } from '@module/checks/translations'
+import { handleErrorsAsync, throwError } from '@module/error'
 
 type LoadAndCheckResult =
   | { loaded: false }
   | {
       loaded: true
       translation: Translation
-      source: TranslationFile
+      source: string
       passedAllChecks: boolean
     }
 
 export default class ReleasePipeline {
-  private readonly _sourceFiles: TranslationFile[]
+  private readonly _sources: TranslationsExtractor
   private readonly _missingCheck: MissingTranslationsCheck
   private readonly _parametersCheck: MessageParametersCheck
   private readonly _allChecks: MultiCheck<Translation>
   private readonly _outputTarget: OutputTarget
 
-  public constructor(sourceFiles: TranslationFile[], outputTarget: OutputTarget) {
-    this._sourceFiles = sourceFiles
+  public constructor(sources: TranslationsExtractor, outputTarget: OutputTarget) {
+    this._sources = sources
 
     this._missingCheck = new MissingTranslationsCheck()
     this._parametersCheck = new MessageParametersCheck()
@@ -34,7 +34,9 @@ export default class ReleasePipeline {
   }
 
   public async execute(): Promise<void> {
-    const allTranslations = await Promise.all(this._sourceFiles.map(this.loadAndCheck.bind(this)))
+    const allTranslations = await Promise.all(
+      this._sources.foundTranslations.map(this.loadAndCheck, this),
+    )
 
     if (!this._allChecks.isValidGlobally)
       throwError('Some checks failed (see above), aborting compilation.', 'checks')
@@ -43,17 +45,22 @@ export default class ReleasePipeline {
       missing: this._missingCheck.getReport(),
       parameters: this._parametersCheck.getReport(),
     })
-    await Promise.all(allTranslations.map(this.compile.bind(this)))
+    await Promise.all(allTranslations.map(this.compile, this))
 
     await this._outputTarget.finish()
   }
 
-  private async loadAndCheck(source: TranslationFile): Promise<LoadAndCheckResult> {
+  private async loadAndCheck(extracted: ExtractedTranslation): Promise<LoadAndCheckResult> {
     return handleErrorsAsync<LoadAndCheckResult>(
       async () => {
-        const translation = await source.read()
+        const translation = await extracted.translation
         this._allChecks.validate(translation)
-        return { loaded: true, source, translation, passedAllChecks: true }
+        return {
+          loaded: true,
+          source: extracted.mainSource.path,
+          translation,
+          passedAllChecks: true,
+        }
       },
       {
         all: (err) => {
@@ -68,7 +75,7 @@ export default class ReleasePipeline {
     if (result.loaded && result.passedAllChecks) {
       await this._outputTarget.compile(
         result.translation,
-        relative(config.requireCurrentPackageRoot(), result.source.path),
+        relative(config.requireCurrentPackageRoot(), result.source),
       )
     }
   }

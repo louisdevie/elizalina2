@@ -6,7 +6,7 @@ import { TSTargetBuilder } from './typescript'
 import { AllTranslationReports } from '@module/checks/translations'
 
 /**
- * A code generation target for the "release" tool.
+ * A code generation target for the tools.
  */
 export interface OutputTarget {
   /**
