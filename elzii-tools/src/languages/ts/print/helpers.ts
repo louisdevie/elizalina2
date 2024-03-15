@@ -4,19 +4,19 @@ import { TSVisitor } from '@module/languages/ts'
 const defaultIndentation: Indentation = { char: ' ', size: 2 }
 
 export function escapeSingleQuotedString(string: string): string {
-  return escapeAnyString(string).replace("'", "\\'")
+  return escapeAnyString(string).replace(/'/g, "\\'")
 }
 
 export function escapeDoubleQuotedString(string: string): string {
-  return escapeAnyString(string).replace('"', '\\"')
+  return escapeAnyString(string).replace(/"/g, '\\"')
 }
 
 export function escapeTemplateString(string: string): string {
-  return escapeAnyString(string).replace('`', '\\`').replace('${', '\\${')
+  return escapeAnyString(string).replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
 }
 
 const escapeSequences = new Map([
-  ['\\', '\\\\'], // backslashes must be replaced first, otherwise the others would be escaped twice
+  ['\\', '\\\\'],
   ['\0', '\\0'],
   ['\n', '\\n'],
   ['\r', '\\r'],

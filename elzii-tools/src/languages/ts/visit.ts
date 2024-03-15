@@ -17,12 +17,12 @@ export abstract class TSVisitor<T = void> {
       /* case 'ArrayPattern':
           result = this.visitArrayPattern(node as ts.ArrayPattern)
            break*/
-      /* case 'ArrowFunctionExpression':
-          result = this.visitArrowFunctionExpression(node as ts.ArrowFunctionExpression)
-           break*/
-      /* case 'AssignmentExpression':
-          result = this.visitAssignmentExpression(node as ts.AssignmentExpression)
-           break*/
+      case 'ArrowFunctionExpression':
+        result = this.visitArrowFunctionExpression(node as ts.ArrowFunctionExpression)
+        break
+      case 'AssignmentExpression':
+        result = this.visitAssignmentExpression(node as ts.AssignmentExpression)
+        break
       /* case 'AssignmentPattern':
           result = this.visitAssignmentPattern(node as ts.AssignmentPattern)
            break*/
@@ -185,9 +185,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'LogicalExpression':
           result = this.visitLogicalExpression(node as ts.LogicalExpression)
            break*/
-      /* case 'MemberExpression':
-          result = this.visitMemberExpression(node as ts.MemberExpression)
-           break*/
+      case 'MemberExpression':
+        result = this.visitMemberExpression(node as ts.MemberExpression)
+        break
       /* case 'MetaProperty':
           result = this.visitMetaProperty(node as ts.MetaProperty)
            break*/
@@ -248,9 +248,9 @@ export abstract class TSVisitor<T = void> {
       case 'TemplateLiteral':
         result = this.visitTemplateLiteral(node as ts.TemplateLiteral)
         break
-      /* case 'ThisExpression':
-          result = this.visitThisExpression(node as ts.ThisExpression)
-           break*/
+      case 'ThisExpression':
+        result = this.visitThisExpression(node as ts.ThisExpression)
+        break
       /* case 'ThrowStatement':
           result = this.visitThrowStatement(node as ts.ThrowStatement)
            break*/
@@ -522,8 +522,13 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitAccessorProperty(accessorProperty: ts.AccessorProperty): T
   // public abstract visitArrayExpression(arrayExpression: ts.ArrayExpression): T
   // public abstract visitArrayPattern(arrayPattern: ts.ArrayPattern): T
-  // public abstract visitArrowFunctionExpression(arrowFunctionExpression: ts.ArrowFunctionExpression): T
-  // public abstract visitAssignmentExpression(assignmentExpression: ts.AssignmentExpression): T
+
+  public abstract visitArrowFunctionExpression(
+    arrowFunctionExpression: ts.ArrowFunctionExpression,
+  ): T
+
+  public abstract visitAssignmentExpression(assignmentExpression: ts.AssignmentExpression): T
+
   // public abstract visitAssignmentPattern(assignmentPattern: ts.AssignmentPattern): T
   // public abstract visitAwaitExpression(awaitExpression: ts.AwaitExpression): T
   // public abstract visitBinaryExpression(binaryExpression: ts.BinaryExpression): T
@@ -602,7 +607,9 @@ export abstract class TSVisitor<T = void> {
   public abstract visitLiteral(literal: ts.Literal): T
 
   // public abstract visitLogicalExpression(logicalExpression: ts.LogicalExpression): T
-  // public abstract visitMemberExpression(memberExpression: ts.MemberExpression): T
+
+  public abstract visitMemberExpression(memberExpression: ts.MemberExpression): T
+
   // public abstract visitMetaProperty(metaProperty: ts.MetaProperty): T
 
   public abstract visitMethodDefinition(methodDefinition: ts.MethodDefinition): T
@@ -634,7 +641,8 @@ export abstract class TSVisitor<T = void> {
 
   public abstract visitTemplateLiteral(templateLiteral: ts.TemplateLiteral): T
 
-  // public abstract visitThisExpression(thisExpression: ts.ThisExpression): T
+  public abstract visitThisExpression(thisExpression: ts.ThisExpression): T
+
   // public abstract visitThrowStatement(throwStatement: ts.ThrowStatement): T
   // public abstract visitTryStatement(tryStatement: ts.TryStatement): T
   // public abstract visitUnaryExpression(unaryExpression: ts.UnaryExpression): T

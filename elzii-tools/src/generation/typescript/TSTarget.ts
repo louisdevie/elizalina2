@@ -1,10 +1,15 @@
 import { BaseTarget } from '../decorators'
 import * as ts from '@module/languages/ts/ast'
 import { Parameter } from '@module/languages/ts/ast'
-import { ElizalinaRuntimeConfig, PlaceholdersConfig } from '@module/generation/codeConfig'
+import {
+  ElizalinaRuntimeConfig,
+  GeneratedCodeConfig,
+  PlaceholdersConfig,
+} from '@module/generation/codeConfig'
 import { randomHex } from '@module/helpers'
 import {
   MessageParameter,
+  MessageParameterFormat,
   MessagePart,
   Translation,
   TypeHint,
@@ -13,11 +18,13 @@ import {
 import { UserCodeInsertion } from '@module/generation/postProcessing'
 import { AllTranslationReports, MissingTranslationsReport } from '@module/checks/translations'
 import { throwError } from '@module/error'
+import { CacheKeyGenerator } from '@module/generation/cacheKeys'
 
 export default abstract class TSTarget extends BaseTarget {
   private readonly _interfaceName: string
   private readonly _objectName: string
   private readonly _userCodeInsertion: UserCodeInsertion
+  private readonly _cacheKeyGenerator: CacheKeyGenerator
   private _reports?: AllTranslationReports
 
   protected constructor(interfaceName: string, objectName: string) {
@@ -26,6 +33,7 @@ export default abstract class TSTarget extends BaseTarget {
     this._interfaceName = interfaceName
     this._objectName = objectName
     this._userCodeInsertion = new UserCodeInsertion()
+    this._cacheKeyGenerator = new CacheKeyGenerator()
   }
   public get userCodeInsertion(): UserCodeInsertion {
     return this._userCodeInsertion
@@ -66,12 +74,12 @@ export default abstract class TSTarget extends BaseTarget {
   }
 
   /**
-   * Creates an import statement for the global formatter.
+   * Creates an import statement for the formatter class.
    * @protected
    */
   protected makeFormatterImport(): ts.ProgramStatement {
     return ts.importDeclaration('value', ElizalinaRuntimeConfig.moduleName, [
-      ts.importSpecifier('value', ElizalinaRuntimeConfig.globalFormatterInstanceName),
+      ts.importSpecifier('value', ElizalinaRuntimeConfig.formatterClassName),
     ])
   }
 
@@ -93,7 +101,28 @@ export default abstract class TSTarget extends BaseTarget {
       implements: [ts.tsClassImplements(this.interfaceName)],
     })
 
-    // cls.body.body.push(ts.)
+    const formatterType = ts.tsTypeReference(
+      ts.identifier(ElizalinaRuntimeConfig.formatterClassName),
+    )
+
+    cls.body.body.push(
+      ts.propertyDefinition(GeneratedCodeConfig.formatterPropertyName, formatterType),
+    )
+
+    cls.body.body.push(
+      ts.methodDefinition('constructor', {
+        kind: 'constructor',
+        params: [ts.identifier(GeneratedCodeConfig.formatterPropertyName, formatterType)],
+        body: ts.blockStatement(
+          ts.expressionStatement(
+            ts.assignmentExpression(
+              ts.memberExpression(ts.thisExpression(), GeneratedCodeConfig.formatterPropertyName),
+              ts.identifier(GeneratedCodeConfig.formatterPropertyName),
+            ),
+          ),
+        ),
+      }),
+    )
 
     const reports = this.requireAllReports()
 
@@ -101,7 +130,9 @@ export default abstract class TSTarget extends BaseTarget {
       const message = translation.messages.get(key)
       const signature = Array.from(reports.parameters.signatureOf(key).parameters)
       if (message !== undefined) {
-        cls.body.body.push(this.makeDefinedMessageMethod(key, signature, message.content))
+        cls.body.body.push(
+          this.makeDefinedMessageMethod(key, signature, message.content, translation.id),
+        )
       } else {
         cls.body.body.push(this.makeMissingMessageMethod(key, signature))
       }
@@ -128,11 +159,16 @@ export default abstract class TSTarget extends BaseTarget {
     key: string,
     messageParameters: MessageParameter[],
     messageContent: MessagePart[],
+    translationContext: string,
   ): ts.MethodDefinition {
     return this.makeMessageMethod(
       key,
       messageParameters,
-      ts.blockStatement(ts.returnStatement(this.makeMessageTemplate(messageContent))),
+      ts.blockStatement(
+        ts.returnStatement(
+          this.makeMessageTemplate(messageContent, `${key}, ${translationContext}`),
+        ),
+      ),
     )
   }
 
@@ -180,7 +216,10 @@ export default abstract class TSTarget extends BaseTarget {
     return type
   }
 
-  private makeMessageTemplate(messageContent: MessagePart[]): ts.TemplateLiteral {
+  private makeMessageTemplate(
+    messageContent: MessagePart[],
+    messageContext: string,
+  ): ts.TemplateLiteral {
     const textElements = []
     const expressions = []
 
@@ -194,21 +233,47 @@ export default abstract class TSTarget extends BaseTarget {
         case 'formatting':
           if (firstPart) textElements.push('') // always start with a quasi
 
-          if (part.format === undefined) {
-            expressions.push(ts.identifier(part.parameterName))
-          } else {
-            expressions.push(
-              ts.callExpression(
-                this.makePlaceholderExpression(part.format),
-                ts.identifier(part.parameterName),
-              ),
-            )
-          }
+          expressions.push(
+            this.makeFormatExpression(part.parameterName, part.format, messageContext),
+          )
       }
       firstPart = false
     }
 
     return ts.templateLiteral(textElements, expressions)
+  }
+
+  private makeFormatExpression(
+    parameterName: string,
+    format: MessageParameterFormat | undefined,
+    messageContext: string,
+  ): ts.Expression {
+    if (format === undefined) {
+      return ts.identifier(parameterName)
+    } else if (format.type === 'basic') {
+      return ts.callExpression(
+        this.makePlaceholderExpression(format.code),
+        ts.identifier(parameterName),
+      )
+    } else {
+      const value = ts.identifier(parameterName)
+      const config = ts.arrowFunctionExpression({
+        params: [ts.identifier('f')],
+        body: this.makePlaceholderExpression(format.code.withPrefix('f.')),
+      })
+      const cacheKey = ts.literal(this._cacheKeyGenerator.generateCacheKey('fmt'))
+      const context = ts.literal(`parameter '${parameterName}' in ${messageContext}`)
+      return ts.callExpression(
+        ts.memberExpression(
+          ts.memberExpression(ts.thisExpression(), GeneratedCodeConfig.formatterPropertyName),
+          ElizalinaRuntimeConfig.formatMethodName,
+        ),
+        value,
+        config,
+        cacheKey,
+        context,
+      )
+    }
   }
 
   protected makeTranslationInterface(): ts.TSInterfaceDeclaration {

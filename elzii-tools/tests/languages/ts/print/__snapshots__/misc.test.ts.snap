@@ -10,10 +10,16 @@ exports[`printing a BlockStatement 2`] = `
 }"
 `;
 
+exports[`printing a MemberExpression 1`] = `"a.b"`;
+
 exports[`printing a TemplateElement 1`] = `"' " \\\` $ { } \\\${} blah blah"`;
 
 exports[`printing a TemplateLiteral 1`] = `"\`something \${something} something, we win\`"`;
 
 exports[`printing a TemplateLiteral 2`] = `"\`\${something} something something, we \${win}\`"`;
+
+exports[`printing a ThisExpression 1`] = `"this"`;
+
+exports[`printing an AssignmentExpression 1`] = `"myVariable = 'value'"`;
 
 exports[`printing an Identifier 1`] = `"something"`;

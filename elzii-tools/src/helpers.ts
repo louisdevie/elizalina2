@@ -67,8 +67,22 @@ export function countOccurrences(
   text: string,
   distinct: boolean = true,
 ): number {
-  if (typeof pattern === 'string') pattern = new RegExp(pattern, 'g' + (distinct ? 'y' : ''))
-  return text.match(pattern)?.length ?? 0
+  let count = 0
+  if (typeof pattern === 'string') {
+    if (pattern.length === 0) {
+      count = text.length + 1
+    } else {
+      let index = 0
+      count = -1 // we always increment one time more than the actual count
+      do {
+        count++
+        index = text.indexOf(pattern, index + pattern.length)
+      } while (index !== -1)
+    }
+  } else {
+    count = text.match(pattern)?.length ?? 0
+  }
+  return count
 }
 
 /**

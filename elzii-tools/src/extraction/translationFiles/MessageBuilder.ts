@@ -4,6 +4,7 @@ import {
   mergeTypeHints,
   Message,
   MessageParameter,
+  MessageParameterFormat,
   MessagePart,
   normalizedMessageContent,
   TypeHint,
@@ -16,7 +17,7 @@ import {
 } from '@module/languages/tm/parse/gen/TMParser'
 import { ParserRuleContext, TerminalNode } from 'antlr4'
 import EtrLexer from '@module/languages/tm/parse/gen/TMLexer'
-import FormatBuilder from './FormatBuilder'
+import UserCodeBuilder from '@module/extraction/translationFiles/UserCodeBuilder'
 
 export default class MessageBuilder extends EtrParserVisitor<void> implements Builder<Message> {
   private readonly _content: MessagePart[]
@@ -54,8 +55,8 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
     return param
   }
 
-  private foundParameter(name: string, format?: UserCode) {
-    let param = this.mergeParameter(name, format?.getTypeHint() ?? TypeHint.None)
+  private foundParameter(name: string, format?: MessageParameterFormat) {
+    let param = this.mergeParameter(name, format?.code.getTypeHint() ?? TypeHint.None)
 
     this._content.push({
       type: 'formatting',
@@ -64,21 +65,37 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
     })
   }
 
+  private getMessageParameterFormat(
+    basicNode: ParserRuleContext | null,
+    shorthandNode: ParserRuleContext | null,
+  ): MessageParameterFormat | undefined {
+    let format: MessageParameterFormat | undefined = undefined
+
+    if (basicNode !== null) {
+      const userCodeBuilder = new UserCodeBuilder()
+      userCodeBuilder.visit(basicNode)
+      format = { type: 'basic', code: userCodeBuilder.finish().value }
+    } else if (shorthandNode !== null) {
+      const userCodeBuilder = new UserCodeBuilder()
+      userCodeBuilder.visit(shorthandNode)
+      format = { type: 'shorthand', code: userCodeBuilder.finish().value }
+    }
+
+    return format
+  }
+
   public override visitSingleQuotedTextParameter = (ctx: SingleQuotedTextParameterContext) => {
-    this.foundParameter(ctx.PARAMETER_NAME().getText())
+    this.foundParameter(
+      ctx.PARAMETER_NAME().getText(),
+      this.getMessageParameterFormat(ctx.parameterFormat(), ctx.shorthandParameterFormat()),
+    )
   }
 
   public override visitDoubleQuotedTextParameter = (ctx: DoubleQuotedTextParameterContext) => {
-    let formatNode: ParserRuleContext = ctx.parameterFormat() || ctx.shorthandParameterFormat()
-    let format = undefined
-
-    if (formatNode !== null) {
-      const formatBuilder = new FormatBuilder()
-      formatBuilder.visit(formatNode)
-      format = formatBuilder.finish().value
-    }
-
-    this.foundParameter(ctx.PARAMETER_NAME().getText(), format)
+    this.foundParameter(
+      ctx.PARAMETER_NAME().getText(),
+      this.getMessageParameterFormat(ctx.parameterFormat(), ctx.shorthandParameterFormat()),
+    )
   }
 
   public override visitTerminal(node: TerminalNode): void {

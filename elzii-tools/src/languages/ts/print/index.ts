@@ -34,6 +34,10 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   // region Visitor implementation
 
+  public visitArrowFunctionExpression = TSPrinterImpl_functions.visitArrowFunctionExpression
+
+  public visitAssignmentExpression = TSPrinterImpl_misc.visitAssignmentExpression
+
   public visitBlockComment = TSPrinterImpl_terminals.visitBlockComment
 
   public visitBlockStatement = TSPrinterImpl_misc.visitBlockStatement
@@ -60,6 +64,8 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   public visitLiteral = TSPrinterImpl_terminals.visitLiteral
 
+  public visitMemberExpression = TSPrinterImpl_misc.visitMemberExpression
+
   public visitMethodDefinition = TSPrinterImpl_classes.visitMethodDefinition
 
   public visitProgram = TSPrinterImpl_global.visitProgram
@@ -71,6 +77,8 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
   public visitTemplateElement = TSPrinterImpl_misc.visitTemplateElement
 
   public visitTemplateLiteral = TSPrinterImpl_misc.visitTemplateLiteral
+
+  public visitThisExpression = TSPrinterImpl_misc.visitThisExpression
 
   public visitTSAnyKeyword = TSPrinterImpl_types.visitTSAnyKeyword
 

@@ -1,6 +1,13 @@
 import { getTSPrinter } from '@module/languages/ts'
 import * as ts from '@module/languages/ts/ast'
 
+test('printing an AssignmentExpression', async () => {
+  const printer = getTSPrinter()
+
+  const assign = ts.assignmentExpression(ts.identifier('myVariable'), ts.literal('value'))
+  expect(await printer.print(assign)).toMatchSnapshot()
+})
+
 test('printing a BlockStatement', async () => {
   const printer = getTSPrinter()
 
@@ -20,6 +27,13 @@ test('printing an Identifier', async () => {
 
   const ident = ts.identifier('something')
   expect(await printer.print(ident)).toMatchSnapshot()
+})
+
+test('printing a MemberExpression', async () => {
+  const printer = getTSPrinter()
+
+  const member = ts.memberExpression(ts.identifier('a'), 'b')
+  expect(await printer.print(member)).toMatchSnapshot()
 })
 
 test('printing a TemplateElement', async () => {
@@ -43,4 +57,11 @@ test('printing a TemplateLiteral', async () => {
     [ts.identifier('something'), ts.identifier('win')],
   )
   expect(await printer.print(startsWithExpression)).toMatchSnapshot()
+})
+
+test('printing a ThisExpression', async () => {
+  const printer = getTSPrinter()
+
+  const thisExpr = ts.thisExpression()
+  expect(await printer.print(thisExpr)).toMatchSnapshot()
 })

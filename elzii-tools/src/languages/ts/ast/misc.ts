@@ -1,14 +1,26 @@
 import {
+  AssignmentExpression,
   AST_NODE_TYPES,
   BlockStatement,
   Expression,
   Identifier,
+  MemberExpression,
   Statement,
   TemplateElement,
   TemplateLiteral,
+  ThisExpression,
   TypeNode,
 } from '@module/languages/ts/tsestree-spec'
 import { tsTypeAnnotation } from './types'
+
+export function assignmentExpression(left: Expression, right: Expression): AssignmentExpression {
+  return {
+    type: AST_NODE_TYPES.AssignmentExpression,
+    left,
+    right,
+    operator: '=',
+  }
+}
 
 export function blockStatement(...statements: Statement[]): BlockStatement {
   return {
@@ -27,6 +39,16 @@ export function identifier(name: string, type?: TypeNode): Identifier {
   }
 }
 
+export function memberExpression(object: Expression, property: string): MemberExpression {
+  return {
+    type: AST_NODE_TYPES.MemberExpression,
+    object,
+    property: identifier(property),
+    optional: false,
+    computed: false,
+  }
+}
+
 export function templateElement(value: string): TemplateElement {
   return {
     type: AST_NODE_TYPES.TemplateElement,
@@ -40,5 +62,11 @@ export function templateLiteral(quasis: string[], expressions: Expression[]): Te
     type: AST_NODE_TYPES.TemplateLiteral,
     quasis: quasis.map(templateElement),
     expressions,
+  }
+}
+
+export function thisExpression(): ThisExpression {
+  return {
+    type: AST_NODE_TYPES.ThisExpression,
   }
 }

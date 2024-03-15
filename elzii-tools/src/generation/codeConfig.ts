@@ -1,19 +1,13 @@
 export class ElizalinaRuntimeConfig {
   private static readonly numberFormatAccessorName = 'number'
 
-  public static readonly globalFormatterInstanceName = '$f'
   public static readonly moduleName = 'elzii'
+  public static readonly formatterClassName = 'Fmt'
+  public static readonly formatMethodName = 'format'
+}
 
-  public static get globalFormatterShorthandPrefix(): string {
-    return ElizalinaRuntimeConfig.globalFormatterInstanceName + '.'
-  }
-
-  public static get numberFormatAccessorPrefix(): string {
-    return (
-      ElizalinaRuntimeConfig.globalFormatterShorthandPrefix +
-      ElizalinaRuntimeConfig.numberFormatAccessorName
-    )
-  }
+export class GeneratedCodeConfig {
+  public static readonly formatterPropertyName = 'fmt'
 }
 
 export class PlaceholdersConfig {

@@ -13,8 +13,6 @@ export * from './types'
 // export function accessorProperty(): ts.AccessorProperty {}
 // export function arrayExpression(): ts.ArrayExpression {}
 // export function arrayPattern(): ts.ArrayPattern {}
-// export function arrowFunctionExpression(): ts.ArrowFunctionExpression {}
-// export function assignmentExpression(): ts.AssignmentExpression {}
 // export function assignmentPattern(): ts.AssignmentPattern {}
 // export function awaitExpression(): ts.AwaitExpression {}
 // export function binaryExpression(): ts.BinaryExpression {}
@@ -56,7 +54,6 @@ export * from './types'
 // export function jSXText(): ts.JSXText {}
 // export function labeledStatement(): ts.LabeledStatement {}
 // export function logicalExpression(): ts.LogicalExpression {}
-// export function memberExpression(): ts.MemberExpression {}
 // export function metaProperty(): ts.MetaProperty {}
 // export function newExpression(): ts.NewExpression {}
 // export function objectExpression(): ts.ObjectExpression {}
@@ -71,7 +68,6 @@ export * from './types'
 // export function switchCase(): ts.SwitchCase {}
 // export function switchStatement(): ts.SwitchStatement {}
 // export function taggedTemplateExpression(): ts.TaggedTemplateExpression {}
-// export function thisExpression(): ts.ThisExpression {}
 // export function throwStatement(): ts.ThrowStatement {}
 // export function tryStatement(): ts.TryStatement {}
 // export function unaryExpression(): ts.UnaryExpression {}

@@ -1,4 +1,5 @@
 import {
+  ArrowFunctionExpression,
   AST_NODE_TYPES,
   BlockStatement,
   CallExpression,
@@ -9,10 +10,24 @@ import {
   Parameter,
   ReturnStatement,
   TSTypeAnnotation,
-  TSTypeParameterDeclaration,
-  TSTypeParameterInstantiation,
 } from '@module/languages/ts/tsestree-spec'
 import { identifier } from '@module/languages/ts/ast/misc'
+
+export function arrowFunctionExpression(
+  options: FunctionOptions<Expression>,
+): ArrowFunctionExpression {
+  return {
+    type: AST_NODE_TYPES.ArrowFunctionExpression,
+    params: options.params,
+    returnType: options.returnType,
+    body: options.body,
+    expression: true,
+    id: null,
+    async: false,
+    generator: false,
+    typeParameters: undefined,
+  }
+}
 
 export function callExpression(
   callee: LeftHandSideExpression,

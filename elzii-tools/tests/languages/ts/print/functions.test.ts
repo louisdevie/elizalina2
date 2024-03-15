@@ -1,6 +1,29 @@
 import { getTSPrinter } from '@module/languages/ts'
 import * as ts from '@module/languages/ts/ast'
 
+test('printing an ArrowFunctionExpression', async () => {
+  const printer = getTSPrinter()
+
+  const noParameters = ts.arrowFunctionExpression({
+    params: [],
+    body: ts.literal('underground'),
+  })
+  expect(await printer.print(noParameters)).toMatchSnapshot()
+
+  const withParameters = ts.arrowFunctionExpression({
+    params: [ts.identifier('x'), ts.identifier('y')],
+    body: ts.literal('artemis'),
+  })
+  expect(await printer.print(withParameters)).toMatchSnapshot()
+
+  const withTypes = ts.arrowFunctionExpression({
+    params: [ts.identifier('x', ts.tsNumberKeyword()), ts.identifier('y', ts.tsNumberKeyword())],
+    returnType: ts.tsTypeAnnotation(ts.tsNumberKeyword()),
+    body: ts.literal('tilTheLightGoesOut'),
+  })
+  expect(await printer.print(withTypes)).toMatchSnapshot()
+})
+
 test('printing a CallExpression', async () => {
   const printer = getTSPrinter()
 

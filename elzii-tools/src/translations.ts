@@ -99,12 +99,21 @@ export function mergeTypeHints(first: TypeHint, second: TypeHint): TypeHint {
   return merged
 }
 
+export type MessageParameterFormat = {
+  type: 'basic' | 'shorthand'
+  code: UserCode
+}
+
 /**
  * A part of a message's content.
  */
 export type MessagePart =
   | { type: 'text'; value: string }
-  | { type: 'formatting'; parameterName: string; format?: UserCode }
+  | {
+      type: 'formatting'
+      parameterName: string
+      format?: MessageParameterFormat
+    }
 
 /**
  * A piece of code written by the user.
@@ -127,11 +136,16 @@ export class UserCode {
   public getTypeHint(): TypeHint {
     let hint = TypeHint.None
 
-    if (this._code.startsWith(ElizalinaRuntimeConfig.numberFormatAccessorPrefix)) {
+    if (this._code.startsWith('number')) {
       hint = TypeHint.Number
     }
 
     return hint
+  }
+
+  public withPrefix(prefix: string): UserCode {
+    this._code = prefix + this._code
+    return this
   }
 }
 
