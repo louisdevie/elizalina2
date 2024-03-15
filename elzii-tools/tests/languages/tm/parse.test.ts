@@ -92,8 +92,8 @@ test('parsing a complex entry', async () => {
 })
 
 test('parsing an entry with custom format', async () => {
-  const withBasicSyntax = 'length = "Longueur: {size|myCustomFormat}"'
-  const withShorthandSyntax = 'length = "Longueur: {size:number.unit("meter").long}"'
+  const withBasicSyntax = 'length = "Longueur: {size:number.unit("meter").long}"'
+  const withCustomSyntax = 'length = "Longueur: {size|myCustomFormat}"'
 
   const trFromBasicSyntax = await defaultTMParser.parse(withBasicSyntax)
   expect(trFromBasicSyntax.directive_list()).toEqual([])
@@ -104,19 +104,19 @@ test('parsing an entry with custom format', async () => {
   expect(messageData.doubleQuotedText?.literals).toEqual(['Longueur: '])
   expect(messageData.doubleQuotedText?.escapes).toEqual([])
   expect(messageData.doubleQuotedText?.parameters).toEqual([
-    { name: 'size', format: '|myCustomFormat}', shorthand: null },
+    { name: 'size', format: ':number.unit("meter").long}', custom: null },
   ])
 
-  const trFromShorthandSyntax = await defaultTMParser.parse(withShorthandSyntax)
-  expect(trFromShorthandSyntax.directive_list()).toEqual([])
-  expect(trFromShorthandSyntax.header()).toBeNull()
-  messageData = getMessageData(trFromShorthandSyntax.message(0))
+  const trFromCustomSyntax = await defaultTMParser.parse(withCustomSyntax)
+  expect(trFromCustomSyntax.directive_list()).toEqual([])
+  expect(trFromCustomSyntax.header()).toBeNull()
+  messageData = getMessageData(trFromCustomSyntax.message(0))
   expect(messageData.key).toEqual('length')
   expect(messageData.singleQuotedText).toBeNull()
   expect(messageData.doubleQuotedText?.literals).toEqual(['Longueur: '])
   expect(messageData.doubleQuotedText?.escapes).toEqual([])
   expect(messageData.doubleQuotedText?.parameters).toEqual([
-    { name: 'size', format: null, shorthand: ':number.unit("meter").long}' },
+    { name: 'size', format: null, custom: '|myCustomFormat}' },
   ])
 })
 

@@ -67,13 +67,13 @@ doubleQuotedText
 singleQuotedTextParameter
     : SINGLE_QUOTED_PARAMETER_START
       PARAMETER_NAME
-      ( shorthandParameterFormat | parameterFormat | PARAMETER_END )
+      ( customParameterFormat | parameterFormat | PARAMETER_END )
     ;
 
 doubleQuotedTextParameter
     : DOUBLE_QUOTED_PARAMETER_START
       PARAMETER_NAME
-      ( shorthandParameterFormat | parameterFormat | PARAMETER_END )
+      ( customParameterFormat | parameterFormat | PARAMETER_END )
     ;
 
 parameterFormat
@@ -82,8 +82,8 @@ parameterFormat
       EMBEDDED_CODE_CLOSING_BRACE
     ;
 
-shorthandParameterFormat
-    : SHORTHAND_FORMAT_SEPARATOR
+customParameterFormat
+    : CUSTOM_FORMAT_SEPARATOR
       ( EMBEDDED_CODE | EMBEDDED_CODE_OPENING_BRACE | EMBEDDED_CODE_CLOSING_BRACE )*
       EMBEDDED_CODE_CLOSING_BRACE
     ;

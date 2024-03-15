@@ -251,11 +251,6 @@ export default abstract class TSTarget extends BaseTarget {
     if (format === undefined) {
       return ts.identifier(parameterName)
     } else if (format.type === 'basic') {
-      return ts.callExpression(
-        this.makePlaceholderExpression(format.code),
-        ts.identifier(parameterName),
-      )
-    } else {
       const value = ts.identifier(parameterName)
       const config = ts.arrowFunctionExpression({
         params: [ts.identifier('f')],
@@ -272,6 +267,11 @@ export default abstract class TSTarget extends BaseTarget {
         config,
         cacheKey,
         context,
+      )
+    } else {
+      return ts.callExpression(
+        this.makePlaceholderExpression(format.code),
+        ts.identifier(parameterName),
       )
     }
   }

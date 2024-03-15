@@ -88,7 +88,7 @@ export interface DoubleQuotedText extends Node {
 export interface SingleQuotedTextParameter extends Node {
   SINGLE_QUOTED_PARAMETER_START(): TerminalNode
   PARAMETER_NAME(): TerminalNode
-  shorthandParameterFormat(): ShorthandParameterFormat
+  customParameterFormat(): ShorthandParameterFormat
   parameterFormat(): ParameterFormat
   PARAMETER_END(): TerminalNode
 }
@@ -96,7 +96,7 @@ export interface SingleQuotedTextParameter extends Node {
 export interface DoubleQuotedTextParameter extends Node {
   DOUBLE_QUOTED_PARAMETER_START(): TerminalNode
   PARAMETER_NAME(): TerminalNode
-  shorthandParameterFormat(): ShorthandParameterFormat
+  customParameterFormat(): ShorthandParameterFormat
   parameterFormat(): ParameterFormat
   PARAMETER_END(): TerminalNode
 }
@@ -112,7 +112,7 @@ export interface ParameterFormat extends Node {
 }
 
 export interface ShorthandParameterFormat extends Node {
-  SHORTHAND_FORMAT_SEPARATOR(): TerminalNode
+  CUSTOM_FORMAT_SEPARATOR(): TerminalNode
   EMBEDDED_CODE_CLOSING_BRACE_list(): TerminalNode[]
   EMBEDDED_CODE_CLOSING_BRACE(i: number): TerminalNode
   EMBEDDED_CODE_list(): TerminalNode[]

@@ -100,7 +100,7 @@ export function mergeTypeHints(first: TypeHint, second: TypeHint): TypeHint {
 }
 
 export type MessageParameterFormat = {
-  type: 'basic' | 'shorthand'
+  type: 'basic' | 'custom'
   code: UserCode
 }
 

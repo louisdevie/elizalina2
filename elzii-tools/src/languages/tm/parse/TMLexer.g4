@@ -149,12 +149,12 @@ PARAMETER_NAME
     ;
 
 FORMAT_SEPARATOR
-    : '|'
+    : ':'
     -> popMode, pushMode(EMBEDDED_CODE_MODE)
     ;
 
-SHORTHAND_FORMAT_SEPARATOR
-    : ':'
+CUSTOM_FORMAT_SEPARATOR
+    : '|'
     -> popMode, pushMode(EMBEDDED_CODE_MODE)
     ;
 

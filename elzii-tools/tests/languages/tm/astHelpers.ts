@@ -3,26 +3,26 @@ import * as tm from '@module/languages/tm/ast'
 interface ParameterData {
   name: string
   format: string | null
-  shorthand: string | null
+  custom: string | null
 }
 
 function getSQTParameterData(param: tm.SingleQuotedTextParameter): ParameterData {
   const format = param.parameterFormat()
-  const shorthand = param.shorthandParameterFormat()
+  const custom = param.customParameterFormat()
   return {
     name: param.PARAMETER_NAME().getText(),
     format: format === null ? null : format.getText(),
-    shorthand: shorthand === null ? null : shorthand.getText(),
+    custom: custom === null ? null : custom.getText(),
   }
 }
 
 function getDQTParameterData(param: tm.DoubleQuotedTextParameter): ParameterData {
   const format = param.parameterFormat()
-  const shorthand = param.shorthandParameterFormat()
+  const custom = param.customParameterFormat()
   return {
     name: param.PARAMETER_NAME().getText(),
     format: format === null ? null : format.getText(),
-    shorthand: shorthand === null ? null : shorthand.getText(),
+    custom: custom === null ? null : custom.getText(),
   }
 }
 

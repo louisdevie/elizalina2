@@ -78,7 +78,7 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
     } else if (shorthandNode !== null) {
       const userCodeBuilder = new UserCodeBuilder()
       userCodeBuilder.visit(shorthandNode)
-      format = { type: 'shorthand', code: userCodeBuilder.finish().value }
+      format = { type: 'custom', code: userCodeBuilder.finish().value }
     }
 
     return format
@@ -87,14 +87,14 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
   public override visitSingleQuotedTextParameter = (ctx: SingleQuotedTextParameterContext) => {
     this.foundParameter(
       ctx.PARAMETER_NAME().getText(),
-      this.getMessageParameterFormat(ctx.parameterFormat(), ctx.shorthandParameterFormat()),
+      this.getMessageParameterFormat(ctx.parameterFormat(), ctx.customParameterFormat()),
     )
   }
 
   public override visitDoubleQuotedTextParameter = (ctx: DoubleQuotedTextParameterContext) => {
     this.foundParameter(
       ctx.PARAMETER_NAME().getText(),
-      this.getMessageParameterFormat(ctx.parameterFormat(), ctx.shorthandParameterFormat()),
+      this.getMessageParameterFormat(ctx.parameterFormat(), ctx.customParameterFormat()),
     )
   }
 
