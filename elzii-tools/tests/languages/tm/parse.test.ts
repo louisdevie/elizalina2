@@ -68,7 +68,7 @@ test('parsing a complex entry', async () => {
   ]
   const expectedSingleQuoteEscapes = ['\\\\', '\\n', '\\t', '\\r', "\\'", '{{', '}}']
   const expectedDoubleQuoteEscapes = ['\\\\', '\\n', '\\t', '\\r', '\\"', '{{', '}}']
-  const expectedParameters = [{ name: 'name', format: null, shorthand: null }]
+  const expectedParameters = [{ name: 'name', format: null, custom: null }]
 
   const trFromSingleQuotes = await defaultTMParser.parse(withSingleQuotes)
   expect(trFromSingleQuotes.directive_list()).toEqual([])
@@ -87,8 +87,8 @@ test('parsing a complex entry', async () => {
   expect(messageData.key).toEqual('greeting')
   expect(messageData.singleQuotedText).toBeNull()
   expect(messageData.doubleQuotedText?.literals).toEqual(expectedLiterals)
-  expect(messageData.doubleQuotedText?.literals).toEqual(expectedLiterals)
-  expect(messageData.doubleQuotedText?.literals).toEqual(expectedLiterals)
+  expect(messageData.doubleQuotedText?.escapes).toEqual(expectedDoubleQuoteEscapes)
+  expect(messageData.doubleQuotedText?.parameters).toEqual(expectedParameters)
 })
 
 test('parsing an entry with custom format', async () => {
@@ -137,7 +137,7 @@ test('parsing entries with different content structures', async () => {
   expect(messageData.doubleQuotedText?.literals).toEqual([])
   expect(messageData.doubleQuotedText?.escapes).toEqual([])
   expect(messageData.doubleQuotedText?.parameters).toEqual([
-    { name: 'and', format: null, shorthand: null },
+    { name: 'and', format: null, custom: null },
   ])
 
   messageData = getMessageData(tr.message(1))
@@ -146,7 +146,7 @@ test('parsing entries with different content structures', async () => {
   expect(messageData.doubleQuotedText?.literals).toEqual(["'round "])
   expect(messageData.doubleQuotedText?.escapes).toEqual([])
   expect(messageData.doubleQuotedText?.parameters).toEqual([
-    { name: 'and', format: null, shorthand: null },
+    { name: 'and', format: null, custom: null },
   ])
 
   messageData = getMessageData(tr.message(2))
@@ -155,7 +155,7 @@ test('parsing entries with different content structures', async () => {
   expect(messageData.doubleQuotedText?.literals).toEqual([' around'])
   expect(messageData.doubleQuotedText?.escapes).toEqual([])
   expect(messageData.doubleQuotedText?.parameters).toEqual([
-    { name: 'and', format: null, shorthand: null },
+    { name: 'and', format: null, custom: null },
   ])
 
   messageData = getMessageData(tr.message(3))
@@ -164,7 +164,7 @@ test('parsing entries with different content structures', async () => {
   expect(messageData.doubleQuotedText?.literals).toEqual(["'round ", ' around'])
   expect(messageData.doubleQuotedText?.escapes).toEqual([])
   expect(messageData.doubleQuotedText?.parameters).toEqual([
-    { name: 'and', format: null, shorthand: null },
+    { name: 'and', format: null, custom: null },
   ])
 })
 

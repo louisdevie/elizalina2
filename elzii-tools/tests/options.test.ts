@@ -33,7 +33,7 @@ test('TargetConfigBuilder', () => {
   expect(() => target.translations).toThrow()
   expect(() => target.output).toThrow()
   expect(target.interfaceName).toEqual('Locale')
-  expect(target.proxyName).toEqual('elz')
+  expect(target.proxyName).toEqual('__')
   expect(target.singleFile).toBeFalsy()
 
   target.merge(
