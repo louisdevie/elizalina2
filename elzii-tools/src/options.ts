@@ -29,7 +29,7 @@ export interface TargetOptions {
   /**
    * The name of the elizalina object used to load translations (the default is `elz`)
    */
-  objectName?: string
+  proxyName?: string
 
   /**
    * If set to true, all translations will be compiled in a single file
@@ -148,7 +148,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
   private _translations?: string
   private _output?: OutputConfigBuilder
   private _interfaceName?: string
-  private _objectName?: string
+  private _proxyName?: string
   private _singleFile?: boolean
   private _minify?: boolean
   private _sourcemap?: boolean
@@ -181,8 +181,8 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     return this._interfaceName ?? 'Locale'
   }
 
-  public get objectName(): string {
-    return this._objectName ?? 'elz'
+  public get proxyName(): string {
+    return this._proxyName ?? '__'
   }
 
   public get singleFile(): boolean {
@@ -212,10 +212,10 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
       this._interfaceName = options.interfaceName
     }
 
-    if (options.objectName !== undefined) {
-      if (!shouldOverride && this._objectName !== undefined)
-        show.detailedWarning('The "objectName" option was overwritten', warningDetails)
-      this._objectName = options.objectName
+    if (options.proxyName !== undefined) {
+      if (!shouldOverride && this._proxyName !== undefined)
+        show.detailedWarning('The "proxyName" option was overwritten', warningDetails)
+      this._proxyName = options.proxyName
     }
 
     if (options.singleFile !== undefined) {
@@ -252,7 +252,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     )
 
     debugOutput.push(`     interfaceName: ${this.debugJsonify(() => this.interfaceName)}`)
-    debugOutput.push(`     objectName: ${this.debugJsonify(() => this.objectName)}`)
+    debugOutput.push(`     objectName: ${this.debugJsonify(() => this.proxyName)}`)
     debugOutput.push(`     singleFile: ${this.debugJsonify(() => this.singleFile)}`)
     debugOutput.push(`     minify: ${this.debugJsonify(() => this.minify)}`)
     debugOutput.push(`     sourcemap: ${this.debugJsonify(() => this.sourcemap)}`)

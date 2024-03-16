@@ -23,3 +23,22 @@ export class CacheKeyGenerator {
     this._existing.clear()
   }
 }
+
+export class ParameterEncounters {
+  private _countByName: Map<string, number>
+
+  public constructor() {
+    this._countByName = new Map()
+  }
+
+  public encountered(name: string): number {
+    let count
+    if (this._countByName.has(name)) {
+      count = this._countByName.get(name)! + 1
+    } else {
+      count = 1
+    }
+    this._countByName.set(name, count)
+    return count
+  }
+}

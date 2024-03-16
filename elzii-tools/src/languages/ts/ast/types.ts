@@ -6,6 +6,7 @@ import {
   TSNumberKeyword,
   TSStringKeyword,
   TSTypeAnnotation,
+  TSTypeParameterInstantiation,
   TSTypeReference,
   TypeNode,
 } from '@module/languages/ts/tsestree-spec'
@@ -33,11 +34,18 @@ export function tsTypeAnnotation(type: TypeNode): TSTypeAnnotation {
   }
 }
 
-export function tsTypeReference(name: EntityName): TSTypeReference {
+export function tsTypeParameterInstantiation(args: TypeNode[]): TSTypeParameterInstantiation {
+  return {
+    type: AST_NODE_TYPES.TSTypeParameterInstantiation,
+    params: args,
+  }
+}
+
+export function tsTypeReference(name: EntityName, ...args: TypeNode[]): TSTypeReference {
   return {
     type: AST_NODE_TYPES.TSTypeReference,
     typeName: name,
-    typeArguments: undefined,
+    typeArguments: args.length === 0 ? undefined : tsTypeParameterInstantiation(args),
     typeParameters: undefined,
   }
 }

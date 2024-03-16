@@ -11,9 +11,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'AccessorProperty':
           result = this.visitAccessorProperty(node as ts.AccessorProperty)
            break*/
-      /* case 'ArrayExpression':
-          result = this.visitArrayExpression(node as ts.ArrayExpression)
-           break*/
+      case 'ArrayExpression':
+        result = this.visitArrayExpression(node as ts.ArrayExpression)
+        break
       /* case 'ArrayPattern':
           result = this.visitArrayPattern(node as ts.ArrayPattern)
            break*/
@@ -122,9 +122,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'ImportDefaultSpecifier':
           result = this.visitImportDefaultSpecifier(node as ts.ImportDefaultSpecifier)
            break*/
-      /* case 'ImportExpression':
-          result = this.visitImportExpression(node as ts.ImportExpression)
-           break*/
+      case 'ImportExpression':
+        result = this.visitImportExpression(node as ts.ImportExpression)
+        break
       /* case 'ImportNamespaceSpecifier':
           result = this.visitImportNamespaceSpecifier(node as ts.ImportNamespaceSpecifier)
            break*/
@@ -194,12 +194,12 @@ export abstract class TSVisitor<T = void> {
       case 'MethodDefinition':
         result = this.visitMethodDefinition(node as ts.MethodDefinition)
         break
-      /* case 'NewExpression':
-          result = this.visitNewExpression(node as ts.NewExpression)
-           break*/
-      /* case 'ObjectExpression':
-          result = this.visitObjectExpression(node as ts.ObjectExpression)
-           break*/
+      case 'NewExpression':
+        result = this.visitNewExpression(node as ts.NewExpression)
+        break
+      case 'ObjectExpression':
+        result = this.visitObjectExpression(node as ts.ObjectExpression)
+        break
       /* case 'ObjectPattern':
           result = this.visitObjectPattern(node as ts.ObjectPattern)
            break*/
@@ -209,9 +209,9 @@ export abstract class TSVisitor<T = void> {
       case 'Program':
         result = this.visitProgram(node as ts.Program)
         break
-      /* case 'Property':
-          result = this.visitProperty(node as ts.Property)
-           break*/
+      case 'Property':
+        result = this.visitProperty(node as ts.Property)
+        break
       case 'PropertyDefinition':
         result = this.visitPropertyDefinition(node as ts.PropertyDefinition)
         break
@@ -263,12 +263,12 @@ export abstract class TSVisitor<T = void> {
       /* case 'UpdateExpression':
           result = this.visitUpdateExpression(node as ts.UpdateExpression)
            break*/
-      /* case 'VariableDeclaration':
-          result = this.visitVariableDeclaration(node as ts.VariableDeclaration)
-           break*/
-      /* case 'VariableDeclarator':
-          result = this.visitVariableDeclarator(node as ts.VariableDeclarator)
-           break*/
+      case 'VariableDeclaration':
+        result = this.visitVariableDeclaration(node as ts.VariableDeclaration)
+        break
+      case 'VariableDeclarator':
+        result = this.visitVariableDeclarator(node as ts.VariableDeclarator)
+        break
       /* case 'WhileStatement':
           result = this.visitWhileStatement(node as ts.WhileStatement)
            break*/
@@ -488,9 +488,9 @@ export abstract class TSVisitor<T = void> {
       /* case 'TSTypeParameterDeclaration':
           result = this.visitTSTypeParameterDeclaration(node as ts.TSTypeParameterDeclaration)
            break*/
-      /* case 'TSTypeParameterInstantiation':
-          result = this.visitTSTypeParameterInstantiation(node as ts.TSTypeParameterInstantiation)
-           break*/
+      case 'TSTypeParameterInstantiation':
+        result = this.visitTSTypeParameterInstantiation(node as ts.TSTypeParameterInstantiation)
+        break
       /* case 'TSTypePredicate':
           result = this.visitTSTypePredicate(node as ts.TSTypePredicate)
            break*/
@@ -520,7 +520,9 @@ export abstract class TSVisitor<T = void> {
   }
 
   // public abstract visitAccessorProperty(accessorProperty: ts.AccessorProperty): T
-  // public abstract visitArrayExpression(arrayExpression: ts.ArrayExpression): T
+
+  public abstract visitArrayExpression(arrayExpression: ts.ArrayExpression): T
+
   // public abstract visitArrayPattern(arrayPattern: ts.ArrayPattern): T
 
   public abstract visitArrowFunctionExpression(
@@ -582,7 +584,9 @@ export abstract class TSVisitor<T = void> {
   public abstract visitImportDeclaration(importDeclaration: ts.ImportDeclaration): T
 
   // public abstract visitImportDefaultSpecifier(importDefaultSpecifier: ts.ImportDefaultSpecifier): T
-  // public abstract visitImportExpression(importExpression: ts.ImportExpression): T
+
+  public abstract visitImportExpression(importExpression: ts.ImportExpression): T
+
   // public abstract visitImportNamespaceSpecifier(importNamespaceSpecifier: ts.ImportNamespaceSpecifier): T
 
   public abstract visitImportSpecifier(importSpecifier: ts.ImportSpecifier): T
@@ -614,14 +618,16 @@ export abstract class TSVisitor<T = void> {
 
   public abstract visitMethodDefinition(methodDefinition: ts.MethodDefinition): T
 
-  // public abstract visitNewExpression(newExpression: ts.NewExpression): T
-  // public abstract visitObjectExpression(objectExpression: ts.ObjectExpression): T
+  public abstract visitNewExpression(newExpression: ts.NewExpression): T
+
+  public abstract visitObjectExpression(objectExpression: ts.ObjectExpression): T
+
   // public abstract visitObjectPattern(objectPattern: ts.ObjectPattern): T
   // public abstract visitPrivateIdentifier(privateIdentifier: ts.PrivateIdentifier): T
 
   public abstract visitProgram(program: ts.Program): T
 
-  // public abstract visitProperty(property: ts.Property): T
+  public abstract visitProperty(property: ts.Property): T
 
   public abstract visitPropertyDefinition(propertyDefinition: ts.PropertyDefinition): T
 
@@ -647,8 +653,11 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTryStatement(tryStatement: ts.TryStatement): T
   // public abstract visitUnaryExpression(unaryExpression: ts.UnaryExpression): T
   // public abstract visitUpdateExpression(updateExpression: ts.UpdateExpression): T
-  // public abstract visitVariableDeclaration(variableDeclaration: ts.VariableDeclaration): T
-  // public abstract visitVariableDeclarator(variableDeclarator: ts.VariableDeclarator): T
+
+  public abstract visitVariableDeclaration(variableDeclaration: ts.VariableDeclaration): T
+
+  public abstract visitVariableDeclarator(variableDeclarator: ts.VariableDeclarator): T
+
   // public abstract visitWhileStatement(whileStatement: ts.WhileStatement): T
   // public abstract visitWithStatement(withStatement: ts.WithStatement): T
   // public abstract visitYieldExpression(yieldExpression: ts.YieldExpression): T
@@ -738,7 +747,11 @@ export abstract class TSVisitor<T = void> {
   // public abstract visitTSTypeOperator(tsTypeOperator: ts.TSTypeOperator): T
   // public abstract visitTSTypeParameter(tsTypeParameter: ts.TSTypeParameter): T
   // public abstract visitTSTypeParameterDeclaration(tsTypeParameterDeclaration: ts.TSTypeParameterDeclaration): T
-  // public abstract visitTSTypeParameterInstantiation(tsTypeParameterInstantiation: ts.TSTypeParameterInstantiation): T
+
+  public abstract visitTSTypeParameterInstantiation(
+    tsTypeParameterInstantiation: ts.TSTypeParameterInstantiation,
+  ): T
+
   // public abstract visitTSTypePredicate(tsTypePredicate: ts.TSTypePredicate): T
   // public abstract visitTSTypeQuery(tsTypeQuery: ts.TSTypeQuery): T
 

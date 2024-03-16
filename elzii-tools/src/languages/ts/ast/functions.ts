@@ -11,7 +11,7 @@ import {
   ReturnStatement,
   TSTypeAnnotation,
 } from '@module/languages/ts/tsestree-spec'
-import { identifier } from '@module/languages/ts/ast/misc'
+import { identifier } from '@module/languages/ts/ast/expressions'
 
 export function arrowFunctionExpression(
   options: FunctionOptions<Expression>,

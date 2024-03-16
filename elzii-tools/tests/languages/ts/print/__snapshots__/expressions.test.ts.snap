@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`printing a MemberExpression 1`] = `"a.b"`;
+
+exports[`printing a ObjectExpression 1`] = `"{}"`;
+
+exports[`printing a ObjectExpression 2`] = `"{a: 'A', b: 'B'}"`;
+
+exports[`printing a ObjectExpression 3`] = `
+"{
+  a: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  b: 'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+}"
+`;
+
+exports[`printing a ObjectExpression 4`] = `
+"{
+  a: 'A',
+  b: [
+    'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+  ],
+}"
+`;
+
+exports[`printing a Property 1`] = `"a: 'A'"`;
+
+exports[`printing a TemplateElement 1`] = `"' " \\\` $ { } \\\${} blah blah"`;
+
+exports[`printing a TemplateLiteral 1`] = `"\`something \${something} something, we win\`"`;
+
+exports[`printing a TemplateLiteral 2`] = `"\`\${something} something something, we \${win}\`"`;
+
+exports[`printing a ThisExpression 1`] = `"this"`;
+
+exports[`printing an ArrayExpression 1`] = `"[]"`;
+
+exports[`printing an ArrayExpression 2`] = `"['A', 'B']"`;
+
+exports[`printing an ArrayExpression 3`] = `
+"[
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+]"
+`;
+
+exports[`printing an AssignmentExpression 1`] = `"myVariable = 'value'"`;
+
+exports[`printing an Identifier 1`] = `"something"`;
+
+exports[`printing an ImportExpression 1`] = `"import('./myModule.js')"`;

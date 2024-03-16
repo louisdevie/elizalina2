@@ -2,6 +2,7 @@ export * from '../tsestree-spec'
 export { NodeOrTokenData as AnyNode } from '../tsestree-spec'
 
 export * from './classes'
+export * from './expressions'
 export * from './functions'
 export * from './global'
 export * from './misc'
@@ -11,7 +12,6 @@ export * from './types'
 // below are nodes that are not needed
 
 // export function accessorProperty(): ts.AccessorProperty {}
-// export function arrayExpression(): ts.ArrayExpression {}
 // export function arrayPattern(): ts.ArrayPattern {}
 // export function assignmentPattern(): ts.AssignmentPattern {}
 // export function awaitExpression(): ts.AwaitExpression {}
@@ -35,7 +35,6 @@ export * from './types'
 // export function ifStatement(): ts.IfStatement {}
 // export function importAttribute(): ts.ImportAttribute {}
 // export function importDefaultSpecifier(): ts.ImportDefaultSpecifier {}
-// export function importExpression(): ts.ImportExpression {}
 // export function importNamespaceSpecifier(): ts.ImportNamespaceSpecifier {}
 // export function jSXAttribute(): ts.JSXAttribute {}
 // export function jSXClosingElement(): ts.JSXClosingElement {}
@@ -55,11 +54,8 @@ export * from './types'
 // export function labeledStatement(): ts.LabeledStatement {}
 // export function logicalExpression(): ts.LogicalExpression {}
 // export function metaProperty(): ts.MetaProperty {}
-// export function newExpression(): ts.NewExpression {}
-// export function objectExpression(): ts.ObjectExpression {}
 // export function objectPattern(): ts.ObjectPattern {}
 // export function privateIdentifier(): ts.PrivateIdentifier {}
-// export function property(): ts.Property {}
 // export function restElement(): ts.RestElement {}
 // export function sequenceExpression(): ts.SequenceExpression {}
 // export function spreadElement(): ts.SpreadElement {}
@@ -72,8 +68,6 @@ export * from './types'
 // export function tryStatement(): ts.TryStatement {}
 // export function unaryExpression(): ts.UnaryExpression {}
 // export function updateExpression(): ts.UpdateExpression {}
-// export function variableDeclaration(): ts.VariableDeclaration {}
-// export function variableDeclarator(): ts.VariableDeclarator {}
 // export function whileStatement(): ts.WhileStatement {}
 // export function withStatement(): ts.WithStatement {}
 // export function yieldExpression(): ts.YieldExpression {}
@@ -138,7 +132,6 @@ export * from './types'
 // export function tsTypeOperator(): ts.TSTypeOperator {}
 // export function tsTypeParameter(): ts.TSTypeParameter {}
 // export function tsTypeParameterDeclaration(): ts.TSTypeParameterDeclaration {}
-// export function tsTypeParameterInstantiation(): ts.TSTypeParameterInstantiation {}
 // export function tsTypePredicate(): ts.TSTypePredicate {}
 // export function tsTypeQuery(): ts.TSTypeQuery {}
 // export function tsUndefinedKeyword(): ts.TSUndefinedKeyword {}

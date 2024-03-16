@@ -28,7 +28,6 @@ const TSPrinterImpl_terminals: Pick<Visitor, VisitMisc> = {
       case 'string':
         const singleQuoteCount = countOccurrences("'", literal.value)
         const doubleQuoteCount = countOccurrences('"', literal.value)
-        console.log(literal.value, singleQuoteCount, doubleQuoteCount)
         if (singleQuoteCount > doubleQuoteCount) {
           code = '"' + escapeDoubleQuotedString(literal.value) + '"'
         } else {

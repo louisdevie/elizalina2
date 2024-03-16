@@ -1,6 +1,6 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
-import { Visitor } from '@module/languages/ts/print/helpers'
+import { printList, Visitor } from '@module/languages/ts/print/helpers'
 
 type VisitFunctions =
   | 'visitArrowFunctionExpression'
@@ -28,9 +28,9 @@ const TSPrinterImpl_functions: Pick<Visitor, VisitFunctions> = {
   },
 
   visitCallExpression(this: Visitor, callExpression: ts.CallExpression): PrintedCode {
-    const args = callExpression.arguments.map((arg) => this.visitAnyNode(arg).toString()).join(', ')
+    const args = callExpression.arguments.map((arg) => this.visitAnyNode(arg))
     const callee = this.visitAnyNode(callExpression.callee)
-    return new PrintedCode(`${callee}(${args})`)
+    return printList(callee + '(', args, ')', this.lineBreaksAllowed ? 'auto' : 'inline')
   },
 
   visitFunctionExpression(this: Visitor, functionExpression: ts.FunctionExpression): PrintedCode {

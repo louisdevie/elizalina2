@@ -1,11 +1,12 @@
 import { PrintedCode } from '@module/printing'
-import { Visitor, wrapInBlock } from './helpers'
+import { printList, Visitor, wrapInBlock } from './helpers'
 import * as ts from '@module/languages/ts/ast'
 
 type VisitClasses =
   | 'visitClassBody'
   | 'visitClassDeclaration'
   | 'visitMethodDefinition'
+  | 'visitNewExpression'
   | 'visitPropertyDefinition'
   | 'visitTSClassImplements'
   | 'visitTSInterfaceBody'
@@ -46,6 +47,22 @@ const TSPrinterImpl_classes: Pick<Visitor, VisitClasses> = {
     const nameWithModifiers = new PrintedCode(`${modifiers.join('')}${name}`)
 
     return PrintedCode.joinInline([nameWithModifiers, this.visitAnyNode(methodDefinition.value)])
+  },
+
+  visitNewExpression(this: Visitor, newExpression: ts.NewExpression): PrintedCode {
+    const cls = this.visitAnyNode(newExpression.callee)
+
+    let typeArgs = ''
+    if (newExpression.typeArguments !== undefined) {
+      typeArgs = this.visitTSTypeParameterInstantiation(newExpression.typeArguments).toString()
+    }
+
+    return printList(
+      `new ${cls}${typeArgs}(`,
+      newExpression.arguments.map((prop) => this.visitAnyNode(prop)),
+      ')',
+      this.lineBreaksAllowed ? 'auto' : 'inline',
+    )
   },
 
   visitPropertyDefinition(this: Visitor, propertyDefinition: ts.PropertyDefinition): PrintedCode {

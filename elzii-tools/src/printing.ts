@@ -9,6 +9,10 @@ export class PrintedCode {
     return this._lines.length
   }
 
+  public get firstLineLength(): number {
+    return this._lines[0].length
+  }
+
   public static join(blocks: PrintedCode[]): PrintedCode {
     return new PrintedCode(...blocks.flatMap((block) => block._lines))
   }
@@ -48,6 +52,22 @@ export class PrintedCode {
 
   public append(code: PrintedCode) {
     this._lines.push(...code._lines)
+  }
+
+  public prependInline(code: PrintedCode) {
+    const last = code._lines.length - 1
+    this._lines[0] = code._lines[last] + this._lines[0]
+    for (let i = last - 1; i >= 0; i--) {
+      this._lines.unshift(code._lines[i])
+    }
+  }
+
+  public appendInline(code: PrintedCode) {
+    const last = this._lines.length - 1
+    this._lines[last] = this._lines[last] + code._lines[0]
+    for (let i = 1; i < code._lines.length; i++) {
+      this._lines.push(code._lines[i])
+    }
   }
 }
 

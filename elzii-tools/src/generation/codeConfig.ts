@@ -4,6 +4,11 @@ export class ElizalinaRuntimeConfig {
   public static readonly moduleName = 'elzii'
   public static readonly formatterClassName = 'Fmt'
   public static readonly formatMethodName = 'format'
+  public static readonly localeSelectionClassName = 'Elz'
+  public static readonly localeSelectionListPropertyName = 'locales'
+  public static readonly localeSelectionIdPropertyName = 'id'
+  public static readonly localeSelectionLoaderPropertyName = 'messages'
+  public static readonly makeProxyMethodName = 'makeLocaleProxy'
 }
 
 export class GeneratedCodeConfig {

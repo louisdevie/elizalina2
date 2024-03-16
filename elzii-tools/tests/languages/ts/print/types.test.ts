@@ -36,9 +36,23 @@ test('printing a TSTypeAnnotation', async () => {
   expect(await printer.print(typeAnnotation)).toMatchSnapshot()
 })
 
+test('printing a TSTypeParameterInstantiation', async () => {
+  const printer = getTSPrinter()
+
+  let typeArgs = ts.tsTypeParameterInstantiation([ts.tsNumberKeyword(), ts.tsStringKeyword()])
+  expect(await printer.print(typeArgs)).toMatchSnapshot()
+})
+
 test('printing a TSTypeReference', async () => {
   const printer = getTSPrinter()
 
-  let typeRef = ts.tsTypeReference(ts.identifier('MyType'))
-  expect(await printer.print(typeRef)).toMatchSnapshot()
+  let withoutArgs = ts.tsTypeReference(ts.identifier('MyType'))
+  expect(await printer.print(withoutArgs)).toMatchSnapshot()
+
+  let withArgs = ts.tsTypeReference(
+    ts.identifier('MyType'),
+    ts.tsNumberKeyword(),
+    ts.tsStringKeyword(),
+  )
+  expect(await printer.print(withArgs)).toMatchSnapshot()
 })

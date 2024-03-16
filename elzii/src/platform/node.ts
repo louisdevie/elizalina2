@@ -11,7 +11,8 @@ export class NodePlatform implements Platform {
     let envLocale =
       process.env.LC_ALL || process.env.LC_MESSAGES || process.env.LANG || process.env.LANGUAGE
     if (envLocale !== undefined) {
-      found.push(envLocale.split('.')[0]) // remove encoding
+      // remove encoding and transform en_US into en-US
+      found.push(envLocale.split('.')[0].replace('_', '-'))
     }
 
     return found

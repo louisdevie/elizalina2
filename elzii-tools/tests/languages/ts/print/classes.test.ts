@@ -1,6 +1,5 @@
 import { getTSPrinter } from '@module/languages/ts'
 import * as ts from '@module/languages/ts/ast'
-import { AST_NODE_TYPES } from '@module/languages/ts/ast'
 
 test('printing a ClassBody', async () => {
   const printer = getTSPrinter()
@@ -49,6 +48,20 @@ test('printing a MethodDefinitionNonComputedName', async () => {
     body: ts.blockStatement(),
   })
   expect(await printer.print(constructor)).toMatchSnapshot()
+})
+
+test('printing a NewExpression', async () => {
+  const printer = getTSPrinter()
+
+  const newExpr = ts.newExpression(ts.identifier('MyClass'), [ts.literal('argument')])
+  expect(await printer.print(newExpr)).toMatchSnapshot()
+
+  const newExprWithTypeArgs = ts.newExpression(
+    ts.identifier('MyClass'),
+    [ts.literal('argument')],
+    [ts.tsNumberKeyword()],
+  )
+  expect(await printer.print(newExprWithTypeArgs)).toMatchSnapshot()
 })
 
 test('printing a PropertyDefinition', async () => {

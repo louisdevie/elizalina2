@@ -6,3 +6,4 @@ lcov-report
 gen
 *.tokens
 *.local.mjs
+/docs/venv/

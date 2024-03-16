@@ -33,7 +33,7 @@ test('TargetConfigBuilder', () => {
   expect(() => target.translations).toThrow()
   expect(() => target.output).toThrow()
   expect(target.interfaceName).toEqual('Locale')
-  expect(target.objectName).toEqual('elz')
+  expect(target.proxyName).toEqual('elz')
   expect(target.singleFile).toBeFalsy()
 
   target.merge(
@@ -42,7 +42,7 @@ test('TargetConfigBuilder', () => {
       output: {
         js: 'path/to/js',
       },
-      objectName: 'locale',
+      proxyName: 'locale',
     },
     true,
     'in tests',
@@ -51,7 +51,7 @@ test('TargetConfigBuilder', () => {
   expect(target.translations).toEqual('path/to/translations')
   expect(target.output).toMatchObject({ js: { enabled: true, directory: 'path/to/js' } })
   expect(target.interfaceName).toEqual('Locale')
-  expect(target.objectName).toEqual('locale')
+  expect(target.proxyName).toEqual('locale')
   expect(target.singleFile).toBeFalsy()
 })
 

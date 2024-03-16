@@ -56,7 +56,11 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
   }
 
   private foundParameter(name: string, format?: MessageParameterFormat) {
-    let param = this.mergeParameter(name, format?.code.getTypeHint() ?? TypeHint.None)
+    let typeHint = TypeHint.None
+    if (format?.type === 'basic') {
+      typeHint = format?.code.getTypeHint()
+    }
+    let param = this.mergeParameter(name, typeHint)
 
     this._content.push({
       type: 'formatting',

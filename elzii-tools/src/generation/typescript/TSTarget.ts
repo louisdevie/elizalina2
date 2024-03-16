@@ -18,23 +18,29 @@ import {
 import { UserCodeInsertion } from '@module/generation/postProcessing'
 import { AllTranslationReports, MissingTranslationsReport } from '@module/checks/translations'
 import { throwError } from '@module/error'
-import { CacheKeyGenerator } from '@module/generation/cacheKeys'
+import { CacheKeyGenerator, ParameterEncounters } from '@module/generation/helperIndexes'
+
+interface LocaleLoaderConfig {
+  id: string
+  path: string
+}
 
 export default abstract class TSTarget extends BaseTarget {
   private readonly _interfaceName: string
-  private readonly _objectName: string
+  private readonly _proxyName: string
   private readonly _userCodeInsertion: UserCodeInsertion
   private readonly _cacheKeyGenerator: CacheKeyGenerator
   private _reports?: AllTranslationReports
 
-  protected constructor(interfaceName: string, objectName: string) {
+  protected constructor(interfaceName: string, proxyName: string) {
     super()
 
     this._interfaceName = interfaceName
-    this._objectName = objectName
+    this._proxyName = proxyName
     this._userCodeInsertion = new UserCodeInsertion()
     this._cacheKeyGenerator = new CacheKeyGenerator()
   }
+
   public get userCodeInsertion(): UserCodeInsertion {
     return this._userCodeInsertion
   }
@@ -80,6 +86,16 @@ export default abstract class TSTarget extends BaseTarget {
   protected makeFormatterImport(): ts.ProgramStatement {
     return ts.importDeclaration('value', ElizalinaRuntimeConfig.moduleName, [
       ts.importSpecifier('value', ElizalinaRuntimeConfig.formatterClassName),
+    ])
+  }
+
+  /**
+   * Creates an import statement for the locale selection class.
+   * @protected
+   */
+  protected makeLocaleSelectorImport(): ts.ProgramStatement {
+    return ts.importDeclaration('value', ElizalinaRuntimeConfig.moduleName, [
+      ts.importSpecifier('value', ElizalinaRuntimeConfig.localeSelectionClassName),
     ])
   }
 
@@ -161,14 +177,16 @@ export default abstract class TSTarget extends BaseTarget {
     messageContent: MessagePart[],
     translationContext: string,
   ): ts.MethodDefinition {
+    const tempVariables: ts.VariableDeclaration[] = []
+    const template = this.makeMessageTemplate(
+      messageContent,
+      `${key}, ${translationContext}`,
+      tempVariables,
+    )
     return this.makeMessageMethod(
       key,
       messageParameters,
-      ts.blockStatement(
-        ts.returnStatement(
-          this.makeMessageTemplate(messageContent, `${key}, ${translationContext}`),
-        ),
-      ),
+      ts.blockStatement(...tempVariables, ts.returnStatement(template)),
     )
   }
 
@@ -219,7 +237,9 @@ export default abstract class TSTarget extends BaseTarget {
   private makeMessageTemplate(
     messageContent: MessagePart[],
     messageContext: string,
+    tempVariables: ts.VariableDeclaration[],
   ): ts.TemplateLiteral {
+    const encounters = new ParameterEncounters()
     const textElements = []
     const expressions = []
 
@@ -234,7 +254,13 @@ export default abstract class TSTarget extends BaseTarget {
           if (firstPart) textElements.push('') // always start with a quasi
 
           expressions.push(
-            this.makeFormatExpression(part.parameterName, part.format, messageContext),
+            this.makeFormatExpression(
+              part.parameterName,
+              part.format,
+              messageContext,
+              encounters.encountered(part.parameterName),
+              tempVariables,
+            ),
           )
       }
       firstPart = false
@@ -247,33 +273,67 @@ export default abstract class TSTarget extends BaseTarget {
     parameterName: string,
     format: MessageParameterFormat | undefined,
     messageContext: string,
+    encounterCount: number,
+    tempVariables: ts.VariableDeclaration[],
   ): ts.Expression {
+    let result
     if (format === undefined) {
-      return ts.identifier(parameterName)
-    } else if (format.type === 'basic') {
-      const value = ts.identifier(parameterName)
-      const config = ts.arrowFunctionExpression({
-        params: [ts.identifier('f')],
-        body: this.makePlaceholderExpression(format.code.withPrefix('f.')),
-      })
-      const cacheKey = ts.literal(this._cacheKeyGenerator.generateCacheKey('fmt'))
-      const context = ts.literal(`parameter '${parameterName}' in ${messageContext}`)
-      return ts.callExpression(
-        ts.memberExpression(
-          ts.memberExpression(ts.thisExpression(), GeneratedCodeConfig.formatterPropertyName),
-          ElizalinaRuntimeConfig.formatMethodName,
-        ),
-        value,
-        config,
-        cacheKey,
-        context,
-      )
+      result = ts.identifier(parameterName)
     } else {
-      return ts.callExpression(
-        this.makePlaceholderExpression(format.code),
-        ts.identifier(parameterName),
+      let expr
+      if (format.type === 'custom') {
+        expr = ts.callExpression(
+          this.makePlaceholderExpression(format.code),
+          ts.identifier(parameterName),
+        )
+      } else {
+        expr = this.makeFormatterCall(parameterName, format, messageContext)
+      }
+      const [decl, ref] = this.makeTempVariable(
+        this.generateNameForFormattedParameter(parameterName, encounterCount),
+        expr,
       )
+      tempVariables.push(decl)
+      result = ref
     }
+    return result
+  }
+
+  private makeFormatterCall(
+    parameterName: string,
+    format: MessageParameterFormat,
+    messageContext: string,
+  ) {
+    const value = ts.identifier(parameterName)
+    const config = ts.arrowFunctionExpression({
+      params: [ts.identifier('f')],
+      body: this.makePlaceholderExpression(format.code.withPrefix('f.')),
+    })
+    const cacheKey = ts.literal(this._cacheKeyGenerator.generateCacheKey('fmt'))
+    const context = ts.literal(`parameter '${parameterName}' in ${messageContext}`)
+    return ts.callExpression(
+      ts.memberExpression(
+        ts.memberExpression(ts.thisExpression(), GeneratedCodeConfig.formatterPropertyName),
+        ElizalinaRuntimeConfig.formatMethodName,
+      ),
+      value,
+      config,
+      cacheKey,
+      context,
+    )
+  }
+
+  private generateNameForFormattedParameter(parameterName: string, encounterCount: number): string {
+    return `${parameterName}_fmt${encounterCount}`
+  }
+
+  private makeTempVariable(
+    name: string,
+    value: ts.Expression,
+  ): [ts.VariableDeclaration, ts.Expression] {
+    const id = ts.identifier(name)
+    const declaration = ts.variableDeclaration('const', id, value)
+    return [declaration, id]
   }
 
   protected makeTranslationInterface(): ts.TSInterfaceDeclaration {
@@ -299,5 +359,42 @@ export default abstract class TSTarget extends BaseTarget {
       params,
       returnType: ts.tsTypeAnnotation(ts.tsStringKeyword()),
     })
+  }
+
+  protected makeLocaleSelectorInstance(locales: LocaleLoaderConfig[]): ts.VariableDeclaration {
+    const localesList = ts.arrayExpression(...locales.map(this.makeLocaleLoaderObject, this))
+
+    return ts.variableDeclaration(
+      'const',
+      ts.identifier('elz'),
+      ts.newExpression(
+        ts.identifier(ElizalinaRuntimeConfig.localeSelectionClassName),
+        [
+          ts.objectExpression(
+            ts.property(ElizalinaRuntimeConfig.localeSelectionListPropertyName, localesList),
+          ),
+        ],
+        [ts.tsTypeReference(ts.identifier(this.interfaceName))],
+      ),
+    )
+  }
+
+  private makeLocaleLoaderObject(locale: LocaleLoaderConfig): ts.Expression {
+    return ts.objectExpression(
+      ts.property(ElizalinaRuntimeConfig.localeSelectionIdPropertyName, ts.literal(locale.id)),
+      ts.property(
+        ElizalinaRuntimeConfig.localeSelectionLoaderPropertyName,
+        ts.arrowFunctionExpression({
+          params: [],
+          body: ts.importExpression(ts.literal(locale.path)),
+        }),
+      ),
+    )
+  }
+
+  protected makeLocaleProxyExpression(): ts.Expression {
+    return ts.callExpression(
+      ts.memberExpression(ts.identifier('elz'), ElizalinaRuntimeConfig.makeProxyMethodName),
+    )
   }
 }

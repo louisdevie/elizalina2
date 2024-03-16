@@ -13,7 +13,7 @@ import {
   ProgramStatement,
 } from '@module/languages/ts/tsestree-spec'
 import { literal } from './terminals'
-import { identifier } from '@module/languages/ts/ast/misc'
+import { identifier } from '@module/languages/ts/ast/expressions'
 
 export function exportDefaultDeclaration(
   declaration: DefaultExportDeclarations,

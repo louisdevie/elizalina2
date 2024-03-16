@@ -5,7 +5,10 @@ import {
   ClassDeclaration,
   ClassDeclarationWithName,
   ClassElement,
+  Expression,
+  LeftHandSideExpression,
   MethodDefinitionNonComputedName,
+  NewExpression,
   Parameter,
   PropertyDefinition,
   TSClassImplements,
@@ -17,8 +20,8 @@ import {
   TypeNode,
 } from '@module/languages/ts/tsestree-spec'
 import { functionExpression, FunctionOptions } from './functions'
-import { identifier } from './misc'
-import { tsTypeAnnotation } from '@module/languages/ts/ast/types'
+import { tsTypeAnnotation, tsTypeParameterInstantiation } from '@module/languages/ts/ast/types'
+import { identifier } from '@module/languages/ts/ast/expressions'
 
 export function classBody(...elements: ClassElement[]): ClassBody {
   return { type: AST_NODE_TYPES.ClassBody, body: elements }
@@ -69,6 +72,21 @@ export function methodDefinition(
     accessibility: 'public' /* options.accessibility */,
     optional: false,
     decorators: [],
+  }
+}
+
+export function newExpression(
+  cls: LeftHandSideExpression,
+  args: Expression[],
+  typeArgs?: TypeNode[],
+): NewExpression {
+  typeArgs ??= []
+  return {
+    type: AST_NODE_TYPES.NewExpression,
+    callee: cls,
+    arguments: args,
+    typeArguments: typeArgs.length === 0 ? undefined : tsTypeParameterInstantiation(typeArgs),
+    typeParameters: undefined,
   }
 }
 

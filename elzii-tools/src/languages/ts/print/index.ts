@@ -1,6 +1,7 @@
 import * as ts from '../ast'
 import { TSPrinter, TSVisitor } from '../index'
 import { PrintedCode, TextProcessor } from '@module/printing'
+import type { Visitor } from './helpers'
 
 import TSPrinterImpl_classes from './classes'
 import TSPrinterImpl_functions from './functions'
@@ -8,20 +9,35 @@ import TSPrinterImpl_global from './global'
 import TSPrinterImpl_misc from './misc'
 import TSPrinterImpl_terminals from './terminals'
 import TSPrinterImpl_types from './types'
+import TSPrinterImpl_expressions from './expressions'
 
 // the implementation of this class is split into the objects imported above
 
-export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
+export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter, Visitor {
   private readonly _postProcessors: TextProcessor[]
+  private _lineBreaksAllowed: boolean
 
   public constructor() {
     super()
 
     this._postProcessors = []
+    this._lineBreaksAllowed = true
   }
 
   public addPostProcessor(postProcessor: TextProcessor) {
     this._postProcessors.push(postProcessor)
+  }
+
+  public get lineBreaksAllowed(): boolean {
+    return this._lineBreaksAllowed
+  }
+
+  public allowLineBreaks() {
+    this._lineBreaksAllowed = true
+  }
+
+  public disallowLineBreaks() {
+    this._lineBreaksAllowed = false
   }
 
   public async print(code: ts.AnyNode): Promise<string> {
@@ -34,9 +50,11 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   // region Visitor implementation
 
+  public visitArrayExpression = TSPrinterImpl_expressions.visitArrayExpression
+
   public visitArrowFunctionExpression = TSPrinterImpl_functions.visitArrowFunctionExpression
 
-  public visitAssignmentExpression = TSPrinterImpl_misc.visitAssignmentExpression
+  public visitAssignmentExpression = TSPrinterImpl_expressions.visitAssignmentExpression
 
   public visitBlockComment = TSPrinterImpl_terminals.visitBlockComment
 
@@ -56,29 +74,41 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
 
   public visitFunctionExpression = TSPrinterImpl_functions.visitFunctionExpression
 
-  public visitIdentifier = TSPrinterImpl_misc.visitIdentifier
+  public visitIdentifier = TSPrinterImpl_expressions.visitIdentifier
 
   public visitImportDeclaration = TSPrinterImpl_global.visitImportDeclaration
+
+  public visitImportExpression = TSPrinterImpl_expressions.visitImportExpression
 
   public visitImportSpecifier = TSPrinterImpl_global.visitImportSpecifier
 
   public visitLiteral = TSPrinterImpl_terminals.visitLiteral
 
-  public visitMemberExpression = TSPrinterImpl_misc.visitMemberExpression
+  public visitMemberExpression = TSPrinterImpl_expressions.visitMemberExpression
 
   public visitMethodDefinition = TSPrinterImpl_classes.visitMethodDefinition
 
+  public visitNewExpression = TSPrinterImpl_classes.visitNewExpression
+
+  public visitObjectExpression = TSPrinterImpl_expressions.visitObjectExpression
+
   public visitProgram = TSPrinterImpl_global.visitProgram
+
+  public visitProperty = TSPrinterImpl_expressions.visitProperty
 
   public visitPropertyDefinition = TSPrinterImpl_classes.visitPropertyDefinition
 
   public visitReturnStatement = TSPrinterImpl_functions.visitReturnStatement
 
-  public visitTemplateElement = TSPrinterImpl_misc.visitTemplateElement
+  public visitTemplateElement = TSPrinterImpl_expressions.visitTemplateElement
 
-  public visitTemplateLiteral = TSPrinterImpl_misc.visitTemplateLiteral
+  public visitTemplateLiteral = TSPrinterImpl_expressions.visitTemplateLiteral
 
-  public visitThisExpression = TSPrinterImpl_misc.visitThisExpression
+  public visitVariableDeclaration = TSPrinterImpl_misc.visitVariableDeclaration
+
+  public visitVariableDeclarator = TSPrinterImpl_misc.visitVariableDeclarator
+
+  public visitThisExpression = TSPrinterImpl_expressions.visitThisExpression
 
   public visitTSAnyKeyword = TSPrinterImpl_types.visitTSAnyKeyword
 
@@ -97,6 +127,8 @@ export class TSPrinterImpl extends TSVisitor<PrintedCode> implements TSPrinter {
   public visitTSNumberKeyword = TSPrinterImpl_types.visitTSNumberKeyword
 
   public visitTSTypeAnnotation = TSPrinterImpl_types.visitTSTypeAnnotation
+
+  public visitTSTypeParameterInstantiation = TSPrinterImpl_types.visitTSTypeParameterInstantiation
 
   public visitTSTypeReference = TSPrinterImpl_types.visitTSTypeReference
 

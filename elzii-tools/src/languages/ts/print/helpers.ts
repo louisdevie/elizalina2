@@ -45,4 +45,58 @@ export function wrapInBlock(content: PrintedCode): PrintedCode {
   return result
 }
 
-export type Visitor = TSVisitor<PrintedCode>
+function printListInline(start: string, items: PrintedCode[], stop: string): PrintedCode {
+  return new PrintedCode(start + items.join(', ') + stop)
+}
+
+function printListBlock(start: string, items: PrintedCode[], stop: string): PrintedCode {
+  for (const item of items) {
+    item.appendInline(new PrintedCode(','))
+  }
+
+  const content = PrintedCode.join(items)
+  content.indent(defaultIndentation)
+  content.prepend(new PrintedCode(start))
+  content.append(new PrintedCode(stop))
+
+  return content
+}
+
+const MAX_LIST_PRINT_WIDTH = 60
+
+export type ListFormat = 'auto' | 'inline' | 'block'
+
+export function printList(
+  start: string,
+  items: PrintedCode[],
+  stop: string,
+  format: ListFormat,
+): PrintedCode {
+  const containsAMultiLineItem = items.some((item) => item.lineCount > 1)
+  const totalItemsWidth = items
+    .map((elt) => elt.firstLineLength)
+    .reduce((sum, eltLength) => sum + eltLength, 0)
+  const wouldBeTooLongInline = totalItemsWidth > MAX_LIST_PRINT_WIDTH
+
+  if (format === 'auto') {
+    if (containsAMultiLineItem || wouldBeTooLongInline) {
+      format = 'block'
+    } else {
+      format = 'inline'
+    }
+  }
+
+  let result
+  if (format === 'block') {
+    result = printListBlock(start, items, stop)
+  } else {
+    result = printListInline(start, items, stop)
+  }
+  return result
+}
+
+export interface Visitor extends TSVisitor<PrintedCode> {
+  lineBreaksAllowed: boolean
+  allowLineBreaks(): void
+  disallowLineBreaks(): void
+}

@@ -20,6 +20,8 @@ exports[`printing a TemplateLiteral 2`] = `"\`\${something} something something,
 
 exports[`printing a ThisExpression 1`] = `"this"`;
 
+exports[`printing a VariableDeclaration 1`] = `"const myVar = 'value';"`;
+
 exports[`printing an AssignmentExpression 1`] = `"myVariable = 'value'"`;
 
 exports[`printing an Identifier 1`] = `"something"`;

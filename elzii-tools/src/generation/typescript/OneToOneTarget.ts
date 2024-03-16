@@ -10,18 +10,24 @@ import { getTSPrinter } from '@module/languages/ts'
 import chalk from 'chalk'
 import { ShowProgress } from '@module/show'
 
+interface OutputInfo {
+  id: string
+  fileName: string
+  tsImportPath: string
+}
+
 export default class OneToOneTarget extends TSTarget {
   private _outputDirectory: TypeScriptOutputDirectory
   private readonly _sourcesList: string[]
-  private readonly _outputList: string[]
+  private readonly _outputList: OutputInfo[]
   private readonly _show: ShowProgress
 
   public constructor(
     outputDirectory: TypeScriptOutputDirectory,
     interfaceName: string,
-    objectName: string,
+    proxyName: string,
   ) {
-    super(interfaceName, objectName)
+    super(interfaceName, proxyName)
 
     this._outputDirectory = outputDirectory
     this._sourcesList = []
@@ -62,7 +68,11 @@ export default class OneToOneTarget extends TSTarget {
 
     show.debugInfo(`   Writing to file`)
     await file.write(program)
-    this._outputList.push(file.name)
+    this._outputList.push({
+      id: translation.id,
+      fileName: file.name,
+      tsImportPath: './' + className,
+    })
     this.userCodeInsertion.clear()
 
     const missing = this.requireMissingReport()
@@ -71,7 +81,7 @@ export default class OneToOneTarget extends TSTarget {
 
   protected override async finishThis(): Promise<void> {
     await this.generateIndex()
-    await this._outputDirectory.cleanUp(this._outputList)
+    await this._outputDirectory.cleanUp(this._outputList.map((output) => output.fileName))
     this._show.success('Finished')
   }
 
@@ -85,11 +95,22 @@ export default class OneToOneTarget extends TSTarget {
       this.makeGeneratedNoticeComment(this._sourcesList, config.requireToolInfo()),
     ]
 
+    program.body.push(this.makeLocaleSelectorImport())
+
     const intf = this.makeTranslationInterface()
     program.body.push(ts.exportNamedDeclaration(intf))
 
+    const elz = this.makeLocaleSelectorInstance(
+      this._outputList.map((output) => ({
+        id: output.id,
+        path: output.tsImportPath,
+      })),
+    )
+    program.body.push(ts.exportNamedDeclaration(elz))
+    program.body.push(ts.exportDefaultDeclaration(this.makeLocaleProxyExpression()))
+
     await file.write(program)
-    this._outputList.push(file.name)
+    this._outputList.push({ id: '__index', fileName: file.name, tsImportPath: '.' })
 
     this.showFileSuccess(fileName, 0, 0)
   }

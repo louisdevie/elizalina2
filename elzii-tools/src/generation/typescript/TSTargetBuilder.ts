@@ -18,11 +18,11 @@ export default class TSTargetBuilder extends BaseBuilder {
         throwError('The TS output format in single-file mode is not available yet.')
       } else {
         const outDir = await getTSOutputDirectory(resolveInPackage(outputs.ts.directory))
-        target = new OneToOneTSTarget(outDir.root, common.interfaceName, common.objectName)
+        target = new OneToOneTSTarget(outDir.root, common.interfaceName, common.proxyName)
         show.debugInfo(`   Added TS target (${target.id})`)
         show.debugInfo(`      output directory is ${outputs.ts.directory}`)
         show.debugInfo(`      interface name is '${common.interfaceName}'`)
-        show.debugInfo(`      object name is '${common.objectName}'`)
+        show.debugInfo(`      proxy name is '${common.proxyName}'`)
       }
     }
 

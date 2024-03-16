@@ -36,6 +36,10 @@ exports[`printing a MethodDefinitionNonComputedName 2`] = `"public get myPropert
 
 exports[`printing a MethodDefinitionNonComputedName 3`] = `"public constructor() { }"`;
 
+exports[`printing a NewExpression 1`] = `"new MyClass('argument')"`;
+
+exports[`printing a NewExpression 2`] = `"new MyClass<number>('argument')"`;
+
 exports[`printing a PropertyDefinition 1`] = `"private _myProperty: string;"`;
 
 exports[`printing a TSClassImplements 1`] = `"MyInterface"`;

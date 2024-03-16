@@ -10,4 +10,8 @@ exports[`printing a TSStringKeyword 1`] = `"string"`;
 
 exports[`printing a TSTypeAnnotation 1`] = `": string"`;
 
+exports[`printing a TSTypeParameterInstantiation 1`] = `"<number, string>"`;
+
 exports[`printing a TSTypeReference 1`] = `"MyType"`;
+
+exports[`printing a TSTypeReference 2`] = `"MyType<number, string>"`;

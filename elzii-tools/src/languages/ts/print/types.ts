@@ -3,9 +3,13 @@ import * as ts from '@module/languages/ts/ast'
 import { Visitor } from './helpers'
 import {
   TSAnyKeyword,
+  tsArrayType,
   TSArrayType,
   TSNumberKeyword,
   TSStringKeyword,
+  tsTypeAnnotation,
+  TSTypeParameterInstantiation,
+  tsTypeReference,
   TSTypeReference,
 } from '@module/languages/ts/ast'
 
@@ -15,6 +19,7 @@ type VisitTypes =
   | 'visitTSNumberKeyword'
   | 'visitTSStringKeyword'
   | 'visitTSTypeAnnotation'
+  | 'visitTSTypeParameterInstantiation'
   | 'visitTSTypeReference'
 
 const TSPrinterImpl_types: Pick<Visitor, VisitTypes> = {
@@ -38,8 +43,20 @@ const TSPrinterImpl_types: Pick<Visitor, VisitTypes> = {
     return new PrintedCode(`: ${this.visitAnyNode(tsTypeAnnotation.typeAnnotation)}`)
   },
 
+  visitTSTypeParameterInstantiation(
+    this: Visitor,
+    tsTypeParameterInstantiation: TSTypeParameterInstantiation,
+  ): PrintedCode {
+    const params = tsTypeParameterInstantiation.params.map((param) => this.visitAnyNode(param))
+    return new PrintedCode(`<${params.join(', ')}>`)
+  },
+
   visitTSTypeReference(this: Visitor, tsTypeReference: TSTypeReference): PrintedCode {
-    return this.visitAnyNode(tsTypeReference.typeName)
+    let args = ''
+    if (tsTypeReference.typeArguments !== undefined) {
+      args = this.visitTSTypeParameterInstantiation(tsTypeReference.typeArguments).toString()
+    }
+    return new PrintedCode(this.visitAnyNode(tsTypeReference.typeName) + args)
   },
 }
 
