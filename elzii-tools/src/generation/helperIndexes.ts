@@ -18,10 +18,6 @@ export class CacheKeyGenerator {
     } while (this._existing.has(key))
     return key
   }
-
-  public reset() {
-    this._existing.clear()
-  }
 }
 
 export class ParameterEncounters {

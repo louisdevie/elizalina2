@@ -1,4 +1,4 @@
-import { Format } from '../index'
+import { Format } from '@module'
 import { NumberFormatImpl } from './number'
 import { ListFormatImpl } from './list'
 import { DatetimeFormatImpl } from './datetime'

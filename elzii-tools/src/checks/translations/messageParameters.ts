@@ -6,8 +6,6 @@ import {
   TypeHint,
 } from '@module/translations'
 import { Check } from '@module/checks'
-import { findSourceMap } from 'node:module'
-import { textChangeRangeNewSpan } from 'typescript'
 import { throwError } from '@module/error'
 import { show } from '@module'
 
@@ -133,7 +131,7 @@ export class Signature implements MessageSignature {
 }
 
 class Report implements MessageParametersReport {
-  private _messages: Map<string, Signature[]>
+  private readonly _messages: Map<string, Signature[]>
 
   public constructor() {
     this._messages = new Map()

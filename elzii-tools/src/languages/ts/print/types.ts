@@ -3,13 +3,10 @@ import * as ts from '@module/languages/ts/ast'
 import { Visitor } from './helpers'
 import {
   TSAnyKeyword,
-  tsArrayType,
   TSArrayType,
   TSNumberKeyword,
   TSStringKeyword,
-  tsTypeAnnotation,
   TSTypeParameterInstantiation,
-  tsTypeReference,
   TSTypeReference,
 } from '@module/languages/ts/ast'
 

@@ -8,7 +8,6 @@ import {
   MessagePart,
   normalizedMessageContent,
   TypeHint,
-  UserCode,
 } from '@module/translations'
 import { ErrorReport, throwError } from '@module/error'
 import {
@@ -60,7 +59,7 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
     if (format?.type === 'basic') {
       typeHint = format?.code.getTypeHint()
     }
-    let param = this.mergeParameter(name, typeHint)
+    this.mergeParameter(name, typeHint)
 
     this._content.push({
       type: 'formatting',

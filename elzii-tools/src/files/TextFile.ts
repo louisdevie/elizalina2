@@ -26,13 +26,13 @@ export default abstract class TextFile<D> extends PathNode {
 
   public abstract readable: boolean
 
-  protected parseContents(contents: string): Promise<D> {
+  protected parseContents(_: string): Promise<D> {
     throwError('Missing parseContents implementation', 'internal')
   }
 
   public abstract writable: boolean
 
-  protected printContents(data: D): Promise<string> {
+  protected printContents(_: D): Promise<string> {
     throwError('Missing printContents implementation', 'internal')
   }
 

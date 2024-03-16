@@ -17,7 +17,7 @@ export class TranslationsDirectory extends Directory<TranslationFile> {
     return name.endsWith(FileExtensions.Translation) ? new TranslationFile(name) : null
   }
 
-  protected override createExistingSubdirectory(name: string): TranslationFile | null {
+  protected override createExistingSubdirectory(_: string): TranslationFile | null {
     return null // ignore all subdirectories
   }
 }

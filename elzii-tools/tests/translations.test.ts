@@ -2,7 +2,6 @@ import {
   mergeTypeHints,
   MessagePart,
   normalizedMessageContent,
-  TypeHint,
   TypeHint as TH,
 } from '@module/translations'
 

@@ -65,10 +65,6 @@ export class Config {
     return this._debug
   }
 
-  public get color(): Chalk {
-    return this._color
-  }
-
   /**
    * Requires the path to the root of the package the tool is being run in.
    */

@@ -88,7 +88,7 @@ class ElzLocale<T extends object> {
 }
 
 class ElzProxyHandler<T extends object> implements ProxyHandler<Elz<T>> {
-  get(target: Elz<T>, p: string | symbol, receiver: any): any {
+  get(target: Elz<T>, p: string | symbol): any {
     let message = undefined
     if (target.currentLocale !== undefined) {
       message = Reflect.get(target.currentLocale, p)

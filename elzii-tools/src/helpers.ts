@@ -1,5 +1,3 @@
-import fs from 'node:fs'
-
 /**
  * Converts a value that *may* be a promise into a promise if it is a regular value.
  * @param maybePromise A value that may be a promise.
@@ -67,7 +65,7 @@ export function countOccurrences(
   text: string,
   distinct: boolean = true,
 ): number {
-  let count = 0
+  let count
   if (typeof pattern === 'string') {
     if (pattern.length === 0) {
       count = text.length + 1

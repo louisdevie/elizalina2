@@ -95,7 +95,7 @@ export class Show {
 }
 
 export class ShowProgress {
-  private _tag: string
+  private readonly _tag: string
 
   public constructor(tag: string) {
     this._tag = tag.toUpperCase().padEnd(3)

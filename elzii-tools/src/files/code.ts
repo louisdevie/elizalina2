@@ -31,7 +31,7 @@ export class TypeScriptOutputDirectory extends Directory<TypeScriptFile> {
     return name.endsWith(FileExtensions.TypeScript) ? new TypeScriptFile(name) : null
   }
 
-  protected override createExistingSubdirectory(name: string): TypeScriptFile | null {
+  protected override createExistingSubdirectory(_: string): TypeScriptFile | null {
     return null // ignore all subdirectories
   }
 

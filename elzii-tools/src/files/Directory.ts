@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { handleErrors, handleErrorsAsync, throwError } from '@module/error'
+import { handleErrorsAsync, throwError } from '@module/error'
 import { PathNode } from '.'
 
 /**

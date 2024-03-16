@@ -1,6 +1,5 @@
 import { AnyFormat, AnyFormatOptions } from '.'
 import { DigitsFormat, DigitsFormatOptions } from './number'
-import { PluralFormatImpl } from '@module/format/implementations/plural'
 
 export type PluralType = 'cardinal' | 'ordinal'
 

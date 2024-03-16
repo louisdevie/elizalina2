@@ -1,5 +1,5 @@
 import { defaultTMParser } from '@module/languages/tm'
-import { Message, TypeHint, UserCode } from '@module/translations'
+import { Message } from '@module/translations'
 import { getDirectivesData, getMessageData } from './astHelpers'
 
 test('parsing only a comment', async () => {

@@ -1,11 +1,5 @@
 import { DatetimeFormatImpl } from '@module/format/implementations/datetime'
-import {
-  DatetimeFormatOptions,
-  HourCycle,
-  NumericComponentStyle,
-  TimeZoneStyle,
-  WordComponentStyle,
-} from '@module/format/datetime'
+import { DatetimeFormatOptions } from '@module/format/datetime'
 
 const fmt = () => new DatetimeFormatImpl('test')
 

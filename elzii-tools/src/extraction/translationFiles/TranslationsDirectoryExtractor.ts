@@ -2,7 +2,6 @@ import { ExtractedTranslation, TranslationsExtractor } from '@module/extraction'
 import { TranslationFile, TranslationsDirectory } from '@module/files/translations'
 import { Translation } from '@module/translations'
 import { parse as parsePath } from 'path'
-import * as tm from '@module/languages/tm/ast'
 import TranslationBuilder from '@module/extraction/translationFiles/TranslationBuilder'
 
 export default class TranslationsDirectoryExtractor implements TranslationsExtractor {

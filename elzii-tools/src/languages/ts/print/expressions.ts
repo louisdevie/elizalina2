@@ -1,16 +1,6 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
 import { escapeTemplateString, printList, Visitor } from './helpers'
-import {
-  arrayExpression,
-  assignmentExpression,
-  identifier,
-  memberExpression,
-  objectExpression,
-  property,
-  templateElement,
-  templateLiteral,
-} from '@module/languages/ts/ast'
 
 type VisitExpressions =
   | 'visitArrayExpression'
@@ -107,7 +97,7 @@ const TSPrinterImpl_expressions: Pick<Visitor, VisitExpressions> = {
     return new PrintedCode(code)
   },
 
-  visitThisExpression(this: Visitor, thisExpression: ts.ThisExpression): PrintedCode {
+  visitThisExpression(this: Visitor, _: ts.ThisExpression): PrintedCode {
     return new PrintedCode(`this`)
   },
 }
