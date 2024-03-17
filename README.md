@@ -1,4 +1,5 @@
-# Elizalina II
+<h1><img src="docs/images/elzii.min.svg" height="100px" alt="Elizalina II"></h1>
+
 [![codecov](https://codecov.io/github/louisdevie/elizalina2/graph/badge.svg?token=6EO0LR9PWQ)](https://codecov.io/github/louisdevie/elizalina2)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
