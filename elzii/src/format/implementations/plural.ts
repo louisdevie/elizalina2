@@ -1,7 +1,7 @@
 import { PluralFormat, PluralFormatOptions, PluralType } from '@module/format/plural'
 import { DigitsFormatImpl } from '@module/format/implementations/number'
 
-export class PluralFormatImpl extends DigitsFormatImpl<PluralFormat> implements PluralFormat {
+export class PluralFormatImpl extends DigitsFormatImpl<PluralFormatImpl> implements PluralFormat {
   private readonly _options: PluralFormatOptions
 
   public constructor(language: string) {

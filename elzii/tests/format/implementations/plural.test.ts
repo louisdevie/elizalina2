@@ -30,6 +30,13 @@ test('default format', () => {
   expect(opts).toEqual(expected)
 })
 
+test('setting a property from digits options', () => {
+  let opts = fmt().fixed(2).toOptions()
+
+  expect(opts.minimumFractionDigits).toEqual(2)
+  expect(opts.maximumFractionDigits).toEqual(2)
+})
+
 test('number types', () => {
   let opts = fmt().pluralType('cardinal').toOptions()
   expect(opts.pluralType).toEqual('cardinal')

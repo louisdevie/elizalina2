@@ -1,11 +1,14 @@
-import { Formatter, FormatterFactory } from '..'
-import { FormatOptions } from '@module/format'
+import type { Formatter, FormatterFactory } from '..'
+import type { FormatOptions } from '@module/format'
+import type { Ctx } from '@module/ctx'
 import { IntlNumberFormatAdapter } from './number'
 import { IntlListFormatAdapter } from './list'
 import { IntlDatetimeFormatAdapter } from './datetime'
 import { IntlPluralRulesAdapter } from './plural'
-import { Ctx } from '@module/ctx'
 
+/**
+ * @internal
+ */
 export class IntlFormatterFactory implements FormatterFactory {
   public makeFormatter(options: FormatOptions, context: Ctx): Formatter {
     let formatter

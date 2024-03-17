@@ -50,10 +50,10 @@ export class IntlNumberFormatAdapter implements Formatter {
 
   public static extractIntlDigitOptions(options: DigitsFormatOptions) {
     return {
-      minimumIntegerDigits: options.minimumIntegerDigits,
-      minimumFractionDigits: options.minimumFractionDigits,
-      maximumFractionDigits: options.maximumFractionDigits,
-      maximumSignificantDigits: options.maximumSignificantDigits,
+      minimumIntegerDigits: this.capIntegerOption(options.minimumIntegerDigits, 1, 21),
+      minimumFractionDigits: this.capIntegerOption(options.minimumFractionDigits, 0, 20),
+      maximumFractionDigits: this.capIntegerOption(options.maximumFractionDigits, 0, 20),
+      maximumSignificantDigits: this.capIntegerOption(options.maximumSignificantDigits, 1, 21),
       roundingMode: options.roundingMode,
     }
   }
@@ -91,6 +91,14 @@ export class IntlNumberFormatAdapter implements Formatter {
       intlCompactDisplay = undefined
     }
     return intlCompactDisplay
+  }
+
+  private static capIntegerOption(
+    value: number | undefined,
+    min: number,
+    max: number,
+  ): number | undefined {
+    return value === undefined ? undefined : Math.min(Math.max(Math.round(value), min), max)
   }
 
   public applyTo(value: any): string {

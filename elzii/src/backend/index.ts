@@ -1,5 +1,5 @@
-import { FormatOptions } from '@module/format'
-import { Ctx } from '@module/ctx'
+import type { FormatOptions } from '@module/format'
+import type { Ctx } from '@module/ctx'
 
 export interface Formatter {
   applyTo(value: any, context: Ctx): string

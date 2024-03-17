@@ -20,3 +20,10 @@ test('date and time format', () => {
   expect(opts.language).toEqual('fr-FR')
   expect(opts.type).toEqual('datetime')
 })
+
+test('plural format', () => {
+  let opts = new FormatImpl('fr-FR').plural.toOptions()
+
+  expect(opts.language).toEqual('fr-FR')
+  expect(opts.type).toEqual('plural')
+})

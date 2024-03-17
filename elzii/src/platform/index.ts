@@ -15,7 +15,9 @@ function platform(): Platform {
     platform = new NodePlatform()
   } else {
     // use a different context because this function should never fail
-    new Ctx().warn('unsupported platform.')
+    const platformInitCtx = new Ctx()
+    platformInitCtx.push('module initialization')
+    platformInitCtx.warn('unsupported platform.')
     platform = new UnknownPlatform()
   }
   return platform

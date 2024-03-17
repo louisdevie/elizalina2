@@ -39,6 +39,11 @@ test('numbering system', () => {
   expect(opts.numberingSystem).toEqual('latn')
 })
 
+test('time zone', () => {
+  let opts = fmt().timeZone('UTC').toOptions()
+  expect(opts.timeZone).toEqual('UTC')
+})
+
 test('hour cycles', () => {
   let opts = fmt().hourCycle('h23').toOptions()
   expect(opts.hourCycle).toEqual('h23')
@@ -103,11 +108,11 @@ test('weekday component', () => {
 })
 
 test('day period component', () => {
-  let opts = fmt().weekday().toOptions()
-  expect(opts.weekday).toEqual('short')
+  let opts = fmt().dayPeriod().toOptions()
+  expect(opts.dayPeriod).toEqual('short')
 
-  opts = fmt().weekday('long').toOptions()
-  expect(opts.weekday).toEqual('long')
+  opts = fmt().dayPeriod('long').toOptions()
+  expect(opts.dayPeriod).toEqual('long')
 })
 
 test('hour component', () => {
