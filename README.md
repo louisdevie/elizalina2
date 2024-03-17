@@ -24,7 +24,7 @@ supported through Intl.
 
 ### How do I use it ?
 
-*That's the neat part, you don't !*
+*“ That's the neat part, you don't ! ”*
 
 I strongly advise against using it in any real project as it's still in early development. Its only use right now is
 dogfooding.
