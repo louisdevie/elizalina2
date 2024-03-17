@@ -1,8 +1,25 @@
 # Elizalina II
+[![codecov](https://codecov.io/github/louisdevie/elizalina2/graph/badge.svg?token=6EO0LR9PWQ)](https://codecov.io/github/louisdevie/elizalina2)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 ### What's this ?
 
-An i18n tool I made to cope with the fact I still haven't found an internship.
+An i18n framework made for CLI tools and libraries (for Node or the browser). Translations are stored in separate files and
+compiled into Javascript or Typescript modules. Numbers, date, time and lists formatting as well as pluralization is
+supported through Intl.
+
+#### Features :
+- [ ] Javascript generation
+- [x] Typescript generation 
+- [ ] Typescript declarations generation
+- [ ] Source maps generation
+- [x] Number formatting
+- [x] Date and time formatting
+- [x] List formatting
+- [x] Pluralization
+- [ ] Defining fallbacks in translations files
+- [ ] Message selectors in translations files
+- [ ] Extension/Plugin API
 
 ### How do I use it ?
 
