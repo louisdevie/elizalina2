@@ -31,6 +31,6 @@ dogfooding.
 
 ### License
 
-Elizalina II is licensed under the MIT License. The software is provided "as is", without warranty of any kind, express
+The packages are licensed under the MIT License. The software is provided "as is", without warranty of any kind, express
 or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and
 noninfringement.

@@ -1,22 +1,23 @@
 {
   "name": "elzii-tools",
   "version": "0.1.0",
-  "description": "Tools for the i18n framework",
+  "description": "Elizalina II CLI tools",
   "files": [
     "dist"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "elzii-update": "./dist/bin/elzii-update.js",
-    "elzii-release": "./dist/bin/elzii-release.js"
+    "elzii-update": "dist/bin/elzii-update.js",
+    "elzii-release": "dist/bin/elzii-release.js"
   },
   "scripts": {
     "build": "tsup",
     "format": "prettier --write src/ bin/ tests/",
     "type-check": "tsc --noEmit",
     "test": "jest",
-    "antlr-gen": "node scripts/antlrGen.mjs"
+    "antlr-gen": "node scripts/antlrGen.mjs",
+    "prepack": "npm run build"
   },
   "tsup": {
     "entry": {

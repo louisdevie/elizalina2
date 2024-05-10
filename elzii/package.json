@@ -1,7 +1,7 @@
 {
   "name": "elzii",
   "version": "0.1.0",
-  "description": "i18n framework",
+  "description": "Elizalina II runtime",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -12,7 +12,8 @@
     "build": "tsup",
     "test": "jest",
     "format": "prettier --write src/ tests/",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepack": "npm run build"
   },
   "tsup": {
     "entry": [
@@ -25,6 +26,7 @@
     "dts": true,
     "splitting": false,
     "sourcemap": true,
+    "minify": true,
     "clean": true
   },
   "jest": {
