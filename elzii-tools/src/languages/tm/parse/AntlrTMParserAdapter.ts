@@ -7,7 +7,7 @@ import { Translation as TMTranslation } from '../ast'
 
 export default class AntlrTMParserAdapter implements TMParser {
   async parse(text: string): Promise<TMTranslation> {
-    const chars = new CharStream(text) // replace this with a FileStream as required
+    const chars = new CharStream(text)
 
     const lexer = new GeneratedTMLexer(chars)
     const tokens = new CommonTokenStream(lexer)
@@ -15,8 +15,8 @@ export default class AntlrTMParserAdapter implements TMParser {
     const parser = new GeneratedTMParser(tokens)
     // parser.removeErrorListeners()
     // TODO: uncomment this once the error listener is implemented
-    const errorListener = new AntlrErrorListener()
-    parser.addErrorListener(errorListener)
+    // const errorListener = new AntlrErrorListener()
+    // parser.addErrorListener(errorListener)
 
     return parser.translation()
   }
