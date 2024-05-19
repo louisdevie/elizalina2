@@ -4,22 +4,30 @@ import { Ctx } from './ctx'
 import { FormatImpl } from '@module/format/implementations'
 import { FormatterFactory } from '@module/backend'
 import { IntlFormatterFactory } from '@module/backend/intl'
-import { Format, AnyFormat } from './format'
+import { AnyFormat, Format } from './format'
 
 export type LocaleModule<T> = { default: new (fmt: Fmt) => T }
 
 export type LocaleModuleLoader<T> = () => Promise<LocaleModule<T>>
 
+export type StaticLocale<T> = { static: new (fmt: Fmt) => T }
+
+function isStaticLocale<T extends object>(
+  messages: LocaleModuleLoader<T> | StaticLocale<T> | T,
+): messages is StaticLocale<T> {
+  return 'static' in messages && typeof messages.static === 'function'
+}
+
 export interface ElzLocaleOptions<T> {
   id: string
-  messages: LocaleModuleLoader<T> | T
+  messages: LocaleModuleLoader<T> | StaticLocale<T> | T
   fallbackFor?: string[]
 }
 
 class ElzLocale<T extends object> {
   private readonly _id: string
   private readonly _language: string | undefined
-  private readonly _messages: LocaleModuleLoader<T> | T
+  private readonly _messages: LocaleModuleLoader<T> | StaticLocale<T> | T
   private readonly _fallbackFor: string[]
   private _instance?: T
   private _fmt?: Fmt
@@ -71,14 +79,35 @@ class ElzLocale<T extends object> {
     )
   }
 
-  public async load(factory: FormatterFactory, context: Ctx) {
+  public async load(factory: FormatterFactory, context: Ctx): Promise<void> {
     this._fmt = new Fmt(new FormatImpl(this._id), factory, context)
+    let newInstance: T
+
     if (typeof this._messages === 'function') {
       const module = await this._messages()
-      this._instance = new module.default(this._fmt)
+      newInstance = new module.default(this._fmt)
+    } else if (isStaticLocale(this._messages)) {
+      newInstance = new this._messages.static(this._fmt)
     } else {
-      this._instance = this._messages
+      newInstance = this._messages
     }
+
+    this._instance = newInstance
+  }
+
+  public staticLoad(factory: FormatterFactory, context: Ctx): void {
+    this._fmt = new Fmt(new FormatImpl(this._id), factory, context)
+    let newInstance: T
+
+    if (typeof this._messages === 'function') {
+      context.fail(`Cannot load ${this._id} statically`)
+    } else if (isStaticLocale(this._messages)) {
+      newInstance = new this._messages.static(this._fmt)
+    } else {
+      newInstance = this._messages
+    }
+
+    this._instance = newInstance
   }
 
   public unload() {
@@ -99,13 +128,13 @@ class ElzProxyHandler<T extends object> implements ProxyHandler<Elz<T>> {
 
 export interface ElzOptions<T> {
   locales: ElzLocaleOptions<T>[]
-  fallback?: string
+  default?: string
   main?: string
 }
 
 export class Elz<T extends object> {
   private readonly _main?: string
-  private readonly _fallback?: string
+  private readonly _default?: string
   private readonly _locales: ElzLocale<T>[]
 
   private readonly _factory: FormatterFactory
@@ -115,7 +144,7 @@ export class Elz<T extends object> {
 
   public constructor(options: ElzOptions<T>) {
     this._main = options.main
-    this._fallback = options.fallback
+    this._default = options.default
     this._locales = options.locales.map((opts) => new ElzLocale(opts))
 
     this._factory = new IntlFormatterFactory()
@@ -147,6 +176,18 @@ export class Elz<T extends object> {
   }
 
   private async changeLocaleTo(locales: string[]) {
+    this._currentLocale = this.resolveLocale(locales)
+    await this._currentLocale?.load(this._factory, this._context)
+    this._currentLocale?.unload()
+  }
+
+  private changeLocaleToStatic(locales: string[]) {
+    this._currentLocale = this.resolveLocale(locales)
+    this._currentLocale?.staticLoad(this._factory, this._context)
+    this._currentLocale?.unload()
+  }
+
+  private resolveLocale(locales: string[]): ElzLocale<T> {
     let chosen = undefined
 
     // the resolution tries to find a matching locale by progressively trying broader selection
@@ -176,8 +217,8 @@ export class Elz<T extends object> {
     }
 
     // 4. try to use the global fallback if there is one
-    if (chosen === undefined && this._fallback !== undefined) {
-      chosen = this.findExactLocale(this._fallback)
+    if (chosen === undefined && this._default !== undefined) {
+      chosen = this.findExactLocale(this._default)
     }
 
     // 5. try to use the main locale if there is one
@@ -190,9 +231,7 @@ export class Elz<T extends object> {
       this._context.fail('could not find any suitable locale. consider adding a global fallback.')
     }
 
-    this._currentLocale?.unload()
-    this._currentLocale = chosen
-    await this._currentLocale?.load(this._factory, this._context)
+    return chosen
   }
 
   public async useEnvironmentLocale() {
@@ -203,9 +242,24 @@ export class Elz<T extends object> {
     await this.changeLocaleTo([locale])
   }
 
-  public async useMainLocale() {
+  public async useMainLocale(): Promise<void> {
     if (this._main === undefined) this._context.fail('there is no main locale configured.')
     await this.changeLocaleTo([this._main])
+  }
+
+  public useStaticMainLocale(): void {
+    if (this._main === undefined) this._context.fail('there is no main locale configured.')
+    this.changeLocaleToStatic([this._main])
+  }
+
+  public async useDefaultLocale(): Promise<void> {
+    if (this._default === undefined) this._context.fail('there is no default locale configured.')
+    await this.changeLocaleTo([this._default])
+  }
+
+  public useStaticDefaultLocale(): void {
+    if (this._default === undefined) this._context.fail('there is no default locale configured.')
+    this.changeLocaleToStatic([this._default])
   }
 
   public async requireLocale() {
@@ -227,11 +281,11 @@ export class Elz<T extends object> {
     return this._currentLocale?.fmt?.format(value, config) ?? '' // just in case
   }
 
-  public enableStrictMode() {
+  public enableStrictMode(): void {
     this._context.enableStrictMode()
   }
 
-  public disableStrictMode() {
+  public disableStrictMode(): void {
     this._context.disableStrictMode()
   }
 

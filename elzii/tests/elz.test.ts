@@ -30,9 +30,9 @@ function testSetup() {
 
   return {
     elzNoMainNoFallback: new Elz<{}>({ locales }),
-    elzFallbackOnly: new Elz<{}>({ locales, fallback: 'en' }),
+    elzFallbackOnly: new Elz<{}>({ locales, default: 'en' }),
     elzMainOnly: new Elz<{}>({ locales, main: 'fr-FR' }),
-    elzMainAndFallback: new Elz<{}>({ locales, fallback: 'en', main: 'fr-FR' }),
+    elzMainAndFallback: new Elz<{}>({ locales, default: 'en', main: 'fr-FR' }),
   }
 }
 
