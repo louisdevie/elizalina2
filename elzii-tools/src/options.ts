@@ -4,6 +4,7 @@ import type { Debug } from './show'
 import type {
   NormalizedOutputConfig,
   OutputConfig,
+  StaticConfig,
   TargetConfig,
   TargetsConfig,
 } from '@module/config'
@@ -32,19 +33,28 @@ export interface TargetOptions {
   proxyName?: string
 
   /**
-   * If set to true, all translations will be compiled in a single file
+   * If set to `true`, all translations will be compiled in a single file
    */
   singleFile?: boolean
 
   /**
-   * If set to true, emitted JavaScript will be minified.
+   * If set to `true`, emitted JavaScript will be minified.
    */
   minify?: boolean
 
   /**
-   * If set to true, source maps will be generated along JavaScript/TypeScript files.
+   * If set to `true`, source maps will be generated along JavaScript/TypeScript files.
    */
   sourcemap?: boolean
+
+  /**
+   * Controls static loading of the main and default locales.
+   * - `'none'` or `false`: disabled (the default)
+   * - `'default'`: enabled only for the default locale
+   * - `'main'`: enabled only for the main locale
+   * - `'both'` or `true`: enabled for both
+   */
+  static?: boolean | 'none' | 'default' | 'main' | 'both'
 }
 
 export type OutputOptions =
@@ -107,19 +117,19 @@ export class TargetsConfigBuilder implements TargetsConfig, Debug {
     targetOptions: TargetOptions,
     shouldOverride: boolean,
     warningDetails: string,
-  ) {
+  ): void {
     if (!(name in this._targets)) {
       this._targets[name] = new TargetConfigBuilder()
     }
     this._targets[name].merge(targetOptions, shouldOverride, `target "${name}", ${warningDetails}`)
   }
 
-  public merge(options: Options, shouldOverride: boolean, warningDetails: string) {
+  public merge(options: Options, shouldOverride: boolean, warningDetails: string): void {
     if (TargetsConfigBuilder.isSingleTarget(options)) {
-      let singleTarget = options as TargetOptions
+      const singleTarget = options as TargetOptions
       this.mergeSingleTarget('default', singleTarget, shouldOverride, warningDetails)
     } else {
-      let multipleTargets = options as Record<string, TargetOptions>
+      const multipleTargets = options as Record<string, TargetOptions>
       for (const key in multipleTargets) {
         // check each target object, you never know...
         if (TargetsConfigBuilder.isSingleTarget(multipleTargets[key])) {
@@ -130,7 +140,7 @@ export class TargetsConfigBuilder implements TargetsConfig, Debug {
   }
 
   public debug(): string[] {
-    let debugOutput = []
+    const debugOutput = []
 
     for (const targetName in this._targets) {
       debugOutput.push(` - ${targetName}:`, ...this.getTarget(targetName).debug())
@@ -152,6 +162,7 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
   private _singleFile?: boolean
   private _minify?: boolean
   private _sourcemap?: boolean
+  private _static?: StaticConfigBuilder
 
   public isValid(thisName: string): boolean {
     let valid = true
@@ -197,7 +208,11 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     return this._sourcemap ?? false
   }
 
-  public merge(options: TargetOptions, shouldOverride: boolean, warningDetails: string) {
+  public get static(): StaticConfigBuilder {
+    return this._static ?? new StaticConfigBuilder(undefined)
+  }
+
+  public merge(options: TargetOptions, shouldOverride: boolean, warningDetails: string): void {
     if (!shouldOverride && this._translations !== undefined)
       show.detailedWarning('The "translations" option was overwritten', warningDetails)
     this._translations = options.translations
@@ -235,14 +250,20 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
         show.detailedWarning('The "sourcemap" option was overwritten', warningDetails)
       this._sourcemap = options.sourcemap
     }
+
+    if (options.static !== undefined) {
+      if (!shouldOverride && this._static !== undefined)
+        show.detailedWarning('The "static" option was overwritten', warningDetails)
+      this._static = new StaticConfigBuilder(options.static)
+    }
   }
 
-  private debugJsonify(getter: () => any): string {
+  private debugJsonify(getter: () => unknown): string {
     return handleErrors(() => JSON.stringify(getter()), { all: (err) => `<${err}>` })
   }
 
   public debug(): string[] {
-    let debugOutput = []
+    const debugOutput = []
 
     debugOutput.push(`     translations: ${this.debugJsonify(() => this.translations)}`)
 
@@ -257,7 +278,59 @@ export class TargetConfigBuilder implements TargetConfig, Debug {
     debugOutput.push(`     minify: ${this.debugJsonify(() => this.minify)}`)
     debugOutput.push(`     sourcemap: ${this.debugJsonify(() => this.sourcemap)}`)
 
+    debugOutput.push(
+      '     static:',
+      ...handleErrors(() => this.static.debug(), { all: (err) => [`       <${err}>`] }),
+    )
+
     return debugOutput
+  }
+}
+
+class StaticConfigBuilder implements StaticConfig, Debug {
+  private readonly _main: boolean
+  private readonly _default: boolean
+
+  public constructor(option: boolean | 'none' | 'main' | 'default' | 'both' | undefined) {
+    switch (option) {
+      case undefined:
+      case false:
+      case 'none':
+        this._main = false
+        this._default = false
+        break
+
+      case 'main':
+        this._main = true
+        this._default = false
+        break
+
+      case 'default':
+        this._main = false
+        this._default = true
+        break
+
+      case true:
+      case 'both':
+        this._main = true
+        this._default = true
+        break
+    }
+  }
+
+  public get main(): boolean {
+    return this._main
+  }
+
+  public get default(): boolean {
+    return this._default
+  }
+
+  public debug(): string[] {
+    const properties: ['main', 'default'] = ['main', 'default']
+    return properties.map((type) => {
+      return `       ${type}: ` + (this[type] ? 'enabled' : 'disabled')
+    })
   }
 }
 
@@ -277,7 +350,7 @@ export class OutputConfigBuilder implements OutputConfig, Debug {
   public constructor(options: OutputOptions) {
     if ('js' in options) {
       // javascript output
-      let dts = options.dts ?? false
+      const dts = options.dts ?? false
       this._js = enabled(options.js)
       // default to same directory if just "true"
       this._dts = dts === false ? disabled() : enabled(typeof dts === 'string' ? dts : options.js)
@@ -303,8 +376,9 @@ export class OutputConfigBuilder implements OutputConfig, Debug {
   }
 
   public debug(): string[] {
-    return ['js', 'dts', 'ts'].map((type) => {
-      const normalizedConfig = (this as any)[type] as NormalizedOutputConfig
+    const properties: ['js', 'dts', 'ts'] = ['js', 'dts', 'ts']
+    return properties.map((type) => {
+      const normalizedConfig = this[type]
       return (
         `       ${type}: ` +
         (normalizedConfig.enabled ?

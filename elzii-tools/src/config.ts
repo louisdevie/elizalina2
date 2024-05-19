@@ -22,6 +22,12 @@ export interface CommonOutputConfig {
   readonly singleFile: boolean
   readonly minify: boolean
   readonly sourcemap: boolean
+  readonly static: StaticConfig
+}
+
+export interface StaticConfig {
+  readonly main: boolean
+  readonly default: boolean
 }
 
 export interface TargetConfig extends CommonOutputConfig {

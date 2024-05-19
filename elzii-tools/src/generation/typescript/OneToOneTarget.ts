@@ -1,4 +1,4 @@
-import { TSTarget } from '.'
+import TSTarget, { type LocaleLoaderConfig } from './TSTarget'
 import { FileExtensions } from '@module/files'
 import { Translation } from '@module/model'
 import { TypeScriptOutputDirectory } from '@module/files/code'
@@ -9,27 +9,28 @@ import { AllTranslationReports } from '@module/checks/translations'
 import { getTSPrinter } from '@module/languages/ts'
 import chalk from 'chalk'
 import { ShowProgress } from '@module/show'
+import type { CommonOutputConfig, StaticConfig } from '@module/config'
 
 interface OutputInfo {
   id: string
   fileName: string
+  className?: string
   tsImportPath: string
+  role: 'none' | 'main' | 'default' | 'index'
 }
 
 export default class OneToOneTarget extends TSTarget {
-  private _outputDirectory: TypeScriptOutputDirectory
+  private readonly _outputDirectory: TypeScriptOutputDirectory
+  private readonly _static: StaticConfig
   private readonly _sourcesList: string[]
   private readonly _outputList: OutputInfo[]
   private readonly _show: ShowProgress
 
-  public constructor(
-    outputDirectory: TypeScriptOutputDirectory,
-    interfaceName: string,
-    proxyName: string,
-  ) {
-    super(interfaceName, proxyName)
+  public constructor(outputDirectory: TypeScriptOutputDirectory, commonConfig: CommonOutputConfig) {
+    super(commonConfig)
 
     this._outputDirectory = outputDirectory
+    this._static = commonConfig.static
     this._sourcesList = []
     this._outputList = []
     this._show = new ShowProgress('TS')
@@ -68,10 +69,13 @@ export default class OneToOneTarget extends TSTarget {
 
     show.debugInfo(`   Writing to file`)
     await file.write(program)
+
     this._outputList.push({
       id: translation.id,
       fileName: file.name,
       tsImportPath: './' + className,
+      className,
+      role: translation.directives.has('default') ? 'default' : 'none',
     })
     this.userCodeInsertion.clear()
 
@@ -97,22 +101,48 @@ export default class OneToOneTarget extends TSTarget {
 
     program.body.push(this.makeLocaleSelectorImport())
 
-    const intf = this.makeTranslationInterface()
-    program.body.push(ts.exportNamedDeclaration(intf))
+    const localesLoaderConfig = this._outputList.map((output) => this.getLoaderConfig(output))
+    for (const cfg of localesLoaderConfig) {
+      if (cfg.static) program.body.push(this.makeLocaleStaticImport(cfg))
+    }
 
+    const intf = this.makeTranslationInterface()
+
+    program.body.push(ts.exportNamedDeclaration(intf))
     const elz = this.makeLocaleSelectorInstance(
-      this._outputList.map((output) => ({
-        id: output.id,
-        path: output.tsImportPath,
-      })),
+      localesLoaderConfig,
+      this._outputList.find((out) => out.role === 'default')?.id,
     )
     program.body.push(ts.exportNamedDeclaration(elz))
     program.body.push(ts.exportDefaultDeclaration(this.makeLocaleProxyExpression()))
 
     await file.write(program)
-    this._outputList.push({ id: '__index', fileName: file.name, tsImportPath: '.' })
+    this._outputList.push({
+      id: '__index__',
+      fileName: file.name,
+      tsImportPath: '.',
+      role: 'index',
+    })
 
     this.showFileSuccess(fileName, 0, 0)
+  }
+
+  private getLoaderConfig(output: OutputInfo): LocaleLoaderConfig {
+    const idAndPath = {
+      id: output.id,
+      path: output.tsImportPath,
+    }
+
+    let full: LocaleLoaderConfig
+    if (
+      (output.role === 'main' && this._static.main) ||
+      (output.role === 'default' && this._static.default)
+    ) {
+      full = { static: true, importName: output.className ?? output.id, ...idAndPath }
+    } else {
+      full = { static: false, ...idAndPath }
+    }
+    return full
   }
 
   private makeInterfaceImport(): ts.ProgramStatement {

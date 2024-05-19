@@ -119,9 +119,9 @@ export abstract class TSVisitor<T = void> {
       case 'ImportDeclaration':
         result = this.visitImportDeclaration(node as ts.ImportDeclaration)
         break
-      /* case 'ImportDefaultSpecifier':
-          result = this.visitImportDefaultSpecifier(node as ts.ImportDefaultSpecifier)
-           break*/
+      case 'ImportDefaultSpecifier':
+        result = this.visitImportDefaultSpecifier(node as ts.ImportDefaultSpecifier)
+        break
       case 'ImportExpression':
         result = this.visitImportExpression(node as ts.ImportExpression)
         break
@@ -583,7 +583,7 @@ export abstract class TSVisitor<T = void> {
 
   public abstract visitImportDeclaration(importDeclaration: ts.ImportDeclaration): T
 
-  // public abstract visitImportDefaultSpecifier(importDefaultSpecifier: ts.ImportDefaultSpecifier): T
+  public abstract visitImportDefaultSpecifier(importDefaultSpecifier: ts.ImportDefaultSpecifier): T
 
   public abstract visitImportExpression(importExpression: ts.ImportExpression): T
 

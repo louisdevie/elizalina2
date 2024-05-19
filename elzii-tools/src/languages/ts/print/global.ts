@@ -1,13 +1,16 @@
 import { PrintedCode } from '@module/printing'
 import * as ts from '@module/languages/ts/ast'
+import { AST_NODE_TYPES } from '@module/languages/ts/ast'
 import { Visitor } from '@module/languages/ts/print/helpers'
 import { throwError } from '@module/error'
+import { spec } from 'node:test/reporters'
 
 type VisitGlobal =
   | 'visitExportDefaultDeclaration'
   | 'visitExportNamedDeclaration'
   | 'visitExpressionStatement'
   | 'visitImportDeclaration'
+  | 'visitImportDefaultSpecifier'
   | 'visitImportSpecifier'
   | 'visitProgram'
 
@@ -38,12 +41,25 @@ const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
   },
 
   visitImportDeclaration(this: Visitor, importDeclaration: ts.ImportDeclaration): PrintedCode {
-    const specifiers = importDeclaration.specifiers
-      .map((spec) => ' ' + this.visitAnyNode(spec))
-      .join(',')
+    let specifiers
+
+    if (importDeclaration.specifiers.length === 1) {
+      const singleSpec = importDeclaration.specifiers[0]
+
+      if (singleSpec.type === AST_NODE_TYPES.ImportDefaultSpecifier) {
+        specifiers = this.visitAnyNode(singleSpec)
+      }
+    }
+
+    if (specifiers === undefined) {
+      const specList = importDeclaration.specifiers
+        .map((spec) => ' ' + this.visitAnyNode(spec))
+        .join(',')
+      specifiers = '{' + specList + ' }'
+    }
     const source = this.visitLiteral(importDeclaration.source)
 
-    return new PrintedCode(`import {${specifiers} } from ${source};`)
+    return new PrintedCode(`import ${specifiers} from ${source};`)
   },
 
   visitImportSpecifier(this: Visitor, importSpecifier: ts.ImportSpecifier): PrintedCode {
@@ -58,6 +74,13 @@ const TSPrinterImpl_global: Pick<Visitor, VisitGlobal> = {
     }
 
     return new PrintedCode(spec)
+  },
+
+  visitImportDefaultSpecifier(
+    this: Visitor,
+    importDefaultSpecifier: ts.ImportDefaultSpecifier,
+  ): PrintedCode {
+    return this.visitIdentifier(importDefaultSpecifier.local)
   },
 
   visitProgram(this: Visitor, program: ts.Program): PrintedCode {

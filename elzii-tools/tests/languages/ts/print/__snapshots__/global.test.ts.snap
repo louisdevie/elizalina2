@@ -15,6 +15,10 @@ exports[`printing an ExpressionStatement 1`] = `"test;"`;
 
 exports[`printing an ImportDeclaration 1`] = `"import { myFunction } from 'myModule';"`;
 
+exports[`printing an ImportDeclaration 2`] = `"import myFunction from 'myModule';"`;
+
+exports[`printing an ImportDefaultSpecifier 1`] = `"myFunction"`;
+
 exports[`printing an ImportSpecifier 1`] = `"myFunction"`;
 
 exports[`printing an ImportSpecifier 2`] = `"myFunction as somethingElse"`;

@@ -7,6 +7,7 @@ import {
   ExpressionStatement,
   ImportClause,
   ImportDeclaration,
+  ImportDefaultSpecifier,
   ImportSpecifier,
   NamedExportDeclarations,
   Program,
@@ -73,6 +74,13 @@ export function importSpecifier(
     importKind,
     imported: identifier(name),
     local: identifier(alias ?? name),
+  }
+}
+
+export function importDefaultSpecifier(name: string): ImportDefaultSpecifier {
+  return {
+    type: AST_NODE_TYPES.ImportDefaultSpecifier,
+    local: identifier(name),
   }
 }
 

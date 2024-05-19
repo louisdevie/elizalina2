@@ -15,11 +15,21 @@ import { AllTranslationReports, MissingTranslationsReport } from '@module/checks
 import { throwError } from '@module/error'
 import { CacheKeyGenerator, ParameterEncounters } from '@module/generation/helperIndexes'
 import CodeConfig from '@module/generation/codeConfig'
+import type { CommonOutputConfig } from '@module/config'
 
-interface LocaleLoaderConfig {
+interface LocaleLoaderBase {
+  static: boolean
   id: string
   path: string
 }
+interface DynamicLocaleLoader extends LocaleLoaderBase {
+  static: false
+}
+interface StaticLocaleLoader extends LocaleLoaderBase {
+  static: true
+  importName: string
+}
+export type LocaleLoaderConfig = DynamicLocaleLoader | StaticLocaleLoader
 
 export default abstract class TSTarget extends BaseTarget {
   private readonly _interfaceName: string
@@ -28,11 +38,11 @@ export default abstract class TSTarget extends BaseTarget {
   private readonly _cacheKeyGenerator: CacheKeyGenerator
   private _reports?: AllTranslationReports
 
-  protected constructor(interfaceName: string, proxyName: string) {
+  protected constructor(config: CommonOutputConfig) {
     super()
 
-    this._interfaceName = interfaceName
-    this._proxyName = proxyName
+    this._interfaceName = config.interfaceName
+    this._proxyName = config.proxyName
     this._userCodeInsertion = new UserCodeInsertion()
     this._cacheKeyGenerator = new CacheKeyGenerator()
   }
@@ -367,8 +377,21 @@ export default abstract class TSTarget extends BaseTarget {
     })
   }
 
-  protected makeLocaleSelectorInstance(locales: LocaleLoaderConfig[]): ts.VariableDeclaration {
+  protected makeLocaleSelectorInstance(
+    locales: LocaleLoaderConfig[],
+    defaultLocaleId: string | undefined,
+  ): ts.VariableDeclaration {
     const localesList = ts.arrayExpression(...locales.map(this.makeLocaleLoaderObject, this))
+    const options: ts.Property[] = []
+
+    if (defaultLocaleId !== undefined) {
+      options.push(
+        ts.property(
+          CodeConfig.ElizalinaRuntime.LocaleSelection.DefaultIdPropertyName,
+          ts.literal(defaultLocaleId),
+        ),
+      )
+    }
 
     return ts.variableDeclaration(
       'const',
@@ -378,6 +401,7 @@ export default abstract class TSTarget extends BaseTarget {
         [
           ts.objectExpression(
             ts.property(CodeConfig.ElizalinaRuntime.LocaleSelection.ListPropertyName, localesList),
+            ...options,
           ),
         ],
         [ts.tsTypeReference(ts.identifier(this.interfaceName))],
@@ -386,19 +410,32 @@ export default abstract class TSTarget extends BaseTarget {
   }
 
   private makeLocaleLoaderObject(locale: LocaleLoaderConfig): ts.Expression {
+    const loaderValue =
+      locale.static ?
+        ts.objectExpression(
+          ts.property(
+            CodeConfig.ElizalinaRuntime.LocaleSelection.StaticPropertyName,
+            ts.identifier(locale.importName),
+          ),
+        )
+      : ts.arrowFunctionExpression({
+          params: [],
+          body: ts.importExpression(ts.literal(locale.path)),
+        })
+
     return ts.objectExpression(
       ts.property(
         CodeConfig.ElizalinaRuntime.LocaleSelection.IdPropertyName,
         ts.literal(locale.id),
       ),
-      ts.property(
-        CodeConfig.ElizalinaRuntime.LocaleSelection.LoaderPropertyName,
-        ts.arrowFunctionExpression({
-          params: [],
-          body: ts.importExpression(ts.literal(locale.path)),
-        }),
-      ),
+      ts.property(CodeConfig.ElizalinaRuntime.LocaleSelection.LoaderPropertyName, loaderValue),
     )
+  }
+
+  protected makeLocaleStaticImport(locale: StaticLocaleLoader): ts.ImportDeclaration {
+    return ts.importDeclaration('value', locale.path, [
+      ts.importDefaultSpecifier(locale.importName),
+    ])
   }
 
   protected makeLocaleProxyExpression(): ts.Expression {

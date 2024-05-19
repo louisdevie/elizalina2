@@ -29,6 +29,11 @@ test('printing an ImportDeclaration', async () => {
     ts.importSpecifier('value', 'myFunction'),
   ])
   expect(await printer.print(importDecl)).toMatchSnapshot()
+
+  const importDefaultDecl = ts.importDeclaration('value', 'myModule', [
+    ts.importDefaultSpecifier('myFunction'),
+  ])
+  expect(await printer.print(importDefaultDecl)).toMatchSnapshot()
 })
 
 test('printing an ImportSpecifier', async () => {
@@ -39,6 +44,13 @@ test('printing an ImportSpecifier', async () => {
 
   const importSpecWithAlias = ts.importSpecifier('value', 'myFunction', 'somethingElse')
   expect(await printer.print(importSpecWithAlias)).toMatchSnapshot()
+})
+
+test('printing an ImportDefaultSpecifier', async () => {
+  const printer = getTSPrinter()
+
+  const importSpec = ts.importDefaultSpecifier('myFunction')
+  expect(await printer.print(importSpec)).toMatchSnapshot()
 })
 
 test('printing a Program', async () => {

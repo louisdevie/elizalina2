@@ -34,7 +34,6 @@ export * from './types'
 // export function functionDeclaration(): ts.FunctionDeclaration {}
 // export function ifStatement(): ts.IfStatement {}
 // export function importAttribute(): ts.ImportAttribute {}
-// export function importDefaultSpecifier(): ts.ImportDefaultSpecifier {}
 // export function importNamespaceSpecifier(): ts.ImportNamespaceSpecifier {}
 // export function jSXAttribute(): ts.JSXAttribute {}
 // export function jSXClosingElement(): ts.JSXClosingElement {}
