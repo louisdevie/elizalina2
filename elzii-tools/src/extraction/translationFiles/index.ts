@@ -1,11 +1,6 @@
-import { ErrorReport } from '@module/error'
+import { Result } from '../result'
 
 export { default as TranslationsDirectoryExtractor } from './TranslationsDirectoryExtractor'
-
-export interface Result<T> {
-  value: T
-  errors: ErrorReport
-}
 
 export interface Builder<T> {
   finish(): Result<T>

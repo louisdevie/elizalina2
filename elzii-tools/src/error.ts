@@ -1,7 +1,7 @@
 /**
  * A string describing the origin of an error.
  */
-export type ErrorKind = 'config' | 'parser' | 'files' | 'checks' | 'internal' | 'other'
+export type ErrorKind = 'config' | 'parser' | 'files' | 'checks' | 'abort' | 'internal' | 'other'
 
 /**
  * Custom error class for exceptions specific to the tooling.
@@ -43,7 +43,7 @@ export class ElziiError extends Error {
   }
 
   public toString(): string {
-    return this.message
+    return `ElziiError (${this._kind}, ${this.message})`
   }
 
   /**
@@ -74,18 +74,22 @@ export class ElziiError extends Error {
 }
 
 export class ErrorReport {
-  private readonly _errors: ElziiError[]
+  private readonly _list: ElziiError[]
 
   public constructor() {
-    this._errors = []
+    this._list = []
   }
 
   public encounteredError(message: string, kind: ErrorKind = 'other'): void {
-    this._errors.push(new ElziiError([message], kind))
+    this._list.push(new ElziiError([message], kind))
   }
 
-  public get errors(): ElziiError[] {
-    return this._errors
+  public get list(): ElziiError[] {
+    return this._list
+  }
+
+  public merge(other: ErrorReport): void {
+    this._list.push(...other._list)
   }
 }
 

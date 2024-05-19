@@ -50,6 +50,8 @@ export interface Directive extends Node {
 export interface Message extends Node {
   KEY(): TerminalNode
   SEPARATOR(): TerminalNode
+  OPENING_PARENS(): TerminalNode
+  CLOSING_PARENS(): TerminalNode
   singleQuotedText(): SingleQuotedText
   doubleQuotedText(): DoubleQuotedText
 }
@@ -72,6 +74,8 @@ export interface SingleQuotedText extends Node {
   SINGLE_QUOTED_ESCAPE(i: number): TerminalNode
   singleQuotedTextParameter_list(): SingleQuotedTextParameter[]
   singleQuotedTextParameter(i: number): SingleQuotedTextParameter
+  singleQuotedTextMI_list(): SingleQuotedTextMI[]
+  singleQuotedTextMI(i: number): SingleQuotedTextMI
 }
 
 export interface DoubleQuotedText extends Node {
@@ -83,6 +87,8 @@ export interface DoubleQuotedText extends Node {
   DOUBLE_QUOTED_ESCAPE(i: number): TerminalNode
   doubleQuotedTextParameter_list(): DoubleQuotedTextParameter[]
   doubleQuotedTextParameter(i: number): DoubleQuotedTextParameter
+  doubleQuotedTextMI_list(): DoubleQuotedTextMI[]
+  doubleQuotedTextMI(i: number): DoubleQuotedTextMI
 }
 
 export interface SingleQuotedTextParameter extends Node {
@@ -119,4 +125,18 @@ export interface ShorthandParameterFormat extends Node {
   EMBEDDED_CODE(i: number): TerminalNode
   EMBEDDED_CODE_OPENING_BRACE_list(): TerminalNode[]
   EMBEDDED_CODE_OPENING_BRACE(i: number): TerminalNode
+}
+
+export interface SingleQuotedTextMI extends Node {
+  SINGLE_QUOTED_PARAMETER_START(): TerminalNode
+  MESSAGE_INTERPOLATION_PREFIX(): TerminalNode
+  PARAMETER_NAME(): TerminalNode
+  PARAMETER_END(): TerminalNode
+}
+
+export interface DoubleQuotedTextMI extends Node {
+  DOUBLE_QUOTED_PARAMETER_START(): TerminalNode
+  MESSAGE_INTERPOLATION_PREFIX(): TerminalNode
+  PARAMETER_NAME(): TerminalNode
+  PARAMETER_END(): TerminalNode
 }

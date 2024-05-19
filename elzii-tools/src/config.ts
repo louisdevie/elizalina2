@@ -52,7 +52,7 @@ export class Config {
   }
 
   /** @internal */
-  public useShowInstance(show: Show) {
+  public useShowInstance(show: Show): void {
     this._show = show
   }
 
@@ -84,11 +84,11 @@ export class Config {
     return `${this._toolName} v${version}`
   }
 
-  public enableDebugMode() {
+  public enableDebugMode(): void {
     this._debug = true
   }
 
-  disableColor() {
+  public disableColor(): void {
     this._color.level = 0
   }
 
@@ -101,7 +101,7 @@ export class Config {
       this._currentPackageRoot = dir
       found = true
     } else {
-      let parent = dir.substring(0, dir.lastIndexOf(path.sep))
+      const parent = dir.substring(0, dir.lastIndexOf(path.sep))
       try {
         if ((await fs.promises.stat(parent)).isDirectory()) {
           found = await this.resolveCurrentPackageRecursive(parent)
@@ -114,8 +114,8 @@ export class Config {
     return found
   }
 
-  public async resolveCurrentPackage() {
-    this.show.debugInfo('searching for the current node package...')
+  public async resolveCurrentPackage(): Promise<void> {
+    this.show.debugInfo('searching for the nearest node package...')
     if (!(await this.resolveCurrentPackageRecursive(process.cwd()))) {
       throwError('No Node.js package found from the current directory.', 'config')
     }
@@ -128,9 +128,9 @@ export class Config {
     return false
   }
 
-  public async loadConfigFiles() {
+  public async loadConfigFiles(): Promise<void> {
     const pkgRoot = this.requireCurrentPackageRoot()
-    let options = new TargetsConfigBuilder()
+    const options = new TargetsConfigBuilder()
 
     let foundConfig
 
@@ -168,7 +168,7 @@ export class Config {
   /**
    * Required steps at the launch of any tool.
    */
-  public async init(toolName: string) {
+  public async init(toolName: string): Promise<void> {
     this._toolName = toolName
     await this.resolveCurrentPackage()
     await this.loadConfigFiles()
@@ -197,12 +197,12 @@ abstract class SerializedConfigLoader implements ConfigLoader {
 
     if (await access(this._path, fs.constants.R_OK)) {
       show.debugInfo(`looking up ${this.baseName}...`)
-      let raw = await fs.promises.readFile(this._path, {
+      const raw = await fs.promises.readFile(this._path, {
         encoding: 'utf-8',
         flag: fs.constants.O_RDONLY,
       })
 
-      let configObject = this.parse(raw)
+      const configObject = this.parse(raw)
       if (configObject !== undefined) {
         options.merge(configObject as Options, false, `in ${this.baseName}`)
         loaded = true
@@ -212,7 +212,7 @@ abstract class SerializedConfigLoader implements ConfigLoader {
     return loaded
   }
 
-  protected abstract parse(raw: string): any
+  protected abstract parse(raw: string): unknown
 }
 
 class YamlConfigLoader extends SerializedConfigLoader {
@@ -220,7 +220,7 @@ class YamlConfigLoader extends SerializedConfigLoader {
     super(path.join(packageRoot, '.elzii'))
   }
 
-  protected override parse(raw: string): any {
+  protected override parse(raw: string): unknown {
     return YAML.parse(raw)
   }
 }
@@ -230,7 +230,7 @@ class PackageJsonConfigLoader extends SerializedConfigLoader {
     super(path.join(packageRoot, 'package.json'))
   }
 
-  protected override parse(raw: string): any {
+  protected override parse(raw: string): unknown {
     const jsonData = JSON.parse(raw)
     return jsonData !== undefined && 'elzii' in jsonData ? jsonData['elzii'] : undefined
   }

@@ -1,9 +1,10 @@
 import EtrParserVisitor from '@module/languages/tm/parse/gen/TMParserVisitor'
-import { Builder, Result } from '@module/extraction/translationFiles/index'
-import { UserCode } from '@module/translations'
+import { Builder } from '@module/extraction/translationFiles'
 import { ErrorReport } from '@module/error'
 import { TerminalNode } from 'antlr4'
 import EtrLexer from '@module/languages/tm/parse/gen/TMLexer'
+import { UserCode } from '@module/model'
+import { Result } from '@module/extraction/result'
 
 export default class UserCodeBuilder extends EtrParserVisitor<void> implements Builder<UserCode> {
   private _rawCode: string

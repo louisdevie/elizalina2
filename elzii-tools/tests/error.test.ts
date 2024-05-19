@@ -1,17 +1,17 @@
 import { ElziiError, handleErrors, handleErrorsAsync, throwError } from '@module/error'
 
 test('Error.constructor', () => {
-  let err1 = new ElziiError([], 'other')
-  let err2 = new ElziiError(['abc'], 'config')
-  let err3 = new ElziiError(['abc', 'def', 'ghi'], 'other')
+  const err1 = new ElziiError([], 'other')
+  const err2 = new ElziiError(['abc'], 'config')
+  const err3 = new ElziiError(['abc', 'def', 'ghi'], 'other')
 
   expect(err1.message).toBeUndefined()
   expect(err2.message).toEqual('abc')
   expect(err3.message).toEqual('abc')
 
-  expect(err1.toString()).toBeUndefined()
-  expect(err2.toString()).toEqual('abc')
-  expect(err3.toString()).toEqual('abc')
+  expect(err1.toString()).toEqual('ElziiError (undefined)')
+  expect(err2.toString()).toEqual('ElziiError (abc)')
+  expect(err3.toString()).toEqual('ElziiError (abc)')
 
   expect(err1.details).toEqual([])
   expect(err2.details).toEqual([])
@@ -23,7 +23,7 @@ test('Error.constructor', () => {
 })
 
 test('Error.cantHandle', () => {
-  let err = new ElziiError(['abc'], 'other')
+  const err = new ElziiError(['abc'], 'other')
 
   try {
     err.cantHandle()
@@ -35,7 +35,7 @@ test('Error.cantHandle', () => {
 })
 
 test('Error.replace', () => {
-  let err = new ElziiError(['abc'], 'other')
+  const err = new ElziiError(['abc'], 'other')
 
   try {
     err.replace({ message: 'def' })
@@ -63,7 +63,7 @@ test('Error.replace', () => {
 })
 
 test('Error.detail', () => {
-  let err = new ElziiError(['abc'], 'other')
+  const err = new ElziiError(['abc'], 'other')
 
   try {
     err.detail('def')

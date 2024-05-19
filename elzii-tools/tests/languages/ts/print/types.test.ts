@@ -4,35 +4,35 @@ import * as ts from '@module/languages/ts/ast'
 test('printing a TSAnyKeyword', async () => {
   const printer = getTSPrinter()
 
-  let anyKw = ts.tsAnyKeyword()
+  const anyKw = ts.tsAnyKeyword()
   expect(await printer.print(anyKw)).toMatchSnapshot()
 })
 
 test('printing a TSArrayType', async () => {
   const printer = getTSPrinter()
 
-  let stringArray = ts.tsArrayType(ts.tsStringKeyword())
+  const stringArray = ts.tsArrayType(ts.tsStringKeyword())
   expect(await printer.print(stringArray)).toMatchSnapshot()
 })
 
 test('printing a TSNumberKeyword', async () => {
   const printer = getTSPrinter()
 
-  let numberKw = ts.tsNumberKeyword()
+  const numberKw = ts.tsNumberKeyword()
   expect(await printer.print(numberKw)).toMatchSnapshot()
 })
 
 test('printing a TSStringKeyword', async () => {
   const printer = getTSPrinter()
 
-  let stringKw = ts.tsStringKeyword()
+  const stringKw = ts.tsStringKeyword()
   expect(await printer.print(stringKw)).toMatchSnapshot()
 })
 
 test('printing a TSTypeAnnotation', async () => {
   const printer = getTSPrinter()
 
-  let typeAnnotation = ts.tsTypeAnnotation(ts.tsStringKeyword())
+  const typeAnnotation = ts.tsTypeAnnotation(ts.tsStringKeyword())
   expect(await printer.print(typeAnnotation)).toMatchSnapshot()
 })
 

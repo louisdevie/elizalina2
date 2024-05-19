@@ -1,65 +1,53 @@
 import EtrParserVisitor from '@module/languages/tm/parse/gen/TMParserVisitor'
-import { Builder, Result } from '@module/extraction/translationFiles/index'
-import {
-  mergeTypeHints,
-  Message,
-  MessageParameter,
-  MessageParameterFormat,
-  MessagePart,
-  normalizedMessageContent,
-  TypeHint,
-} from '@module/translations'
+import { Builder } from '@module/extraction/translationFiles/index'
+import { MessageParameterFormat, MessageParameterSet, TypeHint, Visibility } from '@module/model'
 import { ErrorReport, throwError } from '@module/error'
 import {
   DoubleQuotedTextParameterContext,
   SingleQuotedTextParameterContext,
+  SingleQuotedTextMIContext,
+  DoubleQuotedTextMIContext,
 } from '@module/languages/tm/parse/gen/TMParser'
 import { ParserRuleContext, TerminalNode } from 'antlr4'
 import EtrLexer from '@module/languages/tm/parse/gen/TMLexer'
 import UserCodeBuilder from '@module/extraction/translationFiles/UserCodeBuilder'
+import {
+  ExtendedMessagePart,
+  PreparedMessage,
+} from '@module/extraction/translationFiles/PreparedMessage'
+import { Result } from '@module/extraction/result'
 
-export default class MessageBuilder extends EtrParserVisitor<void> implements Builder<Message> {
-  private readonly _content: MessagePart[]
-  private readonly _parameters: MessageParameter[]
+export default class MessageBuilder
+  extends EtrParserVisitor<void>
+  implements Builder<PreparedMessage>
+{
+  private readonly _content: ExtendedMessagePart[]
+  private readonly _parameters: MessageParameterSet
+  private readonly _visibility: Visibility
   private readonly _report: ErrorReport
 
-  public constructor(report?: ErrorReport) {
+  public constructor(report?: ErrorReport, isPrivate: boolean = false) {
     super()
 
     this._report = report ?? new ErrorReport()
     this._content = []
-    this._parameters = []
+    this._parameters = new MessageParameterSet()
+    this._visibility = isPrivate ? Visibility.Private : Visibility.Public
   }
 
-  public finish(): Result<Message> {
+  public finish(): Result<PreparedMessage> {
     return {
-      value: {
-        parameters: Array.from(this._parameters),
-        content: normalizedMessageContent(this._content),
-      },
+      value: new PreparedMessage(this._parameters, this._content, this._visibility),
       errors: this._report,
     }
   }
 
-  private mergeParameter(name: string, typeHint: TypeHint): MessageParameter {
-    let param = this._parameters.find((p) => p.name === name)
-
-    if (param === undefined) {
-      param = { name, typeHint }
-      this._parameters.push(param)
-    } else {
-      param.typeHint = mergeTypeHints(param.typeHint, typeHint)
-    }
-
-    return param
-  }
-
-  private foundParameter(name: string, format?: MessageParameterFormat) {
+  private foundParameter(name: string, format?: MessageParameterFormat): void {
     let typeHint = TypeHint.None
     if (format?.type === 'basic') {
       typeHint = format?.code.getTypeHint()
     }
-    this.mergeParameter(name, typeHint)
+    this._parameters.add({ name, typeHint })
 
     this._content.push({
       type: 'formatting',
@@ -87,18 +75,30 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
     return format
   }
 
-  public override visitSingleQuotedTextParameter = (ctx: SingleQuotedTextParameterContext) => {
+  public override visitSingleQuotedTextParameter = (
+    ctx: SingleQuotedTextParameterContext,
+  ): void => {
     this.foundParameter(
       ctx.PARAMETER_NAME().getText(),
       this.getMessageParameterFormat(ctx.parameterFormat(), ctx.customParameterFormat()),
     )
   }
 
-  public override visitDoubleQuotedTextParameter = (ctx: DoubleQuotedTextParameterContext) => {
+  public override visitDoubleQuotedTextParameter = (
+    ctx: DoubleQuotedTextParameterContext,
+  ): void => {
     this.foundParameter(
       ctx.PARAMETER_NAME().getText(),
       this.getMessageParameterFormat(ctx.parameterFormat(), ctx.customParameterFormat()),
     )
+  }
+
+  public override visitSingleQuotedTextMI = (ctx: SingleQuotedTextMIContext): void => {
+    this._content.push({ type: 'interpolation', messageName: ctx.PARAMETER_NAME().getText() })
+  }
+
+  public override visitDoubleQuotedTextMI = (ctx: DoubleQuotedTextMIContext): void => {
+    this._content.push({ type: 'interpolation', messageName: ctx.PARAMETER_NAME().getText() })
   }
 
   public override visitTerminal(node: TerminalNode): void {
@@ -117,7 +117,7 @@ export default class MessageBuilder extends EtrParserVisitor<void> implements Bu
     }
   }
 
-  private static escapeSequences = new Map<string, string>([
+  private static escapeSequences: Map<string, string> = new Map([
     ['\\\\', '\\'],
     ['\\n', '\n'],
     ['\\t', '\t'],

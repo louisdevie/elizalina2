@@ -41,6 +41,14 @@ DOUBLE_QUOTE
     -> pushMode(DOUBLE_QUOTED_TEXT_MODE)
     ;
 
+OPENING_PARENS
+    : '('
+    ;
+
+CLOSING_PARENS
+    : ')'
+    ;
+
 SPACE
     : [ \t]+
     -> skip
@@ -110,8 +118,13 @@ SINGLE_QUOTE_CLOSING
     -> popMode
     ;
 
+SINGLE_QUOTE_NEWLINE
+    : '\n'
+    -> popMode
+    ;
+
 SINGLE_QUOTED_TEXT_LITERAL
-    : ~( '\\' | '\'' | '{' | '}' )+
+    : ~( '\\' | '\'' | '{' | '}' | '\n' )+
     ;
 
 
@@ -137,8 +150,13 @@ DOUBLE_QUOTE_CLOSING
     -> popMode
     ;
 
+DOUBLE_QUOTE_NEWLINE
+    : '\n'
+    -> popMode
+    ;
+
 DOUBLE_QUOTED_TEXT_LITERAL
-    : ~( '\\' | '"' | '{' | '}' )+
+    : ~( '\\' | '"' | '{' | '}' | '\n' )+
     ;
 
 
@@ -146,6 +164,10 @@ mode PARAMETER_MODE;
 
 PARAMETER_NAME
     : IDENTIFIER
+    ;
+
+MESSAGE_INTERPOLATION_PREFIX
+    : '%'
     ;
 
 FORMAT_SEPARATOR

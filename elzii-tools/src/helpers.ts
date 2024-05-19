@@ -94,3 +94,11 @@ export function randomHex(bits: number = 32): string {
     .toString(16)
     .padStart(digits, '0')
 }
+
+/**
+ * A value with an index.
+ */
+export interface IndexOf<T> {
+  index: number
+  value: T
+}

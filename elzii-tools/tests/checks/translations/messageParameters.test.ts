@@ -1,22 +1,28 @@
 import 'jest-extended'
 import { Signature } from '@module/checks/translations/messageParameters'
-import { MessageParameter, TypeHint } from '@module/translations'
+import { MessageParameterSet, TypeHint } from '@module/model'
 
-function signatureFactory(translationId: string, parameters: MessageParameter[]): () => Signature {
+function signatureFactory(translationId: string, parameters: MessageParameterSet): () => Signature {
   return () => new Signature(translationId, parameters)
 }
 
 test('Merging identical signatures', () => {
-  let a = signatureFactory('A', [
-    { name: 'x', typeHint: TypeHint.Number },
-    { name: 'y', typeHint: TypeHint.List },
-  ])
-  let b = signatureFactory('B', [
-    { name: 'x', typeHint: TypeHint.Number },
-    { name: 'y', typeHint: TypeHint.List },
-  ])
+  const a = signatureFactory(
+    'A',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.Number },
+      { name: 'y', typeHint: TypeHint.List },
+    ]),
+  )
+  const b = signatureFactory(
+    'B',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.Number },
+      { name: 'y', typeHint: TypeHint.List },
+    ]),
+  )
 
-  let aWithB = a()
+  const aWithB = a()
   expect(aWithB.tryToMergeWith(b())).toBeTrue()
   expect(Array.from(aWithB.usedIn)).toIncludeSameMembers(['A', 'B'])
   expect(aWithB.parameters).toStrictEqual([
@@ -25,22 +31,28 @@ test('Merging identical signatures', () => {
   ])
 
   // same both ways
-  let bWithA = b()
+  const bWithA = b()
   expect(bWithA.tryToMergeWith(a())).toBeTrue()
   expect(bWithA).toEqual(aWithB)
 })
 
 test('Merging signatures with different order', () => {
-  let a = signatureFactory('A', [
-    { name: 'x', typeHint: TypeHint.Number },
-    { name: 'y', typeHint: TypeHint.List },
-  ])
-  let b = signatureFactory('B', [
-    { name: 'y', typeHint: TypeHint.List },
-    { name: 'x', typeHint: TypeHint.Number },
-  ])
+  const a = signatureFactory(
+    'A',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.Number },
+      { name: 'y', typeHint: TypeHint.List },
+    ]),
+  )
+  const b = signatureFactory(
+    'B',
+    new MessageParameterSet([
+      { name: 'y', typeHint: TypeHint.List },
+      { name: 'x', typeHint: TypeHint.Number },
+    ]),
+  )
 
-  let aWithB = a()
+  const aWithB = a()
   expect(aWithB.tryToMergeWith(b())).toBeTrue()
   expect(Array.from(aWithB.usedIn)).toIncludeSameMembers(['A', 'B'])
   expect(aWithB.parameters).toStrictEqual([
@@ -48,7 +60,7 @@ test('Merging signatures with different order', () => {
     { name: 'y', typeHint: TypeHint.List },
   ])
 
-  let bWithA = b()
+  const bWithA = b()
   expect(bWithA.tryToMergeWith(a())).toBeTrue()
   expect(Array.from(bWithA.usedIn)).toIncludeSameMembers(['A', 'B'])
   expect(bWithA.parameters).toStrictEqual([
@@ -58,17 +70,23 @@ test('Merging signatures with different order', () => {
 })
 
 test('Merging signatures with more parameters in one', () => {
-  let a = signatureFactory('A', [
-    { name: 'x', typeHint: TypeHint.Number },
-    { name: 'y', typeHint: TypeHint.List },
-  ])
-  let b = signatureFactory('B', [
-    { name: 'y', typeHint: TypeHint.List },
-    { name: 'z', typeHint: TypeHint.None },
-    { name: 'x', typeHint: TypeHint.Number },
-  ])
+  const a = signatureFactory(
+    'A',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.Number },
+      { name: 'y', typeHint: TypeHint.List },
+    ]),
+  )
+  const b = signatureFactory(
+    'B',
+    new MessageParameterSet([
+      { name: 'y', typeHint: TypeHint.List },
+      { name: 'z', typeHint: TypeHint.None },
+      { name: 'x', typeHint: TypeHint.Number },
+    ]),
+  )
 
-  let aWithB = a()
+  const aWithB = a()
   expect(aWithB.tryToMergeWith(b())).toBeTrue()
   expect(Array.from(aWithB.usedIn)).toIncludeSameMembers(['A', 'B'])
   expect(aWithB.parameters).toStrictEqual([
@@ -79,7 +97,7 @@ test('Merging signatures with more parameters in one', () => {
     { name: 'z', typeHint: TypeHint.None },
   ])
 
-  let bWithA = b()
+  const bWithA = b()
   expect(bWithA.tryToMergeWith(a())).toBeTrue()
   expect(Array.from(bWithA.usedIn)).toIncludeSameMembers(['A', 'B'])
   expect(bWithA.parameters).toStrictEqual([
@@ -92,39 +110,51 @@ test('Merging signatures with more parameters in one', () => {
 })
 
 test('Merging signatures with more parameters in each', () => {
-  let a = signatureFactory('A', [
-    { name: 'x', typeHint: TypeHint.Number },
-    { name: 'y', typeHint: TypeHint.List },
-    { name: 'q', typeHint: TypeHint.Datetime },
-  ])
-  let b = signatureFactory('B', [
-    { name: 'y', typeHint: TypeHint.List },
-    { name: 'z', typeHint: TypeHint.None },
-    { name: 'x', typeHint: TypeHint.Number },
-  ])
+  const a = signatureFactory(
+    'A',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.Number },
+      { name: 'y', typeHint: TypeHint.List },
+      { name: 'q', typeHint: TypeHint.Datetime },
+    ]),
+  )
+  const b = signatureFactory(
+    'B',
+    new MessageParameterSet([
+      { name: 'y', typeHint: TypeHint.List },
+      { name: 'z', typeHint: TypeHint.None },
+      { name: 'x', typeHint: TypeHint.Number },
+    ]),
+  )
 
-  let aWithB = a()
+  const aWithB = a()
   expect(aWithB.tryToMergeWith(b())).toBeFalse()
   // the object should not have changed
   expect(aWithB).toEqual(a())
 
-  let bWithA = b()
+  const bWithA = b()
   expect(bWithA.tryToMergeWith(a())).toBeFalse()
   // the object should not have changed
   expect(bWithA).toEqual(b())
 })
 
 test('Merging signatures with different types', () => {
-  let a = signatureFactory('A', [
-    { name: 'x', typeHint: TypeHint.None },
-    { name: 'y', typeHint: TypeHint.String },
-  ])
-  let b = signatureFactory('B', [
-    { name: 'x', typeHint: TypeHint.Number },
-    { name: 'y', typeHint: TypeHint.List },
-  ])
+  const a = signatureFactory(
+    'A',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.None },
+      { name: 'y', typeHint: TypeHint.String },
+    ]),
+  )
+  const b = signatureFactory(
+    'B',
+    new MessageParameterSet([
+      { name: 'x', typeHint: TypeHint.Number },
+      { name: 'y', typeHint: TypeHint.List },
+    ]),
+  )
 
-  let aWithB = a()
+  const aWithB = a()
   expect(aWithB.tryToMergeWith(b())).toBeTrue()
   expect(Array.from(aWithB.usedIn)).toIncludeSameMembers(['A', 'B'])
   expect(aWithB.parameters).toStrictEqual([
@@ -133,7 +163,7 @@ test('Merging signatures with different types', () => {
   ])
 
   // same both ways
-  let bWithA = b()
+  const bWithA = b()
   expect(bWithA.tryToMergeWith(a())).toBeTrue()
   expect(bWithA).toEqual(aWithB)
 })

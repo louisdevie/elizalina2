@@ -2,9 +2,11 @@ import {
   mergeTypeHints,
   Message,
   MessageParameter,
+  MessageParameterSet,
   Translation,
   TypeHint,
-} from '@module/translations'
+  Visibility,
+} from '@module/model'
 import { Check } from '@module/checks'
 import { throwError } from '@module/error'
 import { show } from '@module'
@@ -28,12 +30,12 @@ type NameMappingResult = {
 export class Signature implements MessageSignature {
   private _parameters: MessageParameter[]
   private readonly _usedIn: Set<string>
-  public constructor(translationId: string | null, parameters: MessageParameter[]) {
-    this._parameters = parameters
+  public constructor(translationId: string | null, parameters: MessageParameterSet) {
+    this._parameters = Array.from(parameters)
     this._usedIn = new Set(translationId === null ? [] : [translationId])
   }
 
-  get parameters(): Iterable<MessageParameter> {
+  public get parameters(): Iterable<MessageParameter> {
     return this._parameters
   }
 
@@ -93,8 +95,8 @@ export class Signature implements MessageSignature {
   }
 
   private tryToMapNamesWith(otherParameters: MessageParameter[]): NameMappingResult | undefined {
-    const notInOther = new Set<number>()
-    const notInThis = new Set(otherParameters.keys())
+    const notInOther: Set<number> = new Set()
+    const notInThis: Set<number> = new Set(otherParameters.keys())
 
     const mapped = new Map()
     this._parameters.forEach(({ name: thisName }, thisIndex) => {
@@ -195,7 +197,9 @@ export class MessageParametersCheck implements Check<Translation, MessageParamet
     let allMessagesValid = true
 
     for (const [key, message] of value.messages) {
-      allMessagesValid &&= this.validateMessage(value.id, key, message)
+      if (message.visibility === Visibility.Public) {
+        allMessagesValid &&= this.validateMessage(value.id, key, message)
+      }
     }
 
     return allMessagesValid

@@ -1,4 +1,4 @@
-import { Translation } from '@module/translations'
+import { Translation } from '@module/model'
 import { PathNode } from '@module/files'
 
 /**
@@ -8,7 +8,12 @@ export interface TranslationsExtractor {
   /**
    * Return all translations that could be loaded.
    */
-  foundTranslations: ExtractedTranslation[]
+  begin(): ExtractedTranslation[]
+
+  /**
+   * Indicate that all translations have been processed.
+   */
+  finish(): void
 }
 
 /**
@@ -16,10 +21,10 @@ export interface TranslationsExtractor {
  */
 export interface ExtractedTranslation {
   /**
-   * The translation object that may be loaded. The promise might get rejected if an error happened
-   * while reading or parsing source files.
+   * The source file that contains most of this translation. If there is no such file, any item
+   * included in the {@link sources} may be returned.
    */
-  translation: Promise<Translation>
+  mainSource: PathNode
 
   /**
    * A list of the sources from which this translation was extracted.
@@ -27,8 +32,8 @@ export interface ExtractedTranslation {
   sources: PathNode[]
 
   /**
-   * The source file that contains most of this translation. If there is no such file, any item
-   * included in the {@link sources} may be returned.
+   * The translation object that may be loaded. The promise might get rejected if an error happened
+   * while reading or parsing source files.
    */
-  mainSource: PathNode
+  translation: Promise<Translation>
 }

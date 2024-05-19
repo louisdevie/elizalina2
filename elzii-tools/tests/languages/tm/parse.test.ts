@@ -1,11 +1,11 @@
 import { defaultTMParser } from '@module/languages/tm'
-import { Message } from '@module/translations'
+import { Message, Visibility } from '@module/model'
 import { getDirectivesData, getMessageData } from './astHelpers'
 
 test('parsing only a comment', async () => {
   const text = '# this is a comment !'
 
-  let tr = await defaultTMParser.parse(text)
+  const tr = await defaultTMParser.parse(text)
   expect(tr.directive_list()).toEqual([])
   expect(tr.header()).toBeNull()
   expect(tr.message_list()).toEqual([])
@@ -30,6 +30,23 @@ test('parsing a single entry', async () => {
   expect(messageData.key).toEqual('nothing')
   expect(messageData.singleQuotedText).toBeNull()
   expect(messageData.doubleQuotedText).toEqual({ literals: ['Rien'], escapes: [], parameters: [] })
+})
+
+test('parsing public and private entries', async () => {
+  const publicEntry = "nothing = 'Rien'"
+  const privateEntry = "(nothing) = 'Rien'"
+
+  const trFromPublicEntry = await defaultTMParser.parse(publicEntry)
+  let messageData = getMessageData(trFromPublicEntry.message(0))
+  expect(messageData.key).toEqual('nothing')
+  expect(messageData.hasParens).toBeFalse()
+
+  const trFromPrivateEntry = await defaultTMParser.parse(privateEntry)
+  expect(trFromPrivateEntry.directive_list()).toEqual([])
+  expect(trFromPrivateEntry.header()).toBeNull()
+  messageData = getMessageData(trFromPrivateEntry.message(0))
+  expect(messageData.key).toEqual('nothing')
+  expect(messageData.hasParens).toBeTrue()
 })
 
 test('parsing multiple entries', async () => {
@@ -176,7 +193,7 @@ test('parsing a translation with a header', async () => {
 
   expect(tr.header().getText()).toEqual("@{ import { myFunction } from '../myModule' }")
 
-  let messageData = getMessageData(tr.message(0))
+  const messageData = getMessageData(tr.message(0))
   expect(messageData.key).toEqual('nothing')
   expect(messageData.singleQuotedText).toEqual({ literals: ['Rien'], escapes: [], parameters: [] })
   expect(messageData.doubleQuotedText).toBeNull()
@@ -187,10 +204,7 @@ test('parsing a translation with directives', async () => {
   const text = "@noArguments \n @withArguments x y z \n nothing = 'Rien'"
 
   const expectedMessages: Map<string, Message> = new Map()
-  expectedMessages.set('nothing', {
-    parameters: [],
-    content: [{ type: 'text', value: 'Rien' }],
-  })
+  expectedMessages.set('nothing', new Message(Visibility.Public, [{ type: 'text', value: 'Rien' }]))
 
   const tr = await defaultTMParser.parse(text)
 
@@ -199,11 +213,11 @@ test('parsing a translation with directives', async () => {
     { name: '@withArguments', arguments: ['x', 'y', 'z'] },
   ]
 
-  let directivesData = getDirectivesData(tr.directive_list())
+  const directivesData = getDirectivesData(tr.directive_list())
   expect(directivesData).toEqual(expectedDirectives)
 
   expect(tr.header()).toBeNull()
-  let messageData = getMessageData(tr.message(0))
+  const messageData = getMessageData(tr.message(0))
   expect(messageData.key).toEqual('nothing')
   expect(messageData.singleQuotedText).toEqual({ literals: ['Rien'], escapes: [], parameters: [] })
   expect(messageData.doubleQuotedText).toBeNull()

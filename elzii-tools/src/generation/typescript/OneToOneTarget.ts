@@ -1,6 +1,6 @@
 import { TSTarget } from '.'
 import { FileExtensions } from '@module/files'
-import { Translation } from '@module/translations'
+import { Translation } from '@module/model'
 import { TypeScriptOutputDirectory } from '@module/files/code'
 import * as ts from '@module/languages/ts/ast'
 import { config, show } from '@module'
@@ -85,7 +85,7 @@ export default class OneToOneTarget extends TSTarget {
     this._show.success('Finished')
   }
 
-  private async generateIndex() {
+  private async generateIndex(): Promise<void> {
     const fileName = 'index' + FileExtensions.TypeScript
     const file = this._outputDirectory.createNewFile(fileName)
 
@@ -119,7 +119,7 @@ export default class OneToOneTarget extends TSTarget {
     return ts.importDeclaration('value', '.', [ts.importSpecifier('value', this.interfaceName)])
   }
 
-  private showFileSuccess(fileName: string, missingCount: number, totalCount: number) {
+  private showFileSuccess(fileName: string, missingCount: number, totalCount: number): void {
     let missingCountFormatted = ''
     if (missingCount > 0) {
       const color = missingCount / totalCount < 0.05 ? chalk.yellow : chalk.redBright

@@ -7,8 +7,8 @@ interface ParameterData {
 }
 
 function getSQTParameterData(param: tm.SingleQuotedTextParameter): ParameterData {
-  const format = param.parameterFormat()
-  const custom = param.customParameterFormat()
+  const format: tm.ParameterFormat | null = param.parameterFormat()
+  const custom: tm.ShorthandParameterFormat | null = param.customParameterFormat()
   return {
     name: param.PARAMETER_NAME().getText(),
     format: format === null ? null : format.getText(),
@@ -50,6 +50,7 @@ function getDoubleQuotedTextData(text: tm.DoubleQuotedText): TextData {
 
 interface MessageData {
   key: string
+  hasParens: boolean
   singleQuotedText: TextData | null
   doubleQuotedText: TextData | null
 }
@@ -59,6 +60,7 @@ export function getMessageData(message: tm.Message): MessageData {
   const dqt = message.doubleQuotedText()
   return {
     key: message.KEY().getText(),
+    hasParens: message.OPENING_PARENS() !== null && message.CLOSING_PARENS() !== null,
     singleQuotedText: sqt === null ? null : getSingleQuotedTextData(sqt),
     doubleQuotedText: dqt === null ? null : getDoubleQuotedTextData(dqt),
   }

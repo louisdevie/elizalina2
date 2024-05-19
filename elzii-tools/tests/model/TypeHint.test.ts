@@ -1,29 +1,4 @@
-import {
-  mergeTypeHints,
-  MessagePart,
-  normalizedMessageContent,
-  TypeHint as TH,
-} from '@module/translations'
-
-test('normalizedMessageContent', () => {
-  let rawContent: MessagePart[] = [
-    { type: 'text', value: 'Try ' },
-    { type: 'text', value: '"' },
-    { type: 'formatting', parameterName: 'it' },
-    { type: 'text', value: '"' },
-    { type: 'text', value: ' out!' },
-    { type: 'text', value: '\n' },
-    { type: 'text', value: 'Another line of text...' },
-  ]
-
-  let expectedNormalizedContent: MessagePart[] = [
-    { type: 'text', value: 'Try "' },
-    { type: 'formatting', parameterName: 'it' },
-    { type: 'text', value: '" out!\nAnother line of text...' },
-  ]
-
-  expect(normalizedMessageContent(rawContent)).toStrictEqual(expectedNormalizedContent)
-})
+import { mergeTypeHints, TypeHint as TH } from '@module/model/TypeHint'
 
 test('mergeTypeHints', () => {
   const hintsInOrder: TH[] = [TH.None, TH.Number, TH.String, TH.Datetime, TH.List, TH.Mixed]
@@ -41,9 +16,9 @@ test('mergeTypeHints', () => {
 
   for (let i = 0; i < 6; i++) {
     for (let j = i; j < 6; j++) {
-      let first = hintsInOrder[i]
-      let second = hintsInOrder[j]
-      let result = expectedResults[i][j]
+      const first = hintsInOrder[i]
+      const second = hintsInOrder[j]
+      const result = expectedResults[i][j]
 
       // the operation should be commutative
       expect(mergeTypeHints(first, second)).toEqual(result)

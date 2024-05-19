@@ -1,11 +1,6 @@
 import { BaseTarget } from '../decorators'
 import * as ts from '@module/languages/ts/ast'
 import { Parameter } from '@module/languages/ts/ast'
-import {
-  ElizalinaRuntimeConfig,
-  GeneratedCodeConfig,
-  PlaceholdersConfig,
-} from '@module/generation/codeConfig'
 import { randomHex } from '@module/helpers'
 import {
   MessageParameter,
@@ -14,11 +9,12 @@ import {
   Translation,
   TypeHint,
   UserCode,
-} from '@module/translations'
+} from '@module/model'
 import { UserCodeInsertion } from '@module/generation/postProcessing'
 import { AllTranslationReports, MissingTranslationsReport } from '@module/checks/translations'
 import { throwError } from '@module/error'
 import { CacheKeyGenerator, ParameterEncounters } from '@module/generation/helperIndexes'
+import CodeConfig from '@module/generation/codeConfig'
 
 interface LocaleLoaderConfig {
   id: string
@@ -60,7 +56,7 @@ export default abstract class TSTarget extends BaseTarget {
   }
 
   private static generatePlaceholderKey(): string {
-    return PlaceholdersConfig.userCodePlaceholderPrefix + randomHex()
+    return CodeConfig.Placeholders.UserCode.Prefix + randomHex()
   }
 
   protected async initThis(reports: AllTranslationReports): Promise<void> {
@@ -84,8 +80,8 @@ export default abstract class TSTarget extends BaseTarget {
    * @protected
    */
   protected makeFormatterImport(): ts.ProgramStatement {
-    return ts.importDeclaration('value', ElizalinaRuntimeConfig.moduleName, [
-      ts.importSpecifier('value', ElizalinaRuntimeConfig.formatterClassName),
+    return ts.importDeclaration('value', CodeConfig.ElizalinaRuntime.ModuleName, [
+      ts.importSpecifier('value', CodeConfig.ElizalinaRuntime.FormatterClassName),
     ])
   }
 
@@ -94,8 +90,8 @@ export default abstract class TSTarget extends BaseTarget {
    * @protected
    */
   protected makeLocaleSelectorImport(): ts.ProgramStatement {
-    return ts.importDeclaration('value', ElizalinaRuntimeConfig.moduleName, [
-      ts.importSpecifier('value', ElizalinaRuntimeConfig.localeSelectionClassName),
+    return ts.importDeclaration('value', CodeConfig.ElizalinaRuntime.ModuleName, [
+      ts.importSpecifier('value', CodeConfig.ElizalinaRuntime.LocaleSelection.ClassName),
     ])
   }
 
@@ -118,22 +114,25 @@ export default abstract class TSTarget extends BaseTarget {
     })
 
     const formatterType = ts.tsTypeReference(
-      ts.identifier(ElizalinaRuntimeConfig.formatterClassName),
+      ts.identifier(CodeConfig.ElizalinaRuntime.FormatterClassName),
     )
 
     cls.body.body.push(
-      ts.propertyDefinition(GeneratedCodeConfig.formatterPropertyName, formatterType),
+      ts.propertyDefinition(CodeConfig.GeneratedCode.FormatterPropertyName, formatterType),
     )
 
     cls.body.body.push(
       ts.methodDefinition('constructor', {
         kind: 'constructor',
-        params: [ts.identifier(GeneratedCodeConfig.formatterPropertyName, formatterType)],
+        params: [ts.identifier(CodeConfig.GeneratedCode.FormatterPropertyName, formatterType)],
         body: ts.blockStatement(
           ts.expressionStatement(
             ts.assignmentExpression(
-              ts.memberExpression(ts.thisExpression(), GeneratedCodeConfig.formatterPropertyName),
-              ts.identifier(GeneratedCodeConfig.formatterPropertyName),
+              ts.memberExpression(
+                ts.thisExpression(),
+                CodeConfig.GeneratedCode.FormatterPropertyName,
+              ),
+              ts.identifier(CodeConfig.GeneratedCode.FormatterPropertyName),
             ),
           ),
         ),
@@ -141,13 +140,20 @@ export default abstract class TSTarget extends BaseTarget {
     )
 
     const reports = this.requireAllReports()
+    const ref = reports.missing.reference
 
     for (const key of reports.missing.allKeys) {
       const message = translation.messages.get(key)
+      let fallbackMessage
+
       const signature = Array.from(reports.parameters.signatureOf(key).parameters)
       if (message !== undefined) {
         cls.body.body.push(
           this.makeDefinedMessageMethod(key, signature, message.content, translation.id),
+        )
+      } else if (ref !== null && (fallbackMessage = ref.messages.get(key)) !== undefined) {
+        cls.body.body.push(
+          this.makeDefinedMessageMethod(key, signature, fallbackMessage.content, translation.id),
         )
       } else {
         cls.body.body.push(this.makeMissingMessageMethod(key, signature))
@@ -161,7 +167,7 @@ export default abstract class TSTarget extends BaseTarget {
     key: string,
     messageParameters: MessageParameter[],
     body: ts.BlockStatement,
-  ) {
+  ): ts.MethodDefinition {
     const params = messageParameters.map(this.makeMessageParameter.bind(this))
     return ts.methodDefinition(key, {
       kind: params.length === 0 ? 'get' : 'method', // use getters when there are no parameters
@@ -303,7 +309,7 @@ export default abstract class TSTarget extends BaseTarget {
     parameterName: string,
     format: MessageParameterFormat,
     messageContext: string,
-  ) {
+  ): ts.CallExpression {
     const value = ts.identifier(parameterName)
     const config = ts.arrowFunctionExpression({
       params: [ts.identifier('f')],
@@ -313,8 +319,8 @@ export default abstract class TSTarget extends BaseTarget {
     const context = ts.literal(`parameter '${parameterName}' in ${messageContext}`)
     return ts.callExpression(
       ts.memberExpression(
-        ts.memberExpression(ts.thisExpression(), GeneratedCodeConfig.formatterPropertyName),
-        ElizalinaRuntimeConfig.formatMethodName,
+        ts.memberExpression(ts.thisExpression(), CodeConfig.GeneratedCode.FormatterPropertyName),
+        CodeConfig.ElizalinaRuntime.FormatMethodName,
       ),
       value,
       config,
@@ -368,10 +374,10 @@ export default abstract class TSTarget extends BaseTarget {
       'const',
       ts.identifier('elz'),
       ts.newExpression(
-        ts.identifier(ElizalinaRuntimeConfig.localeSelectionClassName),
+        ts.identifier(CodeConfig.ElizalinaRuntime.LocaleSelection.ClassName),
         [
           ts.objectExpression(
-            ts.property(ElizalinaRuntimeConfig.localeSelectionListPropertyName, localesList),
+            ts.property(CodeConfig.ElizalinaRuntime.LocaleSelection.ListPropertyName, localesList),
           ),
         ],
         [ts.tsTypeReference(ts.identifier(this.interfaceName))],
@@ -381,9 +387,12 @@ export default abstract class TSTarget extends BaseTarget {
 
   private makeLocaleLoaderObject(locale: LocaleLoaderConfig): ts.Expression {
     return ts.objectExpression(
-      ts.property(ElizalinaRuntimeConfig.localeSelectionIdPropertyName, ts.literal(locale.id)),
       ts.property(
-        ElizalinaRuntimeConfig.localeSelectionLoaderPropertyName,
+        CodeConfig.ElizalinaRuntime.LocaleSelection.IdPropertyName,
+        ts.literal(locale.id),
+      ),
+      ts.property(
+        CodeConfig.ElizalinaRuntime.LocaleSelection.LoaderPropertyName,
         ts.arrowFunctionExpression({
           params: [],
           body: ts.importExpression(ts.literal(locale.path)),
@@ -394,7 +403,7 @@ export default abstract class TSTarget extends BaseTarget {
 
   protected makeLocaleProxyExpression(): ts.Expression {
     return ts.callExpression(
-      ts.memberExpression(ts.identifier('elz'), ElizalinaRuntimeConfig.makeProxyMethodName),
+      ts.memberExpression(ts.identifier('elz'), CodeConfig.ElizalinaRuntime.MakeProxyMethodName),
     )
   }
 }

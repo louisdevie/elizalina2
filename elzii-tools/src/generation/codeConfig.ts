@@ -1,22 +1,31 @@
-export class ElizalinaRuntimeConfig {
-  private static readonly numberFormatAccessorName = 'number'
+const CodeConfig = {
+  ElizalinaRuntime: {
+    ModuleName: 'elzii',
+    FormatterClassName: 'Fmt',
+    FormatMethodName: 'format',
+    LocaleSelection: {
+      ClassName: 'Elz',
+      ListPropertyName: 'locales',
+      IdPropertyName: 'id',
+      LoaderPropertyName: 'messages',
+    },
+    MakeProxyMethodName: 'makeLocaleProxy',
+  },
 
-  public static readonly moduleName = 'elzii'
-  public static readonly formatterClassName = 'Fmt'
-  public static readonly formatMethodName = 'format'
-  public static readonly localeSelectionClassName = 'Elz'
-  public static readonly localeSelectionListPropertyName = 'locales'
-  public static readonly localeSelectionIdPropertyName = 'id'
-  public static readonly localeSelectionLoaderPropertyName = 'messages'
-  public static readonly makeProxyMethodName = 'makeLocaleProxy'
+  GeneratedCode: {
+    FormatterPropertyName: 'fmt',
+  },
+
+  Placeholders: {
+    UserCode: {
+      Prefix: '__$usr_',
+      Format: /__\$usr_[0-9a-f]{8}/g,
+    },
+  },
 }
 
-export class GeneratedCodeConfig {
-  public static readonly formatterPropertyName = 'fmt'
+type DeepReadonly<T extends Record<string, unknown>> = {
+  readonly [P in keyof T]: T[P] extends Record<string, unknown> ? DeepReadonly<T[P]> : T[P]
 }
 
-export class PlaceholdersConfig {
-  public static readonly userCodePlaceholderPrefix = '__$usr_'
-
-  public static readonly userCodePlaceholderFormat = /__\$usr_[0-9a-f]{8}/g
-}
+export default CodeConfig as DeepReadonly<typeof CodeConfig>

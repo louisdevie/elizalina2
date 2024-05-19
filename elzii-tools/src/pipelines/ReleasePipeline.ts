@@ -1,6 +1,6 @@
 import { relative } from 'node:path'
 import { config, show } from '@module'
-import { Translation } from '@module/translations'
+import { Translation } from '@module/model'
 import { ExtractedTranslation, TranslationsExtractor } from '@module/extraction'
 import { OutputTarget } from '@module/generation'
 import { MultiCheck } from '@module/checks'
@@ -34,12 +34,12 @@ export default class ReleasePipeline {
   }
 
   public async execute(): Promise<void> {
-    const allTranslations = await Promise.all(
-      this._sources.foundTranslations.map(this.loadAndCheck, this),
-    )
+    const allTranslations = await Promise.all(this._sources.begin().map(this.loadAndCheck, this))
 
-    if (!this._allChecks.isValidGlobally)
-      throwError('Some checks failed (see above), aborting compilation.', 'checks')
+    const doCompile = allTranslations.every((res) => res.loaded) && this._allChecks.isValidGlobally
+
+    this._sources.finish()
+    if (!doCompile) throwError('Skipping compilation due to the errors above.', 'checks')
 
     await this._outputTarget.init({
       missing: this._missingCheck.getReport(),
@@ -54,15 +54,16 @@ export default class ReleasePipeline {
     return handleErrorsAsync<LoadAndCheckResult>(
       async () => {
         const translation = await extracted.translation
-        this._allChecks.validate(translation)
+        const passedAllChecks = this._allChecks.validate(translation)
         return {
           loaded: true,
           source: extracted.mainSource.path,
           translation,
-          passedAllChecks: true,
+          passedAllChecks,
         }
       },
       {
+        abort: () => ({ loaded: false }),
         all: (err) => {
           show.error(`Unhandled error when loading translation: ${err}`)
           return { loaded: false }
@@ -71,7 +72,7 @@ export default class ReleasePipeline {
     )
   }
 
-  private async compile(result: LoadAndCheckResult) {
+  private async compile(result: LoadAndCheckResult): Promise<void> {
     if (result.loaded && result.passedAllChecks) {
       await this._outputTarget.compile(
         result.translation,

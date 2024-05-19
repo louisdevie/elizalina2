@@ -1,4 +1,4 @@
-import { Translation } from '@module/translations'
+import { Translation } from '@module/model'
 import { OutputTarget, OutputTargetBuilder } from '.'
 import { OutputConfig, CommonOutputConfig } from '@module/config'
 import { throwError } from '@module/error'
