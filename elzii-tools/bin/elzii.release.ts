@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs'
+import { ArgumentsCamelCase, Argv, CommandModule } from 'yargs'
 import { show, config, version } from '@module'
-import { intoPromise, noColorEnv, doNothing } from '@module/helpers'
-import { handleErrorsAsync } from '@module/error'
 import { resolveInPackage } from '@module/files'
 import { TargetConfig } from '@module/config'
 import { getTranslationFiles } from '@module/files/translations'
@@ -12,34 +10,15 @@ import { defaultOutputTargetBuilder } from '@module/generation'
 import chalk from 'chalk'
 import { TranslationsExtractor } from '@module/extraction'
 import { TranslationsDirectoryExtractor } from '@module/extraction/translationFiles'
+import type { GlobalOptions } from './elzii'
 
-async function main() {
-  let argv = await intoPromise(
-    yargs
-      .scriptName('elzii-release')
-      .usage(
-        '$0 [OPTIONS] [TARGETS...]',
-        'Compile translation files into javascript or typescript code.',
-      )
-      .version('elzii-tools v' + version)
-      .boolean('debug')
-      .boolean('no-color')
-      .describe({
-        debug: 'Show debugging information.',
-        'no-color':
-          'Disable colored output. (this option can also be set using the NO_COLOR environment variable)',
-      })
-      .help().argv,
-  )
+interface ReleaseOptions extends GlobalOptions {
+  targets: string[] | undefined
+}
 
-  if (argv['no-color'] || noColorEnv()) config.disableColor()
-  if (argv.debug) config.enableDebugMode()
-
-  show
-    .debugInfo(`elzii-release from elzii-tools v${version}`)
-    .debugInfo(`command-line options: debug=${argv.debug} no-color=${argv['no-color']}`)
-
-  await config.init('elzii-release')
+async function main(argv: ArgumentsCamelCase<ReleaseOptions>): Promise<void> {
+  show.debugInfo(`using tool: release`)
+  await config.init('elzii release')
 
   const availableTargets = config.requireTargets()
   const selectedTargets =
@@ -66,7 +45,7 @@ async function main() {
   }
 }
 
-async function generateTarget(target: TargetConfig) {
+async function generateTarget(target: TargetConfig): Promise<void> {
   const sourceFiles = await getTranslations(target.translations)
 
   if (sourceFiles === null) {
@@ -96,4 +75,9 @@ async function getTranslations(directory: string): Promise<TranslationsExtractor
   return extractor
 }
 
-handleErrorsAsync(main, { all: (err) => show.fatal(err) }).then(doNothing)
+const command: CommandModule<GlobalOptions, ReleaseOptions> = {
+  command: 'release [targets..]',
+  describe: 'Compile translation files to javascript',
+  handler: main,
+}
+export default command
