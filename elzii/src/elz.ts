@@ -176,19 +176,23 @@ export class Elz<T extends object> {
   }
 
   private async changeLocaleTo(locales: string[]) {
-    this._currentLocale = this.resolveLocale(locales)
-    await this._currentLocale?.load(this._factory, this._context)
+    const newLocale = this.resolveLocale(locales)
+    await newLocale.load(this._factory, this._context)
+
     this._currentLocale?.unload()
+    this._currentLocale = newLocale
   }
 
   private changeLocaleToStatic(locales: string[]) {
-    this._currentLocale = this.resolveLocale(locales)
-    this._currentLocale?.staticLoad(this._factory, this._context)
+    const newLocale = this.resolveLocale(locales)
+    newLocale.staticLoad(this._factory, this._context)
+
     this._currentLocale?.unload()
+    this._currentLocale = newLocale
   }
 
   private resolveLocale(locales: string[]): ElzLocale<T> {
-    let chosen = undefined
+    let chosen
 
     // the resolution tries to find a matching locale by progressively trying broader selection
     // methods as long as `chosen` is undefined.
