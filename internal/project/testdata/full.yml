@@ -1,0 +1,20 @@
+sources:
+  a: src/a
+  b: ['src/b/index.ts', 'src/b/other.ts']
+ignore: 'src/**.jsx'
+translations: src/lang
+js:
+  output: dist/i18n
+  module: esm
+  minify: true
+  entryPoint: src/locale/index.ts
+  translateFn: __
+format:
+  printWidth: 80
+  inline: false
+  indent: 1
+  useTabs: true
+  minimumSpacing: 1
+  maximumSpacing: 1
+  collapseConditionals: true
+  sortMessages: alphabetical

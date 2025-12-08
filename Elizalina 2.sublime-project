@@ -1,0 +1,25 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+		},
+		{
+			"path": "../esbuild",
+		}
+	],
+	"settings":
+	{
+		"LSP":
+		{
+			"LSP-pyright":
+			{
+				"enabled": false,
+			},
+			"gopls":
+			{
+				"enabled": true
+			},
+		},
+	},
+}

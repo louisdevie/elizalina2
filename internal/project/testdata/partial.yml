@@ -1,0 +1,5 @@
+sources: src/
+translations: src/lang
+js:
+  output: dist/i18n
+  entryPoint: src/locale/index.ts
