@@ -1,0 +1,21 @@
+{
+    "folders": [
+        {
+            "name": "elz",
+            "path": "tools/elz",
+        },
+        {
+            "name": "go packages",
+            "path": "internal",
+        },
+        {
+            "name": "project files",
+            "path": ".",
+            "folder_exclude_patterns": [ "*" ],
+        },
+        {
+            "name": "github workflows",
+            "path": ".github/workflows"
+        }
+    ],
+}
