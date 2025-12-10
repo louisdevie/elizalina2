@@ -5,17 +5,39 @@
             "path": "tools/elz",
         },
         {
+            "name": "elz-go",
+            "path": "tools/elz-go",
+        },
+        {
+            "name": "elz-js",
+            "path": "tools/elz-js",
+        },
+        {
             "name": "go packages",
             "path": "internal",
         },
         {
             "name": "project files",
             "path": ".",
-            "folder_exclude_patterns": [ "*" ],
+            "folder_exclude_patterns": [ "*"],
         },
         {
             "name": "github workflows",
-            "path": ".github/workflows"
+            "path": ".github/workflows",
         }
     ],
+    "settings":
+    {
+		"LSP":
+		{
+			"gopls":
+			{
+				"enabled": true,
+			},
+            "LSP-typescript":
+            {
+				"enabled": true
+			},
+        },
+	},
 }
